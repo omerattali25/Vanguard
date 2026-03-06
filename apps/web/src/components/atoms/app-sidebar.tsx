@@ -19,7 +19,7 @@ const menu_items = [
 const AppSidebar = () => {
   return (
     <>
-         <Sidebar>
+         <Sidebar variant='floating'>
           <SidebarContent>
              <SidebarGroup>
               <SidebarGroupLabel>VANGUARD</SidebarGroupLabel>
