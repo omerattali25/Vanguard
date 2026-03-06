@@ -13,7 +13,6 @@ function App() {
         <Route path="/alerts" element={<AlertPage/>} />
       </Routes>
       <Toaster position="bottom-right" richColors closeButton theme='system' visibleToasts={5} />
-      
     </>
   )
 }
