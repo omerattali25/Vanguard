@@ -15,9 +15,6 @@ async function bootstrap() {
       client: {
         brokers: [config.kafkaListening],
       },
-      consumer: {
-        groupId: config.groupId,
-      },
     },
   });
 

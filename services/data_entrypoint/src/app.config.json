@@ -1,5 +1,5 @@
 {
-    "listenTopic":"patient-vitals",
+    "listenTopic":"patient_vitals",
     "kafkaListening":"localhost:9092",
     "groupId":"validators"
 }
