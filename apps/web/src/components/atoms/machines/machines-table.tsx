@@ -8,7 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../../ui/table.tsx"
+import { ChangePatientPopover } from "./change-patient-popover.tsx";
 
 interface MachinesTableProps {
   machines: Machine[];
@@ -22,6 +23,7 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
           <TableRow>
             <TableHead className="w-[100px]">מכונה </TableHead>
             <TableHead className="w-[100px] ">מטופל</TableHead>
+             <TableHead className="w-[100px] "></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -30,6 +32,7 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
               <TableRow>
                 <TableCell>{machine.id}</TableCell>
                 <TableCell>{machine.assinged}</TableCell>
+                <TableCell><ChangePatientPopover patients={["123456677"]} machine={machine}/></TableCell>
               </TableRow>
             );
           })}
