@@ -16,24 +16,27 @@ interface MachinesTableProps {
 export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
   return (
     <>
-      <Table>
+      <Table  className="w-full md:w-1/2 mt-10 border mx-auto">
         <TableCaption>מכונות</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">מכונה </TableHead>
-            <TableHead>מטופל</TableHead>
+            <TableHead className="w-[100px] ">מטופל</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {props.machines.map((machine) => {
             return (
               <TableRow>
-                <TableCell className="font-medium">INV001</TableCell>
                 <TableCell>{machine.id}</TableCell>
                 <TableCell>{machine.assinged}</TableCell>
               </TableRow>
             );
           })}
+           <TableRow>
+                <TableCell>dfsdfsdf</TableCell>
+                <TableCell>dfdsfsdfd</TableCell>
+              </TableRow>
         </TableBody>
       </Table>
     </>
