@@ -5,12 +5,14 @@ import {
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table.tsx"
 import { ChangePatientPopover } from "./change-patient-popover.tsx";
 import { MachineStatusBadge } from "./machine-status-badge.tsx";
+import { AddMachineForm } from "../add-machine-form.tsx";
 
 interface MachinesTableProps {
   machines: Machine[];
@@ -23,6 +25,7 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px] text-center">מכונה </TableHead>
+            <TableHead className="w-[100px] text-center">שם</TableHead>
             <TableHead className="w-[100px] text-center ">מטופל</TableHead>
             <TableHead className="w-[100px] text-center ">מיקום</TableHead>
             <TableHead className="w-[100px] text-center ">סטטוס</TableHead>
@@ -34,6 +37,7 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
             return (
               <TableRow>
                 <TableCell className="text-center" >{machine.id}</TableCell>
+                <TableCell className="text-center">{machine.name}</TableCell>
                 <TableCell className="text-center" >{machine.assinged}</TableCell>
                 <TableCell className="text-center" >{machine.location}</TableCell>
                 <TableCell className="text-center" ><MachineStatusBadge status={machine.status}/></TableCell>
@@ -42,6 +46,7 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
             );
           })}
         </TableBody>
+        <TableFooter><AddMachineForm/></TableFooter>
       </Table>
     </>
   );

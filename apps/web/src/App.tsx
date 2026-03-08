@@ -5,6 +5,8 @@ import AppSidebar from "./components/atoms/menu/app-sidebar";
 import Patients from "./pages/Patients";
 import { PatientStatus } from "../types/patinet_status";
 import { Patient } from "../types/patient";
+import { MachinesPage } from "./pages/Machines";
+import { MachineStatus } from "./types/machine-status";
 
 function App() {
   const mockPatients: Patient[] = [
@@ -55,6 +57,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/asd" element={<div>asd</div>} />
           <Route path="/" element={<Patients patients={mockPatients} />} />
+          <Route path="/machines" element={<MachinesPage machines={[{id:"1234",name:"פלג",assinged:"123455",location:"home",status:MachineStatus.AVELIABLE}]}/>}/>
         </Routes>
       </SidebarProvider>
     </>

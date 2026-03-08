@@ -1,5 +1,4 @@
 import { MachineStatus } from "@/types/machine-status"
-import { PatientStatus } from "../../../../types/patinet_status"
 import StatusBadge from "../generic/status-badge"
 
 interface MachineStatusBadgeProps {
