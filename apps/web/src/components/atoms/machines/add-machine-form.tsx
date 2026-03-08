@@ -21,7 +21,7 @@ export const AddMachineForm: React.FC = () => {
           </PopoverHeader>
           <FieldGroup>
             <Field orientation="horizontal">
-              <Input id="id" placeholder="id" />
+              <Input id="name" placeholder="שם" />
             </Field>
           </FieldGroup>
           <Button variant="outline" className="mt-5">
