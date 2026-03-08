@@ -14,7 +14,9 @@ export class AppService {
     @Inject('KAFKA_PRODUCER') private readonly kafkaClient: ClientKafka,
   ) {}
 
-
+    async onModuleInit() {
+    await this.kafkaClient.connect();  
+  }
   
   handleVitals(message:VitalsBefore){
     const vitalsToReturn:Vitals = {
