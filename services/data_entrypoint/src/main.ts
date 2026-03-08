@@ -1,22 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
-import {AppConfiguration}  from "./other_types/AppConfiguration"
-import configuration from "./app.config.json"
+import { AppModule } from './entrypoint.module';
+import { kafkaConfig } from "./kafka.config"
 
 
 async function bootstrap() {
 
-  let config:AppConfiguration = configuration;
 
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        brokers: [config.kafkaListening],
-      },
-    },
-  });
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,kafkaConfig);
 
   await app.listen();
 }

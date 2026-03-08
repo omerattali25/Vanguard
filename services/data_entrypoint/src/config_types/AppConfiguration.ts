@@ -1,4 +1,5 @@
-import { VitalsConfigured } from 'src/inputs/vitals.input';
+import { VitalsConfigured } from "./DefaultValuesConfig"
+
 
 export interface AppConfiguration{
     listenTopic:string,
