@@ -8,11 +8,6 @@ const menu_items = [
         title : "מסך בית",
         url : "/",
         icon : Home
-    },
-    {
-        title : "חרא על החיים שלי",
-        url : "/vitals",
-        icon : BookA
     }
 ]
 

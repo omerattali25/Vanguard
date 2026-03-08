@@ -20,7 +20,6 @@ function App() {
       
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/vitals" element={<div>fdjkhcvkdfjhgkfdljbh</div>} />
       </Routes>
       </SidebarProvider>
     </>
