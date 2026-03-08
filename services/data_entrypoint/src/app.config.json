@@ -1,6 +1,8 @@
 {
     "listenTopic":"patient_vitals",
     "kafkaListening":"localhost:9092",
+    "kafkaProducing":"localhost:9093",
+    "createTopic":"updated_vitals",
     "groupId":"validators",
     "defaultMessageValues":{
         "patient_id":-1,

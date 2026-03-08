@@ -5,4 +5,6 @@ export interface AppConfiguration{
     kafkaListening:string,
     groupId:string
     defaultMessageValues:VitalsConfigured
+    kafkaProducing:string,
+    createTopic:string
 }
