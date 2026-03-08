@@ -23,6 +23,8 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
           <TableRow>
             <TableHead className="w-[100px]">מכונה </TableHead>
             <TableHead className="w-[100px] ">מטופל</TableHead>
+            <TableHead className="w-[100px] ">מיקום</TableHead>
+            <TableHead className="w-[100px] ">סטטוס</TableHead>
              <TableHead className="w-[100px] "></TableHead>
           </TableRow>
         </TableHeader>
@@ -32,14 +34,12 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
               <TableRow>
                 <TableCell>{machine.id}</TableCell>
                 <TableCell>{machine.assinged}</TableCell>
-                <TableCell><ChangePatientPopover patients={["123456677"]} machine={machine}/></TableCell>
+                <TableCell>{machine.location}</TableCell>
+                <TableCell>{machine.status}</TableCell>
+                <TableCell><ChangePatientPopover machine={machine} patients={[]}/></TableCell>
               </TableRow>
             );
           })}
-           <TableRow>
-                <TableCell>dfsdfsdf</TableCell>
-                <TableCell>dfdsfsdfd</TableCell>
-              </TableRow>
         </TableBody>
       </Table>
     </>
