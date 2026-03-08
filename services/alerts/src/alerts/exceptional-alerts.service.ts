@@ -12,6 +12,9 @@ export class ExceptionalAlertsService {
         private alertRepo: Repository<Alert>,
     ) { }
 
+    const DESCRIPTION_ON_OUT_OF_AVERAGE = "Vital field is unstable compared to average."
+    const DESCRIPTION_ON_IRREGULAR = "Vital field out of healthy bounds"
+
     async checkVitals(vitals: PatientVitals): Promise<Alert[]> {
 
         const tasks = (Object.keys(RegularVitalsBoundries) as (keyof PatientVitals)[])
@@ -27,18 +30,16 @@ export class ExceptionalAlertsService {
         const value = vitals[key];
         const vitalField = key as VitalField;
 
-        const lastAlert = await this.GetLastAlertIfExists(vitals.patinetId, vitalField);
-        if (value < bounds.min || value > bounds.max) {
+        const lastAlert = await this.getLastAlertIfExists(vitals.patinetId, vitalField);
+        const isIrregular = value < bounds.min || value > bounds.max; 
+        if (isIrregular || await this.checkOutOfAverage(vitals, vitalField)) {
             //exceptional vital
             if(!lastAlert || lastAlert.ended_at){
                 //if there are no alerts or last alert already ended
-                const newAlert = await this.createAlert(vitals, vitalField)
+                const newAlert = await this.createNewAlert(vitals, vitalField, isIrregular)
                 return newAlert;
             }
         }
-        else if(false){ //for future redis average check
-
-        } 
         else{
             //regular vital
             if(lastAlert && !lastAlert.ended_at){
@@ -48,7 +49,10 @@ export class ExceptionalAlertsService {
         }
         return null;
     }
-    async GetLastAlertIfExists(patientId: string, vitalField: VitalField) : Promise<Alert | null> {
+    async checkOutOfAverage(vitals : PatientVitals, vitalField : VitalField) : Promise<boolean> {
+        return false;
+    } 
+    async getLastAlertIfExists(patientId: string, vitalField: VitalField) : Promise<Alert | null> {
         const lastAlert = await this.alertRepo.findOne({
             where: {
                 patient_id: patientId,
@@ -60,11 +64,13 @@ export class ExceptionalAlertsService {
         })
         return lastAlert;
     }
-    async createAlert(vitals: PatientVitals, violation: VitalField) : Promise<Alert> {
+    async createNewAlert(vitals: PatientVitals, violation: VitalField, isIrregular: boolean) : Promise<Alert> {
+        const description = (isIrregular) ? this.DESCRIPTION_ON_IRREGULAR : this.DESCRIPTION_ON_OUT_OF_AVERAGE;
+
         const alert : Omit<Alert, 'id'> = {
             patient_id: vitals.patinetId,
             vital_field: violation,
-            description: `There was a violation in ${violation} vital`,
+            description: `${violation} ${description}`,
             started_at: vitals.timestamp,
             ended_at: null,
         }
