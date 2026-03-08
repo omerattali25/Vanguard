@@ -1,7 +1,7 @@
 import { Get, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
-import { Patient } from 'src/entity/patient.entity';
+import { Patient } from '../entity/patient.entity';
 import { PatientDetails } from 'src/inputs/patient.input';
 import { Repository } from 'typeorm';
 
@@ -10,7 +10,7 @@ export class PatientsService {
     constructor(
         @InjectRepository(Patient)
         private patientRepo: Repository<Patient>,
-    ) { }
+    ) {}
 
     async getPatientById(patient_id: UUID): Promise<Patient> {
         let result = await this.patientRepo.findOne({ where: { id: patient_id } });

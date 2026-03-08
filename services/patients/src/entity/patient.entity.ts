@@ -16,12 +16,12 @@ export class Patient {
     name: string;
 
     @Column()
-    city?: string;
+    city: string;
 
     @Column({ type: 'enum', enum: PatientStatus })
     status: string;
 
-    @Column({ type: 'timestamp' })
+    @CreateDateColumn()
     registered_at: string;
 
 }

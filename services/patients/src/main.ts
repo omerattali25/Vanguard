@@ -2,10 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppConfiguration } from './config/app-configurations';
-import configuration from "./config/app.conf.json"
 
 async function bootstrap() {
-  let config: AppConfiguration = configuration;
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
@@ -13,10 +11,10 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: [config.kafkaListening],
+          brokers: [process.env.KAFKA_LISTENING || ""],
         },
         consumer: {
-          groupId: config.groupId,
+          groupId: process.env.GROUP_ID || "",
         },
       },
     }

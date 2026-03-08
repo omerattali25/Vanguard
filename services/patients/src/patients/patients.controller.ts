@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { PatientsService } from './patients.service';
 import type { UUID } from 'crypto';
 
@@ -7,7 +7,7 @@ export class PatientsController {
     constructor(private readonly patientsService: PatientsService) { }
 
     @Get(':id')
-    async getPatientById(id: UUID) {
+    async getPatientById(@Param('id') id: UUID) {
         return await this.patientsService.getPatientById(id);
     }
 
