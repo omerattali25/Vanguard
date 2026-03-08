@@ -5,8 +5,8 @@ export const db_alerts_config : TypeOrmModuleOptions = {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: 'Qq321321',
-    database: 'vanguard_db',
+    password: 'mypassword',
+    database: 'postgres',
 
     autoLoadEntities: true,
     synchronize: true,
