@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom'
 
 const menu_items = [
     {
-        title : "Home",
+        title : "מסך בית",
         url : "/",
         icon : Home
     },
     {
-        title : "books",
-        url : "/asd",
+        title : "חרא על החיים שלי",
+        url : "/vitals",
         icon : BookA
     }
 ]
@@ -19,10 +19,10 @@ const menu_items = [
 const AppSidebar = () => {
   return (
     <>
-         <Sidebar variant='floating'>
+         <Sidebar variant='floating' side="right" className="z-50">
           <SidebarContent>
              <SidebarGroup>
-              <SidebarGroupLabel>VANGUARD</SidebarGroupLabel>
+              <SidebarGroupLabel >VANGUARD</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {menu_items.map((item) =>( 

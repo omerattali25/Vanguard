@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar';
 import AppSidebar from './components/atoms/app-sidebar';
+import { Menu, PanelRight } from 'lucide-react';
+import { Button } from './components/ui/button';
 
 function App() {
 
@@ -12,11 +14,13 @@ function App() {
         <AppSidebar>
 
         </AppSidebar>
-        <SidebarTrigger></SidebarTrigger>
+        <SidebarTrigger>
+      </SidebarTrigger>
+
       
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/asd" element={<div>asd</div>} />
+        <Route path="/vitals" element={<div>fdjkhcvkdfjhgkfdljbh</div>} />
       </Routes>
       </SidebarProvider>
     </>
