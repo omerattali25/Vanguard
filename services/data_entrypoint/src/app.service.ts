@@ -11,10 +11,12 @@ const config:AppConfiguration = configuration;
 export class AppService {
   handleVitals(message:VitalsBefore){
     const vitalsToReturn:Vitals = {
+      ...config.defaultMessageValues,
+      created_at:new Date().toISOString(),
       ...message,
       id:v4(),
-      created_at:new Date().toISOString(),
-      ...config.deafultMessageValues
     }
+
+
   }   
 }

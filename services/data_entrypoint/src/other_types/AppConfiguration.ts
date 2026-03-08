@@ -4,5 +4,5 @@ export interface AppConfiguration{
     listenTopic:string,
     kafkaListening:string,
     groupId:string
-    deafultMessageValues:VitalsConfigured
+    defaultMessageValues:VitalsConfigured
 }
