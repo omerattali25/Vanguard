@@ -1,22 +1,26 @@
+import * as dotenv from "dotenv"
+dotenv.config();
+
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import configuration from './config/entrypoint.config.json';
-import {AppConfiguration} from "./config_types/AppConfiguration"
 import { EntryPointController } from './entrypoint.controller';
 import { EntryPointService } from './entrypoint.service';
+import { ConfigModule } from '@nestjs/config';
 
-const config:AppConfiguration = configuration;
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: 'C:/Vanguard/services/data_entrypoint/.env',
+    }),
     ClientsModule.register([
       {
         name: 'KAFKA_PRODUCER',
         transport: Transport.KAFKA,
         options: {
           client: {
-            brokers: [config.kafkaProducing], 
+            brokers: [process.env.KAFKA_PRODUCING || ''],
           },
-          producer: {},
         },
       },
     ]),

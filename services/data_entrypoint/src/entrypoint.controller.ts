@@ -1,16 +1,14 @@
 import { Controller } from '@nestjs/common';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import {EntryPointService } from './entrypoint.service';
-import {AppConfiguration}  from "./config_types/AppConfiguration"
-import configuration from "./config/entrypoint.config.json"
 import { VitalsBefore } from './inputs/vitals.input';
-let appConfig:AppConfiguration = configuration;
+
 
 @Controller()
 export class EntryPointController {
   constructor(private readonly appService: EntryPointService) {}
 
-  @EventPattern (appConfig.listenTopic)
+  @EventPattern (process.env.LISTEN_TOPIC??"")
   handleVital(@Payload() message: VitalsBefore) {
     this.appService.handleVitals(message)
   }
