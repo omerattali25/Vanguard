@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import configuration from './app.config.json';
+import configuration from './config/entrypoint.config.json';
 import {AppConfiguration} from "./config_types/AppConfiguration"
 import { EntryPointController } from './entrypoint.controller';
 import { EntryPointService } from './entrypoint.service';
-
 
 const config:AppConfiguration = configuration;
 @Module({

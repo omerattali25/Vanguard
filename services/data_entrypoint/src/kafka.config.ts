@@ -1,6 +1,6 @@
-import { Transport } from "@nestjs/microservices"
+import { KafkaOptions, Transport } from "@nestjs/microservices"
 import { AppConfiguration } from "./config_types/AppConfiguration";
-import configuration from "./app.config.json"
+import configuration from "./config/entrypoint.config.json"
 
 
 const config:AppConfiguration = configuration;
