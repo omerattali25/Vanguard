@@ -1,4 +1,4 @@
-import { PatientStatusBadge } from '@/components/atoms/patient-status-badge';
+import { PatientStatusBadge } from '@/components/atoms/patients/patient-status-badge';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import React from 'react'
 import { Patient } from "types/patient"

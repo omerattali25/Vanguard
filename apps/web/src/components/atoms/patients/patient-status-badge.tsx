@@ -1,4 +1,5 @@
-import { PatientStatus } from "../../../types/patinet_status"
+import { PatientStatus } from "../../../../types/patinet_status"
+import StatusBadge from "../generic/status-badge"
 
 interface PatientStatusBadgeProps {
   status: PatientStatus
@@ -18,12 +19,8 @@ const patientStatusLabel: Record<PatientStatus, string> = {
 
 export function PatientStatusBadge({ status }: PatientStatusBadgeProps) {
   return (
-    <div className="flex items-center gap-2 border rounded-lg px-2 py-1 w-fit">
-      <div
-        className="w-5 h-5 rounded-md border"
-        style={{ backgroundColor: patientStatusColors[status] }}
-      />
-      <span>{patientStatusLabel[status]}</span>
-    </div>
+    <>
+    <StatusBadge color={patientStatusColors[status]} label={patientStatusLabel[status]}></StatusBadge>
+    </>
   )
 }

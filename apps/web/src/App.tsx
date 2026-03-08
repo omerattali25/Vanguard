@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar';
-import AppSidebar from './components/atoms/app-sidebar';
+import AppSidebar from './components/atoms/menu/app-sidebar';
 import Patients from './pages/Patients';
 import { PatientStatus } from '../types/patinet_status';
 import { Patient } from '../types/patient';
