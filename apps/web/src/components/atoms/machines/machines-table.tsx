@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../ui/table.tsx"
+} from "@/components/ui/table.tsx"
 import { ChangePatientPopover } from "./change-patient-popover.tsx";
 
 interface MachinesTableProps {

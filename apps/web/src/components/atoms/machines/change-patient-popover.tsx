@@ -1,5 +1,4 @@
-
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";  
 import {
   PopoverContent,
   PopoverHeader,
@@ -7,7 +6,7 @@ import {
   Popover,
   PopoverTitle,
   PopoverDescription,
-} from "../ui/popover";
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -16,7 +15,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
 import type { Machine } from "@/types/machine";
 
 interface ChangePatientPopoverProps {
