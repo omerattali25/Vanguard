@@ -19,7 +19,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/asd" element={<div>asd</div>} />
       </Routes>
-      <AddMachineForm/>
       </SidebarProvider>
     </>
   )
