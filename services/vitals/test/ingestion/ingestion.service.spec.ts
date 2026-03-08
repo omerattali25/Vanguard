@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IngestionService } from '../../src/modules/ingestion/ingestion.service';
-import { KafkaConsumerService } from '../../src/kafka/kafka.consumer-service';
+import { KafkaConsumerService } from '../../src/modules/kafka/kafka.consumer.service';
 import { GetVitalsRequest, RecordVitalsRequest } from '@vanguard/proto';
 
 describe('IngestionService', () => {

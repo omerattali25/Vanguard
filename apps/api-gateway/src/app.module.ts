@@ -15,8 +15,8 @@ import { AppService } from './app.service';
           package: VITALS_PACKAGE_NAME,
           protoPath: join(
             require.resolve('@vanguard/proto'),
-            '..',
-            'vitals/vitals.proto',
+            '../..',
+            'src/vitals/vitals.proto',
           ),
           url: 'localhost:50051',
         },

@@ -21,7 +21,7 @@ message GetVitalsResponse {
   float blood_pressure_diastolic = 4;
   float temperature = 5;
   float oxygen_saturation = 6;
-  string recorded_at = 7;
+  string created_at = 7;
 }
 
 message RecordVitalsRequest {
@@ -36,5 +36,5 @@ message RecordVitalsRequest {
 message RecordVitalsResponse {
   bool success = 1;
   string message = 2;
-  string recorded_at = 3;
+  string created_at = 3;
 }

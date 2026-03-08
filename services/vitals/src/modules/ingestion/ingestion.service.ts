@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { KafkaConsumerService } from '../../kafka/kafka.consumer-service';
+import { KafkaConsumerService } from '../kafka/kafka.consumer.service';
 import {
   GetVitalsRequest,
   GetVitalsResponse,
