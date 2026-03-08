@@ -1,6 +1,4 @@
-import AppSidebar from "@/components/atoms/app-sidebar";
 import { Button } from "@/components/ui/button";
-import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Home() {
   return (
