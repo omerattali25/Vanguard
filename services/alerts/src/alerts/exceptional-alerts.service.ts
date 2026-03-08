@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegularVitalsBoundries } from 'src/config/regular-vitals.config';
-import { Alert, VitalField } from 'src/entity/alert.entity';
-import { PatientVitals } from 'src/input/patient-vitals.input';
+import { RegularVitalsBoundries } from '../config/regular-vitals.config';
+import { Alert, VitalField } from '../entity/alert.entity';
+import { PatientVitals } from '../input/patient-vitals.input';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class ExceptionalAlertsService {
         private alertRepo: Repository<Alert>,
     ) { }
 
-    const DESCRIPTION_ON_OUT_OF_AVERAGE = "Vital field is unstable compared to average."
-    const DESCRIPTION_ON_IRREGULAR = "Vital field out of healthy bounds"
+    private readonly DESCRIPTION_ON_OUT_OF_AVERAGE = "vital field is unstable compared to average."
+    private readonly DESCRIPTION_ON_IRREGULAR = "vital field out of healthy bounds"
 
     async checkVitals(vitals: PatientVitals): Promise<Alert[]> {
 

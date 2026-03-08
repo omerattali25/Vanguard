@@ -1,9 +1,9 @@
 import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
 import configuration from '../config/alerts.config.json';
-import { AlertsConfiguration } from 'src/config/alerts.config';
-import { PatientVitals } from 'src/input/patient-vitals.input';
-import { ExceptionalAlertsService } from 'src/alerts/exceptional-alerts.service';
+import { AlertsConfiguration } from '../config/alerts.config';
+import { PatientVitals } from '../input/patient-vitals.input';
+import { ExceptionalAlertsService } from '../alerts/exceptional-alerts.service';
 
 let config: AlertsConfiguration = configuration;
 
@@ -16,6 +16,6 @@ export class KafkaController {
         @Payload() vitals: PatientVitals,
         @Ctx() context: KafkaContext,
     ) {
-        this.exceptionalAlertsService.checkVitals(vitals)
+        return await this.exceptionalAlertsService.checkVitals(vitals)
     }
 }

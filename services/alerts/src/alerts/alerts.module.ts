@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ExceptionalAlertsService } from './exceptional-alerts.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Alert } from 'src/entity/alert.entity';
+import { Alert } from '../entity/alert.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Alert])],
