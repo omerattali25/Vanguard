@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table.tsx"
 import { ChangePatientPopover } from "./change-patient-popover.tsx";
+import { MachineStatusBadge } from "./machine-status-badge.tsx";
 
 interface MachinesTableProps {
   machines: Machine[];
@@ -21,25 +22,25 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
         <TableCaption>מכונות</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">מכונה </TableHead>
-            <TableHead className="w-[100px] ">מטופל</TableHead>
-             <TableHead className="w-[100px] "></TableHead>
+            <TableHead className="w-[100px] text-center">מכונה </TableHead>
+            <TableHead className="w-[100px] text-center ">מטופל</TableHead>
+            <TableHead className="w-[100px] text-center ">מיקום</TableHead>
+            <TableHead className="w-[100px] text-center ">סטטוס</TableHead>
+             <TableHead className="w-[100px] text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {props.machines.map((machine) => {
             return (
               <TableRow>
-                <TableCell>{machine.id}</TableCell>
-                <TableCell>{machine.assinged}</TableCell>
-                <TableCell><ChangePatientPopover patients={["123456677"]} machine={machine}/></TableCell>
+                <TableCell className="text-center" >{machine.id}</TableCell>
+                <TableCell className="text-center" >{machine.assinged}</TableCell>
+                <TableCell className="text-center" >{machine.location}</TableCell>
+                <TableCell className="text-center" ><MachineStatusBadge status={machine.status}/></TableCell>
+                <TableCell className="text-center" ><ChangePatientPopover machine={machine} patients={[]}/></TableCell>
               </TableRow>
             );
           })}
-           <TableRow>
-                <TableCell>dfsdfsdf</TableCell>
-                <TableCell>dfdsfsdfd</TableCell>
-              </TableRow>
         </TableBody>
       </Table>
     </>
