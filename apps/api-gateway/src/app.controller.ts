@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import type { RecordVitalsRequest } from '@vanguard/proto';
 import { AppService } from './app.service';
 
-@Controller()
+@Controller('vitals')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get(':patientId')
+  getVitals(@Param('patientId') patientId: string) {
+    return this.appService.getVitals(patientId);
+  }
+
+  @Post()
+  recordVitals(@Body() data: RecordVitalsRequest) {
+    return this.appService.recordVitals(data);
   }
 }
