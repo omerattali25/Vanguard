@@ -1,5 +1,4 @@
 import { BookA, Home } from 'lucide-react'
-import React from 'react'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar'
 import { Link } from 'react-router-dom'
 
