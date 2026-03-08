@@ -5,9 +5,9 @@ import { AppConfiguration } from './config/app-configurations';
 import configuration from "./config/app.conf.json"
 
 async function bootstrap() {
-  let config : AppConfiguration = configuration;
+  let config: AppConfiguration = configuration;
 
-   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
       transport: Transport.KAFKA,

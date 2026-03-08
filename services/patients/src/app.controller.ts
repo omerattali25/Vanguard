@@ -6,12 +6,12 @@ import { PatientsService } from './patients/patients.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: PatientsService) {}
+  constructor(private readonly appService: PatientsService) { }
 
 
   @EventPattern("patients")
-  handleNewPatient(@Payload() paitentMessage : PatientDetails){
+  handleNewPatient(@Payload() paitentMessage: PatientDetails) {
     this.appService.savePatient(paitentMessage)
   }
- 
+
 }

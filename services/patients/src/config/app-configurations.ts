@@ -1,5 +1,5 @@
-export interface AppConfiguration{
-    listenTopic:string,
-    kafkaListening:string,
-    groupId:string
+export interface AppConfiguration {
+    listenTopic: string,
+    kafkaListening: string,
+    groupId: string
 }

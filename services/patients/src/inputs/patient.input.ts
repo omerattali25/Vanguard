@@ -1,5 +1,5 @@
-export class PatientDetails{
-    patient_id:number;
-    name:string;
-    city:string;
+export class PatientDetails {
+    patient_id: number;
+    name: string;
+    city: string;
 }

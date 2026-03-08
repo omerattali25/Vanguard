@@ -8,8 +8,8 @@ import { db_patients_config } from './config/database.config';
 import { PatientsService } from './patients/patients.service';
 
 @Module({
-  imports: [ TypeOrmModule.forRoot(db_patients_config), PatientsModule ],
+  imports: [TypeOrmModule.forRoot(db_patients_config), PatientsModule],
   controllers: [AppController],
   providers: [AppService, PatientsService],
 })
-export class AppModule {}
+export class AppModule { }

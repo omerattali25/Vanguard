@@ -10,23 +10,23 @@ export class PatientsService {
     constructor(
         @InjectRepository(Patient)
         private patientRepo: Repository<Patient>,
-    ){}
+    ) { }
 
-    async getPatientById(patient_id: UUID) : Promise<Patient>{
-        let result = await this.patientRepo.findOne({where: {id: patient_id}});
-        if(!result){
+    async getPatientById(patient_id: UUID): Promise<Patient> {
+        let result = await this.patientRepo.findOne({ where: { id: patient_id } });
+        if (!result) {
             throw new Error("Patient not found");
         }
         return result;
     }
 
-    async getPatients() : Promise<Patient[]>{
+    async getPatients(): Promise<Patient[]> {
         return await this.patientRepo.find();
     }
 
-    async savePatient(patient: PatientDetails) : Promise<Patient>{
+    async savePatient(patient: PatientDetails): Promise<Patient> {
         const newPatient = this.patientRepo.create(patient);
         return await this.patientRepo.save(newPatient);
     }
-    
+
 }
