@@ -1,12 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import configuration from "./config/alerts.config.json"
-import { AlertsConfiguration } from './config/alerts.config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-
-  const config : AlertsConfiguration = configuration;
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
@@ -14,13 +11,19 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: [config.kafkaListening],
+          brokers: [String(process.env.KAFKA_LISTENING)],
         },
         consumer: {
-          groupId: config.groupId,
+          groupId: String(process.env.KAFKA_GROUP_ID),
         },
       },
     }
+  );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
   );
 }
 
