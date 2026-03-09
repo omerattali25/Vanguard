@@ -1,10 +1,10 @@
-import {IsDateString, IsNumber, IsUUID } from "class-validator";
+import {IsDateString, IsNumber, IsString, IsUUID } from "class-validator";
 
 export class PatientVitals{
     @IsUUID()
     id: string;
 
-    @IsUUID()
+    @IsString()
     patinetId;
     
     @IsDateString()
