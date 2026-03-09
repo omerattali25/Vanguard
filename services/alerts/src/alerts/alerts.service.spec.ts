@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AlertsService } from './alerts.service';
-import { Alert, VitalField } from '../../../../libs/alerts/src/entity/alert.entity';
+import { Alert, VitalField } from './entity/alert.entity';
 import { Repository } from 'typeorm';
 import { PatientVitals } from './input/patient-vitals.input';
 import { RegularVitalsBoundries } from '../config/regular-vitals.config';

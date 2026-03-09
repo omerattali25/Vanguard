@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegularVitalsBoundries } from '../config/regular-vitals.config';
-import { Alert, VitalField } from '../../../../libs/alerts/src/entity/alert.entity';
+import { Alert, VitalField } from './entity/alert.entity';
 import { PatientVitals } from './input/patient-vitals.input';
 import { Repository } from 'typeorm';
 import { RedisService } from '@liaoliaots/nestjs-redis';
@@ -40,7 +40,7 @@ export class AlertsService {
         const bounds = RegularVitalsBoundries[key];
         const value = vitals[key];
         const vitalField = key as VitalField;
-        const redisKey = `recent-alerts:${vitals.patinetId}`
+        const redisKey = `patient:${vitals.patinetId}`
 
         const lastAlert = await this.redis.hget(redisKey, vitalField)
         const [lastAlertEndedAt, lastAlertId] = lastAlert?.split(':') ?? []
