@@ -5,20 +5,19 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.KAFKA,
-      options: {
-        client: {
-          brokers: [process.env.KAFKA_LISTENING || ""],
-        },
-        consumer: {
-          groupId: process.env.GROUP_ID || "",
-        },
+  const app = await NestFactory.create(AppModule);
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: [process.env.KAFKA_LISTENING || ""],
       },
-    }
-  );
+      consumer: {
+        groupId: process.env.GROUP_ID || "",
+      },
+    },
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -27,7 +26,8 @@ async function bootstrap() {
     }),
   );
   
-  await app.listen();
+  app.startAllMicroservices();
+  await app.listen(process.env.PORT || 3002);
 }
 bootstrap();
 
