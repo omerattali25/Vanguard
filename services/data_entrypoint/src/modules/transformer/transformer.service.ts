@@ -1,19 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { VitalsBefore } from './inputs/vitals.input';
+import { VitalsInput } from './inputs/vitals.input';
 import { Vitals } from './outputs/vitals.output';
-import { v4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { ClientKafka } from '@nestjs/microservices';
-import { VitalsConfigured } from './config_types/DefaultValuesConfig';
-import { defaults } from './config/default-messages.config';
-import { stringify } from 'querystring';
-
-const defaultMessageValues: VitalsConfigured = defaults;
+import { defaultMessage } from '../../config/default-messages.config';
 
 @Injectable()
-export class EntryPointService {
+export class TransformerService {
   constructor(
     @Inject('KAFKA_PRODUCER') private readonly kafkaClient: ClientKafka,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     await this.kafkaClient.connect();
@@ -27,19 +23,20 @@ export class EntryPointService {
     });
   }
 
-  handleVitals(message: VitalsBefore) {
-    if(message.patient_id === undefined){
+  handleVitals(message: VitalsInput) {
+    if (message.patient_id === undefined) {
       return;
       //log
     }
 
     const vitalsToReturn: Vitals = {
-      ...defaultMessageValues,
-      created_at: new Date().toISOString(),
+      ...defaultMessage,
       ...message,
-      patient_id: message.patient_id+"",
-      id: v4(),
+      created_at: new Date().toISOString(),
+      patient_id: message.patient_id + "",
+      id: randomUUID(),
     };
+
     this.changeInvalidValuesToMinusOne(vitalsToReturn);
     this.kafkaClient.emit(process.env.CREATE_TOPIC ?? '', vitalsToReturn);
   }

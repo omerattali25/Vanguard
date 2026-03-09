@@ -1,18 +1,24 @@
-import { NestFactory } from '@nestjs/core';
+import { NestApplication, NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './entrypoint.module';
-
+import { DataEntrypointModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  const app = await NestFactory.create<NestApplication>(DataEntrypointModule);
+
+  const configService = app.get(ConfigService);
+
+  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [process.env.KAFKA_LISTENING??""],
-      }, 
+        brokers: [configService.get('KAFKA_LISTENING') ?? ""],
+      },
     },
   });
 
-  await app.listen();
+  app.startAllMicroservices();
+  await app.listen(3000);
 }
+
 bootstrap();
