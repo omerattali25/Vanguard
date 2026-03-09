@@ -9,8 +9,8 @@ export class AppController {
 
 
   @EventPattern(process.env.LISTEN_TOPIC)
-  handleNewPatient(@Payload() paitentMessage: PatientDetails) {
-    this.appService.createPatient(paitentMessage)
+  async handleNewPatient(@Payload() paitentMessage: PatientDetails) {
+    await this.appService.createPatient(paitentMessage)
   }
 
 }
