@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Alert } from './entity/alert.entity';
+import { Alert } from '../../../../libs/alerts/src/entity/alert.entity';
 import { KafkaController } from 'src/kafka/kafka.consumer.controller';
 import { AlertsService } from './alerts.service';
 @Module({
