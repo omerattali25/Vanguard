@@ -1,16 +1,17 @@
 import { Controller } from "@nestjs/common";
-import { KafkaConsumerService } from "./kafka.consumer.service";
-import { Ctx, EventPattern, KafkaContext, Payload } from "@nestjs/microservices";
+import { EventPattern, Payload } from "@nestjs/microservices";
+import { IngestionService } from "../ingestion/ingestion.service";
+import { CreateVitalsInput } from "../ingestion/inputs/vital-payload";
 
 @Controller('kafka')
 export class KafkaConsumerController {
-  constructor(private readonly kafkaConsumerService: KafkaConsumerService) { }
+  constructor(private readonly ingestionService: IngestionService) { }
 
-  @EventPattern(process.env.KAFKA_TOPIC)
-  async handleVitalsConsume(
-    @Ctx() context: KafkaContext,
-  ) {
-    const message = context.getMessage().value;
-    console.log(message);
+  @EventPattern('patient-vitals')
+  async handlePatientVitalConsume(@Payload() payload: CreateVitalsInput) {
+    //@ts-ignore
+    console.log('Payload:', payload.data);
+    //@ts-ignore
+    return this.ingestionService.create(payload.data);
   }
 }

@@ -1,10 +1,39 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { IngestionModule } from './modules/ingestion/ingestion.module';
+import { KafkaModule } from './modules/kafka/kafka.module';
+import loadConfig, { AppConfig } from './config/app';
+import { Vital } from './modules/ingestion/entities/vital.entity';
 
 @Module({
-  imports: [IngestionModule],
+  imports: [
+    ConfigModule.forRoot({ 
+      isGlobal: true, 
+      load: [loadConfig],
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<AppConfig, true>) => {
+        const db = config.get<AppConfig['db']>('db');
+        return {
+          type: 'postgres' as const,
+          host: db.host,
+          port: db.port,
+          username: db.username,
+          password: db.password,
+          database: db.database,
+          entities: [Vital],
+          synchronize: true,
+        };
+      },
+    }),
+    IngestionModule,
+    KafkaModule,
+  ],
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

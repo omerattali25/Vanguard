@@ -1,39 +1,29 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { join } from 'path';
-import { VITALS_PACKAGE_NAME } from '@vanguard/proto';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.GRPC,
-    options: {
-      package: VITALS_PACKAGE_NAME,
-      protoPath: join(
-        require.resolve('@vanguard/proto'),
-        '../..',
-        'src/vitals/vitals.proto',
-      ),
-      url: `${process.env.VITALS_SERVICE_URL}:${process.env.VITALS_SERVICE_PORT}`,
-    },
-  });
+  const config = app.get(ConfigService);
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
-        clientId: process.env.KAFKA_CLIENT_ID,
-        brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
+        brokers: [config.getOrThrow<string>('kafka.brokers')],
       },
       consumer: {
-        groupId: process.env.KAFKA_GROUP_ID ?? '',
+        groupId: config.getOrThrow<string>('kafka.groupId'),
       },
     },
   });
 
-  await app.startAllMicroservices();
-  console.log('Vitals service is running (gRPC + Kafka)');
+  const port = config.getOrThrow<number>('env.port');
+
+  app.startAllMicroservices();
+  await app.listen(port);
+  console.log(`Vitals service is running on port ${6555} (HTTP + Kafka)`);
 }
 bootstrap();

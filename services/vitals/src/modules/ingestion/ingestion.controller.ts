@@ -1,24 +1,32 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { IngestionService } from './ingestion.service';
-import {
-  GetVitalsRequest,
-  GetVitalsResponse,
-  RecordVitalsRequest,
-  RecordVitalsResponse,
-  VitalsServiceController,
-  VitalsServiceControllerMethods,
-} from '@vanguard/proto';
+import { CreateVitalsInput } from './inputs/vital-payload';
 
-@Controller('ingestion')
-@VitalsServiceControllerMethods()
-export class IngestionController implements VitalsServiceController {
-  constructor(private readonly ingestionService: IngestionService) {}
+@Controller('vitals')
+export class IngestionController {
+  constructor(private readonly ingestionService: IngestionService) { }
 
-  getVitals(data: GetVitalsRequest): GetVitalsResponse {
-    return this.ingestionService.getVitals(data);
+  @Post()
+  create(@Body() payload: CreateVitalsInput) {
+    return this.ingestionService.create(payload);
   }
 
-  recordVitals(data: RecordVitalsRequest): RecordVitalsResponse {
-    return this.ingestionService.recordVitals(data);
+  @Get()
+  getVitals() {
+    return this.ingestionService.getVitals();
+  }
+
+  @Get('/vital/:id')
+  getVitalById(@Param('id') id: string) {
+    return this.ingestionService.getVitalById(id);
+  }
+
+  @Get(':patientId')
+  getVitalByPatientId(
+    @Param('patientId') patientId: string,
+    @Query('limit') limit: number = 100
+  ) {
+    return this.ingestionService.getVitalByPatientId(patientId, limit);
   }
 }
+
