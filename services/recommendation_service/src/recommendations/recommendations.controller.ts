@@ -9,7 +9,7 @@ export class RecommendationsController {
   @Get()
   async getRecommendations() {
     let raw_data = await this.recommendationsService.getTopRecommendations();
-    
+
     const entries = raw_data.reduce(
       (acc, val, i) => {
         if (i % 2 === 0) acc[val] = parseFloat(raw_data[i + 1]);
