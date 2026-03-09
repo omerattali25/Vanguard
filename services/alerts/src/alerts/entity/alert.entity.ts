@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 export enum VitalField {
     HeartRate = 'heartRate',
@@ -8,6 +8,7 @@ export enum VitalField {
 }
 
 @Entity()
+@Index(["patient_id", "started_at"])
 export class Alert {
 
     @PrimaryGeneratedColumn('uuid')

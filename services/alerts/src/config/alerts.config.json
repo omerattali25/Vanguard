@@ -1,8 +1,0 @@
-{
-    "listenTopic":"updated_vitals",
-    "kafkaListening":"localhost:9092",
-    "kafkaProducing":"localhost:9092",
-    "createTopic":"alerts",
-    "groupId":"alerts",
-    "producerName": "ALERTS_PRODUCER"
-}

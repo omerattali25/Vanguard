@@ -1,4 +1,4 @@
-import { PatientVitals } from "src/input/patient-vitals.input";
+import { PatientVitals } from "../alerts/input/patient-vitals.input";
 
 export const RegularVitalsBoundries : Record<keyof Omit<PatientVitals, 'id' | 'patinetId' | 'timestamp'>, {min: number; max: number}> = {
   heartRate: { min: 60, max: 100 },
