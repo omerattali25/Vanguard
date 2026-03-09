@@ -6,7 +6,7 @@ import { Patient } from '../entity/patient.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule.forRoot(),TypeOrmModule.forFeature([Patient])],
+  imports: [ConfigModule.forRoot() ,TypeOrmModule.forFeature([Patient])],
   controllers: [PatientsController],
   providers: [PatientsService],
   exports: [PatientsService]
