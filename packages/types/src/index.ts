@@ -1,1 +1,0 @@
-export type { VitalsPayload } from './vitals/vitals-payload';
