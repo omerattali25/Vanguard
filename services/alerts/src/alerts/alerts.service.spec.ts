@@ -52,7 +52,7 @@ describe('AlertsService', () => {
     const alerts = await service.checkVitals(vitals);
 
     expect(alerts.length).toBe(1);
-    expect(alerts[0].vital_field).toBe(VitalField.HeartRate);
+    expect(alerts[0].vital_field).toBe(VitalField.HEART_RATE);
   });
   it('should end previous alert if vital is now regular', async () => {
     const vitals: PatientVitals = {
@@ -65,7 +65,7 @@ describe('AlertsService', () => {
       timestamp: new Date().toString(),
     };
 
-    const lastAlert = { id: 'a1', ended_at: null, patient_id: 'p1', vital_field: VitalField.HeartRate, started_at: new Date(), description: 'test' };
+    const lastAlert = { id: 'a1', ended_at: null, patient_id: 'p1', vital_field: VitalField.HEART_RATE, started_at: new Date(), description: 'test' };
     (repo.findOne as jest.Mock).mockResolvedValue(lastAlert);
     (repo.update as jest.Mock).mockResolvedValue({});
 
@@ -128,7 +128,7 @@ describe('AlertsService', () => {
     const lastAlert = {
       id: 'a1',
       patient_id: 'p1',
-      vital_field: VitalField.HeartRate,
+      vital_field: VitalField.HEART_RATE,
       started_at: new Date(),
       ended_at: null,
       description: 'test',
@@ -155,7 +155,7 @@ describe('AlertsService', () => {
     const lastAlert = {
       id: 'a1',
       patient_id: 'p1',
-      vital_field: VitalField.HeartRate,
+      vital_field: VitalField.HEART_RATE,
       started_at: new Date(),
       ended_at: new Date(),
       description: 'old alert',
@@ -205,10 +205,10 @@ describe('AlertsService', () => {
     (repo.create as jest.Mock).mockImplementation(a => a);
     (repo.save as jest.Mock).mockImplementation(a => Promise.resolve({ ...a, id: 'a1' }));
 
-    const alert = await service.createNewAlert(vitals, VitalField.HeartRate, true);
+    const alert = await service.createNewAlert(vitals, VitalField.HEART_RATE, true);
 
     expect(alert.patient_id).toBe('p1');
-    expect(alert.vital_field).toBe(VitalField.HeartRate);
+    expect(alert.vital_field).toBe(VitalField.HEART_RATE);
   });
   it('should end last alert with correct timestamp if vital becomes valid', async () => {
     const vitals: PatientVitals = {
@@ -224,7 +224,7 @@ describe('AlertsService', () => {
     const lastAlert = {
       id: 'a1',
       patient_id: 'p1',
-      vital_field: VitalField.HeartRate,
+      vital_field: VitalField.HEART_RATE,
       started_at: new Date(),
       ended_at: null,
       description: 'old alert',
