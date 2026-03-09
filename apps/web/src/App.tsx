@@ -57,7 +57,9 @@ function App() {
 
       
       <Routes>
-        <Route path="/" element={<Patients patients={mockPatients} />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/patients" element={<Patients patients={mockPatients} />} />
+        <Route path="/patients/:id" element={<div>Patient Details Page</div>} />
       </Routes>
       </SidebarProvider>
     </>

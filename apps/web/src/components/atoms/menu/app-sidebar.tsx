@@ -1,4 +1,4 @@
-import { BookA, Home } from 'lucide-react'
+import { BookA, Home, Stethoscope } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../../ui/sidebar'
 import { Link } from 'react-router-dom'
 
@@ -7,6 +7,11 @@ const menu_items = [
         title : "מסך בית",
         url : "/",
         icon : Home
+    },
+    {
+        title : "כל המטופלים",
+        url : "/patients",
+        icon : Stethoscope
     }
 ]
 
