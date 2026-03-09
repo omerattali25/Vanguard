@@ -11,7 +11,6 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'C:/Vanguard/services/data_entrypoint/.env',
     }),
     ClientsModule.register([
       {
