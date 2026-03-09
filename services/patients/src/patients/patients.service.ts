@@ -1,9 +1,10 @@
-import { Get, Injectable } from '@nestjs/common';
+import { Get, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 import { Patient } from '../entity/patient.entity';
 import { PatientDetails } from 'src/inputs/patient.input';
 import { Repository } from 'typeorm';
+import { not } from 'rxjs/internal/util/not';
 
 @Injectable()
 export class PatientsService {
@@ -15,7 +16,7 @@ export class PatientsService {
     async getPatientById(patient_id: string): Promise<Patient> {
         const patient = await this.patientRepo.findOne({ where: { id: patient_id } });
         if (!patient) {
-            throw new Error("Patient not found");
+            throw new NotFoundException(`Patient with ID ${patient_id} not found`);
         }
         return patient;
     }
