@@ -11,7 +11,12 @@ export class RecommendationsService {
   }
 
   async getTopRecommendations() {
-    const raw = await this.redis.zrevrange('riskIndex', 0, parseInt(process.env.MAX_PATIENTS || '6'), 'WITHSCORES');
+    const raw = await this.redis.zrevrange(
+      'riskIndex',
+      0,
+      parseInt(process.env.MAX_PATIENTS || '5'),
+      'WITHSCORES',
+    );
     return raw;
   }
 }
