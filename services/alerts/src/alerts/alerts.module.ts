@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Alert } from './entity/alert.entity';
 import { KafkaController } from 'src/kafka/kafka.consumer.controller';
 import { AlertsService } from './alerts.service';
-import { ConfigModule } from '@nestjs/config';
 @Module({
     imports: [TypeOrmModule.forFeature([Alert])],
     controllers: [KafkaController],
