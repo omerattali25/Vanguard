@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { db_alerts_config } from './config/database.config';
 import { AlertsModule } from './alerts/alerts.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { db_alerts_config } from './config/database.config';
+import { redis_alerts_config } from './config/redis.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(db_alerts_config), AlertsModule],
-  controllers: [],
-  providers: [],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync(db_alerts_config),
+    RedisModule.forRootAsync(redis_alerts_config),
+    AlertsModule,
+  ],
 })
 export class AppModule { }
