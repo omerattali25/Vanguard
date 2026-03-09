@@ -12,19 +12,19 @@ export class PatientsService {
         private patientRepo: Repository<Patient>,
     ) {}
 
-    async getPatientById(patient_id: UUID): Promise<Patient> {
-        let result = await this.patientRepo.findOne({ where: { id: patient_id } });
-        if (!result) {
+    async getPatientById(patient_id: string): Promise<Patient> {
+        const patient = await this.patientRepo.findOne({ where: { id: patient_id } });
+        if (!patient) {
             throw new Error("Patient not found");
         }
-        return result;
+        return patient;
     }
 
     async getPatients(): Promise<Patient[]> {
         return await this.patientRepo.find();
     }
 
-    async savePatient(patient: PatientDetails): Promise<Patient> {
+    async createPatient(patient: PatientDetails): Promise<Patient> {
         const newPatient = this.patientRepo.create(patient);
         return await this.patientRepo.save(newPatient);
     }

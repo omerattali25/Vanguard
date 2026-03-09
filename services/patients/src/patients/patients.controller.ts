@@ -7,7 +7,7 @@ export class PatientsController {
     constructor(private readonly patientsService: PatientsService) { }
 
     @Get(':id')
-    async getPatientById(@Param('id') id: UUID) {
+    async getPatientById(@Param('id') id: string) {
         return await this.patientsService.getPatientById(id);
     }
 
