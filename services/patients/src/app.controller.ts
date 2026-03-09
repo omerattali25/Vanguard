@@ -8,7 +8,7 @@ export class AppController {
   constructor(private readonly appService: PatientsService) { }
 
 
-  @EventPattern("patients")
+  @EventPattern(process.env.LISTEN_TOPIC)
   handleNewPatient(@Payload() paitentMessage: PatientDetails) {
     this.appService.createPatient(paitentMessage)
   }
