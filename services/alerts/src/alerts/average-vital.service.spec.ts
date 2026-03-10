@@ -76,15 +76,15 @@ describe('AverageVitalService', () => {
     });
 
     it('should return true if deviation > 20%', async () => {
-        redisMock.hget.mockResolvedValueOnce('80')
-            .mockResolvedValueOnce('82')
-            .mockResolvedValueOnce('81');
+        redisMock.hget.mockResolvedValueOnce('75')
+            .mockResolvedValueOnce('76')
+            .mockResolvedValueOnce('77');
 
         const vitals: PatientVitals = {
             id: 'a',
             patientId: '123',
             timestamp: new Date().toISOString(),
-            heartRate: 110, // >20% above average ~81
+            heartRate: 99, // >20% above average ~76
             spO2: 97,
             respiratoryRate: 97.5,
             bodyTemperature: 36.5
