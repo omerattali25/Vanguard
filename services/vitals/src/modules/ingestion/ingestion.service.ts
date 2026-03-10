@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { VitalEntity } from '@vanguard/types';
+import { CreateVitalsInput, VitalEntity } from '@vanguard/types';
 import { Repository } from 'typeorm';
-import { CreateVitalsInput } from './inputs/vital-payload';
 
 @Injectable()
 export class IngestionService {

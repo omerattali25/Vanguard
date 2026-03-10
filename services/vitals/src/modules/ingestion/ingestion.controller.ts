@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { IngestionService } from './ingestion.service';
-import { CreateVitalsInput } from './inputs/vital-payload';
+import { CreateVitalsInput } from '@vanguard/types';
 
 @Controller('vitals')
 export class IngestionController {
