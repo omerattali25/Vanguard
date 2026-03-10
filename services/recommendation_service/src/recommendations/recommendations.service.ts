@@ -38,11 +38,11 @@ export class RecommendationsService {
   }
 
   private async filterMachines(patients: Record<string, number>) {
-    const patientsInMachines = await this.getPatientsInMachines();
-    const assignedIds = patientsInMachines.map((m) => m.assigned);
+    const machines = await this.getPatientsInMachines();
+    const assignedIds = new Set(machines.map((m) => m.assigned));
 
     return Object.fromEntries(
-      Object.entries(patients).filter(([id]) => !assignedIds.includes(id)),
+      Object.entries(patients).filter(([id]) => !assignedIds.has(id)),
     );
   }
 
