@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface StatusBadgeProps{
     color : string
     label : string
