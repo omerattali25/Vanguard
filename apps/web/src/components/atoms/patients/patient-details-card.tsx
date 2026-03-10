@@ -1,4 +1,3 @@
-import React from 'react'
 import { Patient } from 'types/patient';
 import PatientDetailCard from './patient-detail-card';
 

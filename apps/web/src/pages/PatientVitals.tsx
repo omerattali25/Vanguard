@@ -1,7 +1,4 @@
 import LineGraph from '@/components/atoms/graphs/line-graph';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getPatientVitals } from 'api/vitals/vitals.api';
-import { get } from 'node:http';
 import { Vital } from '../../types/vitals';
 import { useParams } from 'react-router-dom';
 import { Patient } from 'types/patient';

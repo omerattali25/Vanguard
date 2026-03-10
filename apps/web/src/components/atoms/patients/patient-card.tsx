@@ -1,5 +1,4 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import React from 'react'
 import { Patient } from 'types/patient'
 import { Vital } from 'types/vitals';
 import PatientDetailsCard from './patient-details-card';
