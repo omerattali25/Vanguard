@@ -23,7 +23,7 @@ export class RecommendationsService {
         assigned: Not(IsNull()),
       },
     });
-    return machines;
+    return machines.map((m) => m.assigned);
   }
 
   private makeJsonFromList(raw: string[]) {
@@ -38,8 +38,8 @@ export class RecommendationsService {
   }
 
   private async filterMachines(patients: Record<string, number>) {
-    const machines = await this.getPatientsInMachines();
-    const assignedIds = new Set(machines.map((m) => m.assigned));
+    const paitientIds = await this.getPatientsInMachines();
+    const assignedIds = new Set(paitientIds);
 
     return Object.fromEntries(
       Object.entries(patients).filter(([id]) => !assignedIds.has(id)),
