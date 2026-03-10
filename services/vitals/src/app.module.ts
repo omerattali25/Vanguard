@@ -5,7 +5,7 @@ import { AppController } from './app.controller';
 import { IngestionModule } from './modules/ingestion/ingestion.module';
 import { KafkaModule } from './modules/kafka/kafka.module';
 import loadConfig, { AppConfig } from './config/app';
-import { Vital } from './modules/ingestion/entities/vital.entity';
+import { VitalEntity } from '@vanguard/types';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { Vital } from './modules/ingestion/entities/vital.entity';
           username: db.username,
           password: db.password,
           database: db.database,
-          entities: [Vital],
+          entities: [VitalEntity],
           synchronize: true,
         };
       },

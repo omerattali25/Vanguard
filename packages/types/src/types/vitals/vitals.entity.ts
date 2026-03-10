@@ -1,8 +1,8 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Vital {
+export class VitalEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
