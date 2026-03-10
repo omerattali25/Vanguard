@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { ConfigModule } from '@nestjs/config';
+import { Machine } from './entities/machine.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ['src/entities/*.ts'],
+      entities: [Machine],
       synchronize: true,
     }),
   ],
