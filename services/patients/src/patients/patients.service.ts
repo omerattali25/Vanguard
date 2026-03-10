@@ -1,10 +1,8 @@
-import { Get, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UUID } from 'crypto';
 import { Patient } from '../entity/patient.entity';
 import { PatientDetails } from 'src/inputs/patient.input';
 import { Repository } from 'typeorm';
-import { not } from 'rxjs/internal/util/not';
 
 @Injectable()
 export class PatientsService {

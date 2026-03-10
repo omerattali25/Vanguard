@@ -6,9 +6,8 @@ export type AppConfig = {
         port: number;
     };
     kafka: {
-        clientId: string;
         groupId: string;
-        topic: string;
+        broker: string;
     };
     db: {
         host: string;
@@ -21,8 +20,7 @@ export type AppConfig = {
 
 const loadConfig = (): AppConfig => {
     const env = getEnv("NODE_ENV") as "production" | "development";
-    const port = getEnv("PORT");
-
+    const port = getEnv("VITALS_SERVICE_PORT");
 
     return {
         env: {
@@ -30,9 +28,8 @@ const loadConfig = (): AppConfig => {
             port: port,
         },
         kafka: {
-            clientId: getEnv("KAFKA_CLIENT_ID"),
             groupId: getEnv("KAFKA_GROUP_ID"),
-            topic: getEnv("KAFKA_TOPIC"),
+            broker: getEnv("KAFKA_BROKER"),
         },
         db: {
             host: getEnv("DB_HOST"),
