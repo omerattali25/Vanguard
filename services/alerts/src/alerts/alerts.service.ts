@@ -22,7 +22,7 @@ export class AlertsService {
         private readonly redisService: RedisService,
         private readonly configService: ConfigService
     ) {
-        const namespace = this.configService.get<string>('REDIS_NAMESPACE_RECENT_ALERT');
+        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
         this.redis = this.redisService.getOrThrow(namespace);
     }
 
