@@ -1,4 +1,4 @@
-import { BookA, Home, Stethoscope } from 'lucide-react'
+import { Home, Stethoscope } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../../ui/sidebar'
 import { Link } from 'react-router-dom'
 

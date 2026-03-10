@@ -1,7 +1,7 @@
 import { PatientStatusBadge } from '@/components/atoms/patients/patient-status-badge';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import React from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Patient } from "types/patient"
 interface PatientsTableProps {
   patients: Patient[];
