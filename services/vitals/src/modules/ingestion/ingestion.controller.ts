@@ -6,11 +6,6 @@ import { CreateVitalsInput } from '@vanguard/types';
 export class IngestionController {
   constructor(private readonly ingestionService: IngestionService) { }
 
-  @Post()
-  create(@Body() payload: CreateVitalsInput) {
-    return this.ingestionService.create(payload);
-  }
-
   @Get()
   getVitals() {
     return this.ingestionService.getVitals();

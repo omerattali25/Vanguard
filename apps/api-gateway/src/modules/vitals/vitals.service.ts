@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { CreateVitalsInput, VitalEntity } from '@vanguard/types';
+import { VitalEntity } from '@vanguard/types';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -22,13 +22,6 @@ export class VitalsService {
       this.httpService.get<VitalEntity[]>(`${this.baseUrl}/vitals/${patientId}`, {
         params: limit ? { limit } : {},
       }),
-    );
-    return data;
-  }
-
-  async recordVitals(payload: CreateVitalsInput): Promise<VitalEntity> {
-    const { data } = await firstValueFrom(
-      this.httpService.post<VitalEntity>(`${this.baseUrl}/vitals`, payload),
     );
     return data;
   }

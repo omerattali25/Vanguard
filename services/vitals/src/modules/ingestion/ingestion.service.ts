@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateVitalsInput, VitalEntity } from '@vanguard/types';
+import { VitalEntity } from '@vanguard/types';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class IngestionService {
   constructor(@InjectRepository(VitalEntity) private vitalRepository: Repository<VitalEntity>) {}
 
-  async create(payload: CreateVitalsInput): Promise<VitalEntity> {
+  async create(payload: VitalEntity): Promise<VitalEntity> {
     const vital = this.vitalRepository.create(payload);
     return this.vitalRepository.save(vital);
   }

@@ -1,9 +1,10 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class VitalEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @Column()
+  @PrimaryColumn()  
   id: string;
 
   @Column()

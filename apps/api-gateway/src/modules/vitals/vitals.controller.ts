@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { CreateVitalsInput } from '@vanguard/types';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { VitalsService } from './vitals.service';
 
 @Controller('vitals')
@@ -12,10 +11,5 @@ export class VitalsController {
     @Query('limit') limit?: number,
   ) {
     return this.vitalsService.getVitals(patientId, limit);
-  }
-
-  @Post()
-  recordVitals(@Body() data: CreateVitalsInput) {
-    return this.vitalsService.recordVitals(data);
   }
 }

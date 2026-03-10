@@ -24,6 +24,5 @@ async function bootstrap() {
 
   app.startAllMicroservices();
   await app.listen(port);
-  console.log(`Vitals service is running on port ${6555} (HTTP + Kafka)`);
 }
 bootstrap();
