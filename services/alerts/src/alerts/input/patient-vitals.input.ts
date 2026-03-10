@@ -5,7 +5,7 @@ export class PatientVitals{
     id: string;
 
     @IsString()
-    patinetId;
+    patientId;
     
     @IsDateString()
     timestamp : string;

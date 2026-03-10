@@ -61,7 +61,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '123',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 120,
       spO2: 97,
       respiratoryRate: 16,
@@ -79,7 +79,7 @@ describe('AlertsService', () => {
     expect(alerts[0].vital_field).toBe(VitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patinetId}`,
+      `patient:${vitals.patientId}`,
       VitalField.HEART_RATE,
       `ACTIVE:a1`
     );
@@ -90,7 +90,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '456',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 80,
       spO2: 97,
       respiratoryRate: 16,
@@ -106,7 +106,7 @@ describe('AlertsService', () => {
     expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.timestamp });
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patinetId}`,
+      `patient:${vitals.patientId}`,
       VitalField.HEART_RATE,
       vitals.timestamp
     );
@@ -119,7 +119,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '789',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 80,
       spO2: 97,
       respiratoryRate: 16,
@@ -140,7 +140,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '111',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 80,
       spO2: 98,
       respiratoryRate: 16,
@@ -161,7 +161,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '222',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 120,
       spO2: 97,
       respiratoryRate: 16,
@@ -182,7 +182,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '333',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 120,
       spO2: 97,
       respiratoryRate: 16,
@@ -205,7 +205,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '444',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 120,
       spO2: 97,
       respiratoryRate: 16,
@@ -225,7 +225,7 @@ describe('AlertsService', () => {
   it('should create alert entity correctly', async () => {
     const vitals: PatientVitals = {
       id: '555',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 120,
       spO2: 97,
       respiratoryRate: 16,
@@ -243,7 +243,7 @@ describe('AlertsService', () => {
     const alert = await service.createNewAlert(
       vitals,
       VitalField.HEART_RATE,
-      `patient:${vitals.patinetId}`,
+      `patient:${vitals.patientId}`,
       true
     );
 
@@ -251,7 +251,7 @@ describe('AlertsService', () => {
     expect(alert.vital_field).toBe(VitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patinetId}`,
+      `patient:${vitals.patientId}`,
       VitalField.HEART_RATE,
       `ACTIVE:a1`
     );
@@ -262,7 +262,7 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '666',
-      patinetId: 'p1',
+      patientId: 'p1',
       heartRate: 80,
       spO2: 97,
       respiratoryRate: 16,
@@ -278,7 +278,7 @@ describe('AlertsService', () => {
     expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.timestamp });
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patinetId}`,
+      `patient:${vitals.patientId}`,
       VitalField.HEART_RATE,
       vitals.timestamp
     );

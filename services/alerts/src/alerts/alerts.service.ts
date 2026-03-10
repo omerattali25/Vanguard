@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
+import { AverageVitalService } from './average-vital.service';
 
 
 const DESCRIPTION_ON_OUT_OF_AVERAGE = "vital field is unstable compared to average."
@@ -20,7 +21,8 @@ export class AlertsService {
         @InjectRepository(Alert)
         private alertRepo: Repository<Alert>,
         private readonly redisService: RedisService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly averageVitalService: AverageVitalService,
     ) {
         const namespace = this.configService.get<string>('REDIS_NAMESPACE');
         this.redis = this.redisService.getOrThrow(namespace);
@@ -40,13 +42,13 @@ export class AlertsService {
         const bounds = RegularVitalsBoundries[key];
         const value = vitals[key];
         const vitalField = key as VitalField;
-        const redisKey = `patient:${vitals.patinetId}`
+        const redisKey = `recent-alerts:${vitals.patientId}`
 
         const lastAlert = await this.redis.hget(redisKey, vitalField)
         const [lastAlertEndedAt, lastAlertId] = lastAlert?.split(':') ?? []
 
         const isInBounds = value >= bounds.min && value <= bounds.max;
-        const hasViolation = !isInBounds || await this.isVitalOutOfAverage(value, vitalField);
+        const hasViolation = !isInBounds || await this.averageVitalService.isVitalOutOfAverage(vitals, vitalField);
 
         if (!hasViolation) {
             if (lastAlert && lastAlertEndedAt === "ACTIVE") {
@@ -59,16 +61,13 @@ export class AlertsService {
         }
         return null;
     }
-    async isVitalOutOfAverage(vitalFieldValue: number, vitalField: VitalField): Promise<boolean> {
-        return false;
-    }
     async createNewAlert(vitals: PatientVitals, violation: VitalField, redisKey: string, isOutOfBounds: boolean): Promise<Alert> {
 
 
         const description = (isOutOfBounds) ? DESCRIPTION_ON_OUT_OF_BOUNDS : DESCRIPTION_ON_OUT_OF_AVERAGE;
 
         const alert: Omit<Alert, 'id'> = {
-            patient_id: vitals.patinetId,
+            patient_id: vitals.patientId,
             vital_field: violation,
             description: `${violation} ${description}`,
             started_at: vitals.timestamp,
