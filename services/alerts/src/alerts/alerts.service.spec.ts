@@ -4,7 +4,7 @@ import { AlertsService } from './alerts.service';
 import { Alert, VitalField } from './entity/alert.entity';
 import { Repository } from 'typeorm';
 import { PatientVitals } from './input/patient-vitals.input';
-import { RegularVitalsBoundries } from '../config/regular-vitals.config';
+import { RegularVitalsBoundries } from '../../../../packages/types/src/types/alerts/regular-vitals.config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegularVitalsBoundries } from '../config/regular-vitals.config';
+import { RegularVitalsBoundries } from '../../../../packages/types/src/types/alerts/regular-vitals.config';
 import { Alert, VitalField } from './entity/alert.entity';
 import { PatientVitals } from './input/patient-vitals.input';
 import { Repository } from 'typeorm';

@@ -1,6 +1,6 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-export enum VitalField {
+export enum PatientVitalField {
     HEART_RATE = 'heartRate',
     SP_O2 = 'spO2',
     RESPIRATORY_RATE = 'respiratoryRate',
@@ -17,15 +17,15 @@ export class Alert {
     @Column()
     patient_id: string;
 
-    @Column({ type: 'enum', enum: VitalField })
-    vital_field: VitalField;
+    @Column({ type: 'enum', enum: PatientVitalField })
+    vital_field: PatientVitalField;
 
     @Column()
     description: string;
 
-    @Column({ type: 'timestamp' })
+    @Column({ type: 'timestamptz' })
     started_at: string;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     ended_at?: string | null;
 }
