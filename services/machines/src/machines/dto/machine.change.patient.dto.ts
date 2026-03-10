@@ -1,4 +1,4 @@
-export class MachineChangePatientDto{
-    id:string
-    patient:string
+export class MachineChangePatientDto {
+  id: string;
+  patient: string;
 }

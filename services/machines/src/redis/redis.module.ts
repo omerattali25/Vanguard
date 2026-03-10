@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import Redis from 'ioredis';
-import Redlock from 'redlock';
+const Redlock = require('redlock');
 
 @Module({
   providers: [
     {
       provide: 'REDIS_CLIENT',
       useFactory: () => {
-        return new Redis(`redis://${process.env.REDIS_CLIENT_HOST}:${process.env.REDIS_CLIENT_PORT}`);
+        return new Redis(
+          `redis://${process.env.REDIS_CLIENT_HOST}:${process.env.REDIS_CLIENT_PORT}`,
+        );
       },
     },
     {
@@ -15,8 +17,9 @@ import Redlock from 'redlock';
       inject: ['REDIS_CLIENT'],
       useFactory: (client: Redis) => {
         return new Redlock([client as any], {
-          retryCount: 5,
-          retryDelay: 200,
+          retryCount: 10,
+          retryDelay: 400,
+          retryJitter: 200,
         });
       },
     },

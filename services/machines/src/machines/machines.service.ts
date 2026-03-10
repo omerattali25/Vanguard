@@ -1,21 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Machine } from './entity/machine.entity';
 import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
-import Redlock from 'redlock';
+const Redlock = require('redlock');
 
 @Injectable()
 export class MachinesService {
-  
   constructor(
-  @InjectRepository(Machine)
-  private readonly machineRepo: Repository<Machine>,
+    @InjectRepository(Machine)
+    private readonly machineRepo: Repository<Machine>,
 
-  @Inject('REDLOCK')
-  private readonly redlock: Redlock,
-) {}
+    @Inject('REDLOCK')
+    private readonly redlock: any,
+  ) {}
 
   async getMachines(): Promise<Machine[]> {
     return await this.machineRepo.find();
@@ -41,21 +40,31 @@ export class MachinesService {
   }
   async changePatient(id: string, patient: string) {
     const lockKey = `lock:resource:${id}`;
-    const ttl = 5000; 
+    let lock;
+    const ttl = process.env.LOCK_TTL ? parseInt(process.env.LOCK_TTL) : 15000;
     try {
-      const lock = await this.redlock.acquire([lockKey], ttl);
+      lock = await this.redlock.lock(lockKey, ttl);
+
       if (lock) {
         const machine = await this.machineRepo.findOne({ where: { id } });
         if (!machine) {
-          throw new Error('Machine not found');
+          throw new NotFoundException(`Machine with id ${id} not found`);
         }
-        machine.assinged = patient;
+        machine.assigned = patient;
         await this.machineRepo.save(machine);
       } else {
         throw new Error('המכונה מועברת על ידי אחות אחרת');
       }
     } catch (error) {
       throw error;
+    } finally {
+      if (lock) {
+        try {
+          await lock.unlock();
+        } catch (unlockError) {
+          throw unlockError;
+        }
+      }
     }
   }
 }

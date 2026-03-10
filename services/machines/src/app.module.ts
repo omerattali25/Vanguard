@@ -8,12 +8,10 @@ import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
-    // 1. Load environment variables FIRST
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-    // 4. Now initialize TypeORM
     TypeOrmModule.forRoot({
       type: (process.env.DB_TYPE as any) || 'postgres',
       host: process.env.DB_HOST,
@@ -26,6 +24,6 @@ import { RedisModule } from './redis/redis.module';
     }),
     MachinesModule,
     RedisModule,
-  ]
+  ],
 })
 export class AppModule {}
