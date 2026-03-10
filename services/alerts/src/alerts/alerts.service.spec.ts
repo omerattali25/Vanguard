@@ -8,11 +8,13 @@ import { RegularVitalsBoundries } from '../config/regular-vitals.config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
+import { AverageVitalService } from './average-vital.service';
 
 describe('AlertsService', () => {
   let service: AlertsService;
   let repo: Repository<Alert>;
   let redisMock: Redis;
+  let averageVitalService: AverageVitalService;
 
   beforeEach(async () => {
     redisMock = {
@@ -43,11 +45,18 @@ describe('AlertsService', () => {
             get: jest.fn().mockReturnValue('alerts'),
           },
         },
+        {
+          provide: AverageVitalService,
+          useValue: {
+            isVitalOutOfAverage: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<AlertsService>(AlertsService);
     repo = module.get<Repository<Alert>>(getRepositoryToken(Alert));
+    averageVitalService = module.get<AverageVitalService>(AverageVitalService);
 
     (redisMock.hset as jest.Mock).mockResolvedValue('OK');
   });
@@ -57,7 +66,7 @@ describe('AlertsService', () => {
   });
 
   it('should create a new alert if heartRate is irregular and no active alert in Redis', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '123',
@@ -71,7 +80,7 @@ describe('AlertsService', () => {
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
     (repo.create as jest.Mock).mockImplementation(a => a);
-    (repo.save as jest.Mock).mockResolvedValue({...vitals, id:'a1', vital_field: VitalField.HEART_RATE });
+    (repo.save as jest.Mock).mockResolvedValue({ ...vitals, id: 'a1', vital_field: VitalField.HEART_RATE });
 
     const alerts = await service.checkVitals(vitals);
 
@@ -79,14 +88,14 @@ describe('AlertsService', () => {
     expect(alerts[0].vital_field).toBe(VitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patientId}`,
+      `recent-alerts:${vitals.patientId}`,
       VitalField.HEART_RATE,
       `ACTIVE:a1`
     );
   });
 
   it('should end previous alert if vital becomes normal and Redis shows ACTIVE', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '456',
@@ -106,7 +115,7 @@ describe('AlertsService', () => {
     expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.timestamp });
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patientId}`,
+      `recent-alerts:${vitals.patientId}`,
       VitalField.HEART_RATE,
       vitals.timestamp
     );
@@ -115,7 +124,7 @@ describe('AlertsService', () => {
   });
 
   it('should call isVitalOutOfAverage for each vital', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '789',
@@ -131,12 +140,12 @@ describe('AlertsService', () => {
 
     await service.checkVitals(vitals);
 
-    expect(service.isVitalOutOfAverage)
+    expect(averageVitalService.isVitalOutOfAverage)
       .toHaveBeenCalledTimes(Object.keys(RegularVitalsBoundries).length);
   });
 
   it('should not create alert if vitals are normal', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '111',
@@ -157,7 +166,7 @@ describe('AlertsService', () => {
   });
 
   it('should not create alert if one is already active in Redis', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '222',
@@ -178,7 +187,7 @@ describe('AlertsService', () => {
   });
 
   it('should create new alert if previous alert ended', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '333',
@@ -192,7 +201,7 @@ describe('AlertsService', () => {
 
     (redisMock.hget as jest.Mock).mockResolvedValue('ENDED:a1');
     (repo.create as jest.Mock).mockImplementation(a => a);
-    (repo.save as jest.Mock).mockResolvedValue({...vitals, id:'a2' });
+    (repo.save as jest.Mock).mockResolvedValue({ ...vitals, id: 'a2' });
 
     const alerts = await service.checkVitals(vitals);
 
@@ -201,7 +210,7 @@ describe('AlertsService', () => {
   });
 
   it('should generate correct description for out of bounds alert', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '444',
@@ -215,7 +224,7 @@ describe('AlertsService', () => {
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
     (repo.create as jest.Mock).mockImplementation(a => a);
-    (repo.save as jest.Mock).mockImplementation(alert=> Promise.resolve({...alert, id:'a2'}))
+    (repo.save as jest.Mock).mockImplementation(alert => Promise.resolve({ ...alert, id: 'a2' }))
 
     const alerts = await service.checkVitals(vitals);
 
@@ -243,7 +252,7 @@ describe('AlertsService', () => {
     const alert = await service.createNewAlert(
       vitals,
       VitalField.HEART_RATE,
-      `patient:${vitals.patientId}`,
+      `recent-alerts:${vitals.patientId}`,
       true
     );
 
@@ -251,14 +260,14 @@ describe('AlertsService', () => {
     expect(alert.vital_field).toBe(VitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patientId}`,
+      `recent-alerts:${vitals.patientId}`,
       VitalField.HEART_RATE,
       `ACTIVE:a1`
     );
   });
 
   it('should end last alert when vital becomes normal', async () => {
-    jest.spyOn(service, 'isVitalOutOfAverage').mockResolvedValue(false);
+    jest.spyOn(averageVitalService, 'isVitalOutOfAverage').mockResolvedValue(false);
 
     const vitals: PatientVitals = {
       id: '666',
@@ -278,7 +287,7 @@ describe('AlertsService', () => {
     expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.timestamp });
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `patient:${vitals.patientId}`,
+      `recent-alerts:${vitals.patientId}`,
       VitalField.HEART_RATE,
       vitals.timestamp
     );
