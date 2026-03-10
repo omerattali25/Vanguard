@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import type { RecordVitalsRequest } from '@vanguard/proto';
 import { AppService } from './app.service';
 
 @Controller('vitals')
@@ -8,11 +7,11 @@ export class AppController {
 
   @Get(':patientId')
   getVitals(@Param('patientId') patientId: string) {
-    return this.appService.getVitals(patientId);
+    return 'Hello World!';
   }
 
   @Post()
-  recordVitals(@Body() data: RecordVitalsRequest) {
-    return this.appService.recordVitals(data);
+  recordVitals(@Body() data: any) {
+    return 'Hello World!';
   }
 }
