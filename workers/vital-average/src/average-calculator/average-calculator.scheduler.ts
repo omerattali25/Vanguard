@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { TIMEFRAMES } from '../config/timeframes.config';
+import { TIMEFRAMES } from '@vanguard/types';
 import { AverageCalculatorService } from './average-calculator.service';
 
 @Injectable()

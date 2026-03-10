@@ -1,3 +1,4 @@
+
 export enum VitalField {
     HEART_RATE = 'heart_rate',
     SP_O2 = 'spO2',

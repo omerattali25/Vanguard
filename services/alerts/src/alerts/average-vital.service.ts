@@ -2,8 +2,8 @@ import { RedisService } from "@liaoliaots/nestjs-redis";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
-import { VitalField } from "./entity/alert.entity";
-import { PatientVitals } from "./input/patient-vitals.input";
+import { PatientVitalField, PatientVitals, Timeframe, TIMEFRAMES, TTL_DAYS } from "@vanguard/types";
+
 
 @Injectable()
 export class AverageVitalService {
@@ -16,7 +16,7 @@ export class AverageVitalService {
         const namespace = this.configService.get<string>('REDIS_NAMESPACE');
         this.redis = this.redisService.getOrThrow(namespace);
     }
-    async isVitalOutOfAverage(vitals: PatientVitals, vitalField: VitalField): Promise<boolean> {
+    async isVitalOutOfAverage(vitals: PatientVitals, vitalField: PatientVitalField): Promise<boolean> {
         const timeframe = this.getTimeframe(vitals.timestamp);
         if (!timeframe) return false;
 
@@ -48,11 +48,11 @@ export class AverageVitalService {
         return deviation > 0.2;
     }
 
-    private getTimeframe(timestamp: string): Timeframe | null {
+    private getTimeframe(timestamp: string): Timeframe | undefined {
 
         const date = new Date(timestamp);
         if (isNaN(date.getTime())) {
-            return null;
+            return undefined;
         }
         
         const hours = date.getUTCHours().toString().padStart(2, '0');

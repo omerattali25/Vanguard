@@ -1,5 +1,12 @@
 import {IsDateString, IsNumber, IsString, IsUUID } from "class-validator";
 
+export enum PatientVitalField {
+    HEART_RATE = 'heartRate',
+    SP_O2 = 'spO2',
+    RESPIRATORY_RATE = 'respiratoryRate',
+    BODY_TEMPERATURE = 'bodyTemperature',
+}
+
 export class PatientVitals{
     @IsUUID()
     id: string;

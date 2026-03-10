@@ -1,11 +1,5 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
-
-export enum PatientVitalField {
-    HEART_RATE = 'heartRate',
-    SP_O2 = 'spO2',
-    RESPIRATORY_RATE = 'respiratoryRate',
-    BODY_TEMPERATURE = 'bodyTemperature',
-}
+import { PatientVitalField } from "../vitals/input/patient-vitals.input";
 
 @Entity()
 @Index(["patient_id", "vital_field", "started_at"])

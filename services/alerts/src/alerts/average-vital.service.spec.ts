@@ -4,8 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AverageVitalService } from './average-vital.service';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { ConfigService } from '@nestjs/config';
-import { VitalField } from './entity/alert.entity';
-import { PatientVitals } from './input/patient-vitals.input';
+import { PatientVitalField, PatientVitals } from '@vanguard/types';
 
 describe('AverageVitalService', () => {
     let service: AverageVitalService;
@@ -52,7 +51,7 @@ describe('AverageVitalService', () => {
             bodyTemperature: 36.5
         };
 
-        const result = await service.isVitalOutOfAverage(vitals, VitalField.HEART_RATE);
+        const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
         expect(result).toBe(false);
     });
 
@@ -71,7 +70,7 @@ describe('AverageVitalService', () => {
             bodyTemperature: 36.5
         };
 
-        const result = await service.isVitalOutOfAverage(vitals, VitalField.HEART_RATE);
+        const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
         expect(result).toBe(false);
     });
 
@@ -90,7 +89,7 @@ describe('AverageVitalService', () => {
             bodyTemperature: 36.5
         };
 
-        const result = await service.isVitalOutOfAverage(vitals, VitalField.HEART_RATE);
+        const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
         expect(result).toBe(true);
     });
 
@@ -111,7 +110,7 @@ describe('AverageVitalService', () => {
         };
 
         // avg = (80+82+78)/3 = 80
-        const result = await service.isVitalOutOfAverage(vitals, VitalField.HEART_RATE);
+        const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
         expect(result).toBe(true); // 100 is > 20% of 80
     });
 
@@ -126,7 +125,7 @@ describe('AverageVitalService', () => {
             bodyTemperature: 36.5
         };
 
-        const result = await service.isVitalOutOfAverage(vitals, VitalField.HEART_RATE);
+        const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
         expect(result).toBe(false);
     });
 });

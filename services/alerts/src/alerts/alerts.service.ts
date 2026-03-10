@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegularVitalsBoundries } from '../../../../packages/types/src/types/alerts/regular-vitals.config';
-import { Alert, VitalField } from './entity/alert.entity';
-import { PatientVitals } from './input/patient-vitals.input';
+import { RegularVitalsBoundries } from '@vanguard/types';
+import { Alert, PatientVitalField } from '@vanguard/types';
+import { PatientVitals } from "@vanguard/types";
 import { Repository } from 'typeorm';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
@@ -41,7 +41,7 @@ export class AlertsService {
     async checkVitalField(vitals: PatientVitals, key: keyof PatientVitals): Promise<Alert | null> {
         const bounds = RegularVitalsBoundries[key];
         const value = vitals[key];
-        const vitalField = key as VitalField;
+        const vitalField = key as PatientVitalField;
         const redisKey = `recent-alerts:${vitals.patientId}`
 
         const lastAlert = await this.redis.hget(redisKey, vitalField)
@@ -61,7 +61,7 @@ export class AlertsService {
         }
         return null;
     }
-    async createNewAlert(vitals: PatientVitals, violation: VitalField, redisKey: string, isOutOfBounds: boolean): Promise<Alert> {
+    async createNewAlert(vitals: PatientVitals, violation: PatientVitalField, redisKey: string, isOutOfBounds: boolean): Promise<Alert> {
 
 
         const description = (isOutOfBounds) ? DESCRIPTION_ON_OUT_OF_BOUNDS : DESCRIPTION_ON_OUT_OF_AVERAGE;
@@ -80,7 +80,7 @@ export class AlertsService {
         await this.redis.hset(redisKey, violation, `ACTIVE:${savedAlert.id}`);
         return savedAlert;
     }
-    private async closeActiveAlert(vitals: PatientVitals, vitalField: VitalField, alertId: string, redisKey: string) {
+    private async closeActiveAlert(vitals: PatientVitals, vitalField: PatientVitalField, alertId: string, redisKey: string) {
         await this.redis.hset(redisKey, vitalField, vitals.timestamp);
         await this.alertRepo.update(alertId, { ended_at: vitals.timestamp })
     }

@@ -1,7 +1,7 @@
 import {Controller} from '@nestjs/common';
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices';
-import { PatientVitals } from '../alerts/input/patient-vitals.input';
 import { AlertsService } from '../alerts/alerts.service';
+import { PatientVitals } from '@vanguard/types';
 
 @Controller()
 export class KafkaController {

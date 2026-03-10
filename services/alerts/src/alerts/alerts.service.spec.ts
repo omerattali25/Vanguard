@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AlertsService } from './alerts.service';
-import { Alert, VitalField } from './entity/alert.entity';
 import { Repository } from 'typeorm';
-import { PatientVitals } from './input/patient-vitals.input';
 import { RegularVitalsBoundries } from '../../../../packages/types/src/types/alerts/regular-vitals.config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import { AverageVitalService } from './average-vital.service';
+import { Alert, PatientVitalField, PatientVitals } from '@vanguard/types';
 
 describe('AlertsService', () => {
   let service: AlertsService;
@@ -80,16 +79,16 @@ describe('AlertsService', () => {
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
     (repo.create as jest.Mock).mockImplementation(a => a);
-    (repo.save as jest.Mock).mockResolvedValue({ ...vitals, id: 'a1', vital_field: VitalField.HEART_RATE });
+    (repo.save as jest.Mock).mockResolvedValue({ ...vitals, id: 'a1', vital_field: PatientVitalField.HEART_RATE });
 
     const alerts = await service.checkVitals(vitals);
 
     expect(alerts.length).toBe(1);
-    expect(alerts[0].vital_field).toBe(VitalField.HEART_RATE);
+    expect(alerts[0].vital_field).toBe(PatientVitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
       `recent-alerts:${vitals.patientId}`,
-      VitalField.HEART_RATE,
+      PatientVitalField.HEART_RATE,
       `ACTIVE:a1`
     );
   });
@@ -116,7 +115,7 @@ describe('AlertsService', () => {
 
     expect(redisMock.hset).toHaveBeenCalledWith(
       `recent-alerts:${vitals.patientId}`,
-      VitalField.HEART_RATE,
+      PatientVitalField.HEART_RATE,
       vitals.timestamp
     );
 
@@ -246,22 +245,22 @@ describe('AlertsService', () => {
     (repo.save as jest.Mock).mockResolvedValue({
       id: 'a1',
       patient_id: 'p1',
-      vital_field: VitalField.HEART_RATE,
+      vital_field: PatientVitalField.HEART_RATE,
     });
 
     const alert = await service.createNewAlert(
       vitals,
-      VitalField.HEART_RATE,
+      PatientVitalField.HEART_RATE,
       `recent-alerts:${vitals.patientId}`,
       true
     );
 
     expect(alert.patient_id).toBe('p1');
-    expect(alert.vital_field).toBe(VitalField.HEART_RATE);
+    expect(alert.vital_field).toBe(PatientVitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
       `recent-alerts:${vitals.patientId}`,
-      VitalField.HEART_RATE,
+      PatientVitalField.HEART_RATE,
       `ACTIVE:a1`
     );
   });
@@ -288,7 +287,7 @@ describe('AlertsService', () => {
 
     expect(redisMock.hset).toHaveBeenCalledWith(
       `recent-alerts:${vitals.patientId}`,
-      VitalField.HEART_RATE,
+      PatientVitalField.HEART_RATE,
       vitals.timestamp
     );
 

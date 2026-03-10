@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 
-import { Vital } from '@libs/vitals';
-import { VitalField } from '@libs/alerts';
+import { VitalEntity, VitalField } from '@vanguard/types';
+
+import { TTL_DAYS } from '@vanguard/types'
 
 import Redis from 'ioredis';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { ConfigService } from '@nestjs/config';
 
-import { TIMEFRAMES, TTL_DAYS } from '../config/timeframes.config';
+
 
 type Timeframe = {
   start: string;
@@ -22,8 +23,8 @@ export class AverageCalculatorService {
   private readonly redis: Redis;
 
   constructor(
-    @InjectRepository(Vital)
-    private readonly vitalRepo: Repository<Vital>,
+    @InjectRepository(VitalEntity)
+    private readonly vitalRepo: Repository<VitalEntity>,
 
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
