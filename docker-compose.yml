@@ -41,7 +41,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: vitals
+      POSTGRES_DB: vanguard
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
