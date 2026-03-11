@@ -12,6 +12,7 @@
   import { randomUUID, UUID } from 'crypto';
   import { MachineAction } from './entity/machine.action.entity';
   import { MachineActionDto } from './dto/machine.action.dto';
+import { Patient } from '@vanguard/types';
 
   @Injectable()
   export class MachinesService {
@@ -20,6 +21,8 @@
       private readonly machineRepo: Repository<Machine>,
       @InjectRepository(MachineAction)
       private readonly machineActionRepo: Repository<MachineAction>,
+      @InjectRepository(Patient)
+      private readonly patientRepo: Repository<Patient>,
       @Inject('REDIS_CLIENT') private readonly redisClient: any,
     ) {}
 
@@ -77,6 +80,12 @@
         throw new InternalServerErrorException('Invalid lock token');
       }
       try {
+        const patientRecord = await this.patientRepo.findOne({
+          where: { id: patient },
+        });
+        if (!patientRecord) {
+          throw new NotFoundException('Patient not found');
+        }
         const machine = await this.machineRepo.findOne({
           where: { id: machineId },
         });

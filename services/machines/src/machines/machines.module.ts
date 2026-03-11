@@ -5,9 +5,9 @@ import { Machine } from './entity/machine.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from 'src/redis/redis.module';
 import { MachineAction } from './entity/machine.action.entity';
-
+import {Patient} from '@vanguard/types';
 @Module({
-  imports: [TypeOrmModule.forFeature([Machine,MachineAction]),RedisModule],
+  imports: [TypeOrmModule.forFeature([Machine,MachineAction,Patient]),RedisModule],
   controllers: [MachinesController],
   providers: [MachinesService],
   exports: [MachinesService],
