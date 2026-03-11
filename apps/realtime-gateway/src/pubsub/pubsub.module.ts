@@ -4,7 +4,7 @@ import { PubsubController } from './pubsub.controller';
 
 @Module({
   controllers: [PubsubController],
-  providers: [PubsubService, SocketGateway],
-  exports: [PubsubService],
+  providers: [SocketGateway],
+  exports: [],
 })
 export class PubsubModule {}

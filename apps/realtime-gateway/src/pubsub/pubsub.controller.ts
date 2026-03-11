@@ -1,6 +1,5 @@
 import { Controller } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { validateOrReject } from 'class-validator';
 import { Alert } from 'src/inputs/alert.input';
 import { Machine } from 'src/inputs/machine.input';
 import { Vitals } from 'src/inputs/vitals.input';
@@ -17,11 +16,14 @@ export class PubsubController {
 
   @EventPattern('alerts')
   onAlerts(@Payload() alert: Alert) {
+    console.log(alert);
     this.socket.emitToRoom(`alerts`, 'alerts', alert);
   }
 
   @EventPattern('machines')
   onMachine(@Payload() machine: Machine) {
+    console.log(machine);
+
     this.socket.emitToRoom(`machines`, 'machines', machine);
   }
 }
