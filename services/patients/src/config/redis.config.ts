@@ -1,7 +1,7 @@
 import { RedisModuleAsyncOptions } from "@liaoliaots/nestjs-redis";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
-export const redis_vitals_config: RedisModuleAsyncOptions = {
+export const redis_patients_config: RedisModuleAsyncOptions = {
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: (configService: ConfigService) => ({
