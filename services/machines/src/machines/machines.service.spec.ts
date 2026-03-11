@@ -46,7 +46,7 @@ it('should return all machines', async () => {
     {
       id: '1',
       name: 'A',
-      location: 'חדר מכונות',
+      location:'storage',
       status: MachineStatus.AVALIBLE,
       assigned: '',
     },
@@ -64,7 +64,7 @@ it('should save a new machine', async () => {
   repo.create!.mockReturnValue({
     id: '1233',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: '',
   });
@@ -72,7 +72,7 @@ it('should save a new machine', async () => {
   repo.save!.mockResolvedValue({
     id: '1',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: '',
   });
@@ -88,7 +88,7 @@ it('should update a machine', async () => {
   repo.findOne!.mockResolvedValue({
     id: '1',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: '',
   });
@@ -136,7 +136,7 @@ it('should update machine when lock is valid', async () => {
   repo.findOne!.mockResolvedValue({
     id: '123',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: '',
   });
@@ -144,7 +144,7 @@ it('should update machine when lock is valid', async () => {
   repo.save!.mockResolvedValue({
     id: '123',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: 'John',
   });
@@ -204,7 +204,7 @@ it('should allow only the correct token to update concurrently', async () => {
   repo.findOne!.mockResolvedValue({
     id: '123',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: '',
   });
@@ -212,7 +212,7 @@ it('should allow only the correct token to update concurrently', async () => {
   repo.save!.mockResolvedValue({
     id: '123',
     name: 'A',
-    location: 'חדר מכונות',
+    location: 'storage',
     status: MachineStatus.AVALIBLE,
     assigned: 'John',
   });

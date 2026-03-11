@@ -1,8 +1,8 @@
   import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
   export enum MachineStatus {
-    AVALIBLE = 'פנוי',
-    USED = 'תפוס',
-    IN_TRANSFER = 'בתנועה',
+    AVALIBLE = 'available',
+    USED = 'used',
+    IN_TRANSFER = 'in_transfer',
   }
   @Entity()
   export class Machine {
@@ -10,7 +10,7 @@
     name: string;
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    @Column({ default: 'חדר מכונות' })
+    @Column({ default: 'storage' })
     location: string;
     @Column({
       type: 'enum',
