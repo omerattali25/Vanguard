@@ -6,6 +6,9 @@ import { IngestionModule } from './modules/ingestion/ingestion.module';
 import { KafkaModule } from './modules/kafka/kafka.module';
 import loadConfig, { AppConfig } from './config/app';
 import { VitalEntity } from '@vanguard/types';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { redis_alerts_config } from './config/redis.config';
+import { PagesStateModule } from './modules/pages-state/pages-state.module';
 
 @Module({
   imports: [
@@ -30,8 +33,10 @@ import { VitalEntity } from '@vanguard/types';
         };
       },
     }),
+    RedisModule.forRootAsync(redis_alerts_config),
     IngestionModule,
     KafkaModule,
+    PagesStateModule,
   ],
   controllers: [AppController],
   providers: [],
