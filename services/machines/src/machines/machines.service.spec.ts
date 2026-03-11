@@ -148,7 +148,6 @@ it('should return error if machine not found', async () => {
     id: '2',
     name: 'New',
     location: 'Loc',
-    status: MachineStatus.USED,
   });
 
   expect(result).toBe('machine with this id not found');

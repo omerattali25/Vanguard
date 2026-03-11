@@ -5,7 +5,7 @@
     NotFoundException,
   } from '@nestjs/common';
   import { InjectRepository } from '@nestjs/typeorm';
-  import { Machine } from './entity/machine.entity';
+  import { Machine, MachineStatus } from './entity/machine.entity';
   import { Repository } from 'typeorm';
   import { MachineInputDto } from './dto/machine.input.dto';
   import { MachineUpdateDto } from './dto/machine.update.dto';
@@ -44,11 +44,16 @@ import { Patient } from '@vanguard/types';
         {
           name: machineUpdateDto.name,
           location: machineUpdateDto.location,
-          status: machineUpdateDto.status,
         },
       );
     }
     async startChangePatient(machineId: string) {
+      const machine = await this.machineRepo.findOne({
+        where: { id: machineId },
+      });
+      if (!machine) {
+        throw new NotFoundException('Machine not found');
+      }
       const ttl = parseInt(process.env.LOCK_TTL || '180000');
       const resource = `locks:machine:${machineId}`;
       const lockId = randomUUID();
@@ -65,6 +70,8 @@ import { Patient } from '@vanguard/types';
         );
       }
       console.log(`Lock acquired for ${resource} with token ${lockId}`);
+      machine.status=MachineStatus.IN_TRANSFER;
+      await this.machineRepo.save(machine);
       return {
         lockId: lockId,
         expiration: ttl,
@@ -95,6 +102,7 @@ import { Patient } from '@vanguard/types';
         }
         const ogPatient = machine.assigned;
         machine.assigned = patient;
+        machine.status=MachineStatus.USED;
         await this.machineRepo.save(machine);
         let machineActionDTO = new MachineActionDto(machineId, patient, `connected patient ${patient} to machine ${machine.name}`);
         let machineAction = this.machineActionRepo.create(machineActionDTO);
