@@ -10,12 +10,16 @@ import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
 import { randomUUID, UUID } from 'crypto';
+import { MachineAction } from './entity/machine.action.entity';
+import { MachineActionDto } from './dto/machine.action.dto';
 
 @Injectable()
 export class MachinesService {
   constructor(
     @InjectRepository(Machine)
     private readonly machineRepo: Repository<Machine>,
+    @InjectRepository(MachineAction)
+    private readonly machineActionRepo: Repository<MachineAction>,
     @Inject('REDIS_CLIENT') private readonly redisClient: any,
   ) {}
 
@@ -80,8 +84,17 @@ export class MachinesService {
         this.redisClient.del(`locks:machine:${machineId}`);
         throw new NotFoundException('Machine not found');
       }
+      const ogPatient = machine.assigned;
       machine.assigned = patient;
       await this.machineRepo.save(machine);
+      let machineActionDTO = new MachineActionDto(machineId, patient, `connected patient ${patient} to machine ${machine.name}`);
+      let machineAction = this.machineActionRepo.create(machineActionDTO);
+      await this.machineActionRepo.save(machineAction);
+      if(ogPatient!== ''){
+        machineActionDTO = new MachineActionDto(machineId, ogPatient, `disconnected patient ${ogPatient} from machine ${machine.name}`);
+        machineAction = this.machineActionRepo.create(machineActionDTO);
+        await this.machineActionRepo.save(machineAction);
+      }
       await this.redisClient.del(`locks:machine:${machineId}`);
       return machine;
     } catch (err) {
