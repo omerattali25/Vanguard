@@ -4,21 +4,24 @@ import { validateOrReject } from 'class-validator';
 import { Alert } from 'src/inputs/alert.input';
 import { Machine } from 'src/inputs/machine.input';
 import { Vitals } from 'src/inputs/vitals.input';
+import { SocketGateway } from 'src/websocket/socket.gateway';
 
 @Controller('pubsub')
 export class PubsubController {
+  constructor(private readonly socket: SocketGateway) {}
+
   @EventPattern('vitals')
   async onVitals(@Payload() vitals: Vitals) {
-    console.log('Received vitals data:', vitals);
+    this.socket.emitToRoom(`vitals:${vitals.patient_id}`, 'vitals', vitals);
   }
 
   @EventPattern('alerts')
   onAlerts(@Payload() alert: Alert) {
-    console.log('Received alerts data:', alert);
+    this.socket.emitToRoom(`alerts`, 'alerts', alert);
   }
 
   @EventPattern('machines')
   onMachine(@Payload() machine: Machine) {
-    console.log('Received machine data:', machine.assigned);
+    this.socket.emitToRoom(`machines`, 'machines', machine);
   }
 }
