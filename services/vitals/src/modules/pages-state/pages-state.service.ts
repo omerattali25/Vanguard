@@ -29,8 +29,10 @@ export class PagesStateService {
         const count = await this.redis.get(`vitals-page:${patientId}`);
         return count !== null && parseInt(count) > 0;
     }
-    async sendToRedisTopic(patientId: string, Vital: VitalEntity): Promise<void> {
-        await this.redis.publish(`vitals:${patientId}`, JSON.stringify(Vital));
+    async sendToRedisTopic(Vital: VitalEntity): Promise<void> {
+        if(await this.hasCount(Vital.patient_id)) {
+            await this.redis.publish(`vitals`, JSON.stringify(Vital));
+        }
     }
 
 }

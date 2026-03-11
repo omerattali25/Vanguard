@@ -11,7 +11,7 @@ export class IngestionService {
 
   async create(payload: VitalEntity): Promise<VitalEntity> {
     const vital = this.vitalRepository.create(payload);
-    this.pagesStateService.sendToRedisTopic(payload.patient_id, vital);
+    this.pagesStateService.sendToRedisTopic(vital);
     return await this.vitalRepository.save(vital);
   }
 
