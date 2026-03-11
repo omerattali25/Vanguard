@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 const Redlock = require('redlock');
 
 @Module({
+  imports: [RedisModule],
   providers: [
     {
       provide: 'REDIS_CLIENT',
@@ -12,18 +13,7 @@ const Redlock = require('redlock');
         );
       },
     },
-    {
-      provide: 'REDLOCK',
-      inject: ['REDIS_CLIENT'],
-      useFactory: (client: Redis) => {
-        return new Redlock([client as any], {
-          retryCount: 10,
-          retryDelay: 400,
-          retryJitter: 200,
-        });
-      },
-    },
   ],
-  exports: ['REDIS_CLIENT', 'REDLOCK'],
+  exports: ['REDIS_CLIENT'],
 })
 export class RedisModule {}

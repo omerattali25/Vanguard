@@ -1,125 +1,244 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MachinesService } from './machines.service';
-import { Repository } from 'typeorm';
-import { Machine } from './entity/machine.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-const Redlock = require('redlock');
+import { Machine, MachineStatus } from './entity/machine.entity';
+import { Repository } from 'typeorm';
 
-describe('MachinesService', () => {
-  let service: MachinesService;
-  let machineRepo: Repository<Machine>;
-  let redlock: any;
+let repo: Repository<Machine>;
+let redisClient: any;
+let service: MachinesService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        MachinesService,
-        {
-          provide: 'REDLOCK',
-          useValue: {
-            lock: jest.fn(),
-            unlock: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(Machine),
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
+beforeEach(async () => {
+  redisClient = {
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+  };
+
+  const module = await Test.createTestingModule({
+    providers: [
+      MachinesService,
+      {
+        provide: getRepositoryToken(Machine),
+         useValue: {
             create: jest.fn(),
             save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
             update: jest.fn(),
           },
-        },
-      ],
-    }).compile();
+      },             
+      {           
+        provide: 'REDIS_CLIENT',
+        useValue: redisClient,
+      },
+    ],
+  }).compile();
 
-    service = module.get<MachinesService>(MachinesService);
-    machineRepo = module.get<jest.Mocked<Repository<Machine>>>(
-      getRepositoryToken(Machine),
-    );
-    redlock = module.get<any>('REDLOCK');
-  });
+  service = module.get<MachinesService>(MachinesService);
+   repo = module.get<jest.Mock<Repository<Machine>>>(getRepositoryToken(Machine));
+});
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
 
+  // ---------------------------------------------------------
+  // getMachines
+  // ---------------------------------------------------------
   it('should return all machines', async () => {
-    const machines = [{ id: '1' }, { id: '2' }];
-    (machineRepo.find as jest.Mock).mockResolvedValue(machines);
+    repo.find!.mockResolvedValue([
+      {
+        id: '1',
+        name: 'A',
+        location: 'חדר מכונות',
+        status: MachineStatus.AVALIBLE,
+        assigned: '',
+      },
+    ]);
 
     const result = await service.getMachines();
 
-    expect(result).toEqual(machines);
-    expect(machineRepo.find).toHaveBeenCalled();
+    expect(result.length).toBe(1);
+    expect(result[0].name).toBe('A');
   });
 
-  it('should return all machines', async () => {
-    const machines = [{ id: '1' }, { id: '2' }];
-    (machineRepo.find as jest.Mock).mockResolvedValue(machines);
+  // ---------------------------------------------------------
+  // saveMachine
+  // ---------------------------------------------------------
+  it('should save a new machine', async () => {
+    const dto = { name: 'A' };
 
-    const result = await service.getMachines();
+    repo.create!.mockReturnValue({
+      name: 'A',
+      location: 'חדר מכונות',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    });
 
-    expect(result).toEqual(machines);
-    expect(machineRepo.find).toHaveBeenCalled();
-  });
-
-  it('should create and save a machine', async () => {
-    const dto = { name: 'X', location: 'Y' };
-    const entity = { id: '1', ...dto };
-
-    (machineRepo.create as jest.Mock).mockReturnValue(entity);
-    (machineRepo.save as jest.Mock).mockResolvedValue(entity);
+    repo.save!.mockResolvedValue({
+      id: '1',
+      name: 'A',
+      location: 'חדר מכונות',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    });
 
     const result = await service.saveMachine(dto);
 
-    expect(machineRepo.create).toHaveBeenCalledWith(dto);
-    expect(machineRepo.save).toHaveBeenCalledWith(entity);
-    expect(result).toEqual(entity);
+    expect(repo.create).toHaveBeenCalledWith(dto);
+    expect(repo.save).toHaveBeenCalled();
+    expect(result.id).toBe('1');
   });
 
-  const mockLock = {
-    unlock: jest.fn(),
-  };
+  // ---------------------------------------------------------
+  // updateMachine
+  // ---------------------------------------------------------
+  it('should update a machine', async () => {
+    repo.findOne!.mockResolvedValue({ id: '1' });
 
-  it('should lock, update machine, and release lock', async () => {
-    const id = '123';
-    const patient = 'John';
-    const machine = { id, assigned: null };
-
-    (redlock.lock as jest.Mock).mockResolvedValue(mockLock);
-    (machineRepo.findOne as jest.Mock).mockResolvedValue(machine);
-    (machineRepo.save as jest.Mock).mockResolvedValue({
-      ...machine,
-      assigned: patient,
+    await service.updateMachine({
+      id: '1',
+      name: 'New',
+      location: 'Loc',
+      status: MachineStatus.USED,
     });
 
-    await service.changePatient(id, patient);
-
-    expect(redlock.lock).toHaveBeenCalledWith(`lock:resource:${id}`, 15000);
-    expect(machineRepo.findOne).toHaveBeenCalledWith({ where: { id } });
-    expect(machineRepo.save).toHaveBeenCalledWith({
-      ...machine,
-      assigned: patient,
-    });
-    expect(mockLock.unlock).toHaveBeenCalled();
+    expect(repo.update).toHaveBeenCalled();
   });
 
-  it('should throw if machine not found', async () => {
-    (redlock.lock as jest.Mock).mockResolvedValue(mockLock);
-    (machineRepo.findOne as jest.Mock).mockResolvedValue(null);
+  it('should return error if machine not found', async () => {
+    repo.findOne!.mockResolvedValue(null);
 
-    await expect(service.changePatient('1', 'John')).rejects.toThrow(
-      'Machine with id 1 not found',
+    const result = await service.updateMachine({
+      id: '1',
+      name: 'New',
+      location: 'Loc',
+      status: MachineStatus.USED,
+    });
+
+    expect(result).toBe('משתמש לא נמצא');
+  });
+
+  // ---------------------------------------------------------
+  // startChangePatient (lock acquire)
+  // ---------------------------------------------------------
+  it('should acquire lock and return lockId + expiration', async () => {
+    redisClient.set.mockResolvedValue('OK');
+
+    const result = await service.startChangePatient('123');
+
+    expect(redisClient.set).toHaveBeenCalled();
+    expect(result.lockId).toBeDefined();
+    expect(result.expiration).toBeDefined();
+  });
+
+  it('should throw if lock already exists', async () => {
+    redisClient.set.mockResolvedValue(null);
+
+    await expect(service.startChangePatient('123')).rejects.toThrow(
+      'Resource is already locked'
     );
   });
 
-  it('should throw if lock cannot be acquired', async () => {
-    (redlock.lock as jest.Mock).mockRejectedValue(new Error('Lock failed'));
+  // ---------------------------------------------------------
+  // changePatient (lock validation + update)
+  // ---------------------------------------------------------
+  it('should update machine when lock is valid', async () => {
+    redisClient.get.mockResolvedValue('token123');
 
-    await expect(service.changePatient('1', 'John')).rejects.toThrow(
-      'Lock failed',
-    );
+    repo.findOne!.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'חדר מכונות',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    });
+
+    repo.save!.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'חדר מכונות',
+      status: MachineStatus.AVALIBLE,
+      assigned: 'John',
+    });
+
+    const result = await service.changePatient('123', 'John', 'token123');
+
+    expect(redisClient.get).toHaveBeenCalledWith('locks:machine:123');
+    expect(repo.save).toHaveBeenCalled();
+    expect(redisClient.del).toHaveBeenCalledWith('locks:machine:123');
+    expect(result.assigned).toBe('John');
+  });
+
+  it('should throw if lock not found', async () => {
+    redisClient.get.mockResolvedValue(null);
+
+    await expect(
+      service.changePatient('123', 'John', 'token123')
+    ).rejects.toThrow('Lock not found or expired');
+  });
+
+  it('should throw if lock token is invalid', async () => {
+    redisClient.get.mockResolvedValue('wrongToken');
+
+    await expect(
+      service.changePatient('123', 'John', 'token123')
+    ).rejects.toThrow('Invalid lock token');
+  });
+
+  it('should delete lock and throw if machine not found', async () => {
+    redisClient.get.mockResolvedValue('token123');
+    repo.findOne!.mockResolvedValue(null);
+
+    await expect(
+      service.changePatient('123', 'John', 'token123')
+    ).rejects.toThrow('Machine not found');
+
+    expect(redisClient.del).toHaveBeenCalledWith('locks:machine:123');
+  });
+
+  // ---------------------------------------------------------
+  // CONCURRENT ACCESS TESTS
+  // ---------------------------------------------------------
+  it('should allow only one concurrent lock', async () => {
+    redisClient.set
+      .mockResolvedValueOnce('OK') // first request acquires lock
+      .mockResolvedValueOnce(null); // second request denied
+
+    const first = service.startChangePatient('123');
+    const second = service.startChangePatient('123');
+
+    const results = await Promise.allSettled([first, second]);
+
+    expect(results[0].status).toBe('fulfilled');
+    expect(results[1].status).toBe('rejected');
+  });
+
+  it('should allow only the correct token to update concurrently', async () => {
+    redisClient.get
+      .mockResolvedValueOnce('tokenA')
+      .mockResolvedValueOnce('tokenA');
+
+    repo.findOne!.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'חדר מכונות',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    });
+
+    repo.save!.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'חדר מכונות',
+      status: MachineStatus.AVALIBLE,
+      assigned: 'John',
+    });
+
+    const first = service.changePatient('123', 'John', 'tokenA');
+    const second = service.changePatient('123', 'John', 'tokenB');
+
+    const results = await Promise.allSettled([first, second]);
+
+    expect(results[0].status).toBe('fulfilled');
+    expect(results[1].status).toBe('rejected');
   });
 });

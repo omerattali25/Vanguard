@@ -1,4 +1,6 @@
+import Redlock from "redlock";
+
 export class MachineChangePatientDto {
-  id: string;
   patient: string;
+  lockID: string;
 }

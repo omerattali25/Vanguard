@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./jest-e2e.json"
   },
   "dependencies": {
+    "@liaoliaots/nestjs-redis": "^10.0.0",
     "@nestjs-redis/client": "^1.0.0",
     "@nestjs-redis/lock": "^1.0.0",
     "@nestjs/common": "^11.0.1",
@@ -31,10 +32,9 @@
     "@nestjs/typeorm": "^11.0.0",
     "dotenv": "^17.3.1",
     "ioredis": "^5.10.0",
-    "node-redlock": "^2.3.0",
     "pg": "^8.20.0",
     "redis": "^5.11.0",
-    "redlock": "4",
+    "redlock": "5.0.0-beta.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.28",

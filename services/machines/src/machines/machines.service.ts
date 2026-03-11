@@ -4,17 +4,16 @@ import { Machine } from './entity/machine.entity';
 import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
-const Redlock = require('redlock');
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MachinesService {
   constructor(
     @InjectRepository(Machine)
     private readonly machineRepo: Repository<Machine>,
-
-    @Inject('REDLOCK')
-    private readonly redlock: any,
-  ) {}
+    @Inject('REDIS_CLIENT') private readonly redisClient: any,
+  ) {
+  }
 
   async getMachines(): Promise<Machine[]> {
     return await this.machineRepo.find();
@@ -38,33 +37,47 @@ export class MachinesService {
       },
     );
   }
-  async changePatient(id: string, patient: string) {
-    const lockKey = `lock:resource:${id}`;
-    let lock;
-    const ttl = process.env.LOCK_TTL ? parseInt(process.env.LOCK_TTL) : 15000;
-    try {
-      lock = await this.redlock.lock(lockKey, ttl);
+  async startChangePatient(machineId: string) {
+    const ttl = parseInt(process.env.LOCK_TTL || '180000');
+    const resource = `locks:machine:${machineId}`;
+    const lockId = uuidv4();
+    const lockAcquired = await this.redisClient.set(resource, lockId, 'NX', 'PX', ttl );
+    if (!lockAcquired) {
+      throw new Error(`Resource is already locked: ${resource}`);
+    }
+    console.log(`Lock acquired for ${resource} with token ${lockId}`);
+    return {
+      lockId: lockId,
+      expiration: ttl,
+    };
+  }
 
-      if (lock) {
-        const machine = await this.machineRepo.findOne({ where: { id } });
-        if (!machine) {
-          throw new NotFoundException(`Machine with id ${id} not found`);
-        }
-        machine.assigned = patient;
-        await this.machineRepo.save(machine);
-      } else {
-        throw new Error('המכונה מועברת על ידי אחות אחרת');
+  async changePatient(machineId: string, patient: string, lockId: string) {
+    console.log(`locks:machine:${machineId}`);
+    const lock = await this.redisClient.get(`locks:machine:${machineId}`);
+    if (!lock) {
+      throw new Error('Lock not found or expired');
+    }
+    if (lock !== lockId) {
+      throw new Error('Invalid lock token');
+    }
+    try {
+      const machine = await this.machineRepo.findOne({
+        where: { id: machineId },
+      });
+      if (!machine) {
+        this.redisClient.del(`locks:machine:${machineId}`);
+        throw new NotFoundException('Machine not found');
       }
-    } catch (error) {
-      throw error;
-    } finally {
-      if (lock) {
-        try {
-          await lock.unlock();
-        } catch (unlockError) {
-          throw unlockError;
-        }
-      }
+      machine.assigned = patient;
+      await this.machineRepo.save(machine);
+      await this.redisClient.del(`locks:machine:${machineId}`);
+      return machine;
+    } catch (err) {
+      await this.redisClient.del(`locks:machine:${machineId}`);
+      throw err;
     }
   }
 }
+
+

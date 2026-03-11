@@ -23,7 +23,8 @@ import { RedisModule } from './redis/redis.module';
       synchronize: true,
     }),
     MachinesModule,
-    RedisModule,
+    RedisModule
+
   ],
 })
 export class AppModule {}
