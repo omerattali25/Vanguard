@@ -7,8 +7,13 @@ import { PatientStatus } from "../types/patinet_status";
 import { Patient } from "../types/patient";
 import { MachinesPage } from "./pages/Machines";
 import { MachineStatus } from "./types/machine-status";
+import PatientVitals from './pages/PatientVitals';
+
+
+
 
 function App() {
+
   const mockPatients: Patient[] = [
     {
       id: "1",
@@ -45,21 +50,30 @@ function App() {
       status: PatientStatus.Unstable,
       registred_at: new Date("2025-03-05"),
     },
-  ];
-  
+  ]
   return (
     <>
       <SidebarProvider defaultOpen={false}>
-        <AppSidebar />
-        <SidebarTrigger />
+
+        <AppSidebar>
+
+        </AppSidebar>
+        <SidebarTrigger>
+        </SidebarTrigger>
+
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/asd" element={<div>asd</div>} />
-          <Route path="/" element={<Patients patients={mockPatients} />} />
-          <Route path="/machines" element={<MachinesPage machines={[{id:"1234",name:"פלג",assinged:"123455",location:"home",status:MachineStatus.AVELIABLE}]}/>}/>
+          <Route path="/patients" element={<Patients patients={mockPatients} />} />
+          <Route path="/patients/:id" element={<PatientVitals />} />
+                    <Route path="/machines" element={<MachinesPage machines={[{id:"1234",name:"פלג",assinged:"123455",location:"home",status:MachineStatus.AVELIABLE}]}/>}/>
         </Routes>
       </SidebarProvider>
+      <footer className="bg-gray-900 text-white py-12 px-6">
+        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+          <p>&copy; MoReDis.</p>
+        </div>
+      </footer>
     </>
   );
 }
