@@ -13,13 +13,13 @@ export class VitalsService {
     private readonly configService: ConfigService,
   ) {
     const host = this.configService.get('VITALS_SERVICE_HOST', 'localhost');
-    const port = this.configService.get('VITALS_SERVICE_PORT', 3001);
+    const port = this.configService.get('VITALS_SERVICE_PORT', 3003);
     this.baseUrl = `http://${host}:${port}`;
   }
 
-  async getVitals(patientId: string, limit?: number): Promise<VitalEntity[]> {
+  async getVitals(id: string, limit?: number): Promise<VitalEntity[]> {
     const { data } = await firstValueFrom(
-      this.httpService.get<VitalEntity[]>(`${this.baseUrl}/vitals/${patientId}`, {
+      this.httpService.get<VitalEntity[]>(`${this.baseUrl}/vitals/${id}`, {
         params: limit ? { limit } : {},
       }),
     );

@@ -1,12 +1,12 @@
-import axios from "axios";
+import { api } from "api/axios/axios";
 import { Patient } from "types/patient";
 
 export async function getPatients(): Promise<Patient[]> {
-    const response = await axios.get('/patients')
+    const response = await api.get('/patients')
     return response.data;
 }
 
 export async function getPatientById(patientId: string): Promise<Patient> {
-    const response = await axios.get(`/patients/${patientId}`)
+    const response = await api.get(`/patients/${patientId}`)
     return response.data;
 }

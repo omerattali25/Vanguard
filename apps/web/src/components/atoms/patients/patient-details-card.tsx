@@ -2,7 +2,7 @@ import { Patient } from 'types/patient';
 import PatientDetailCard from './patient-detail-card';
 
 interface PatientDetailsCardProps {
-    patient: Patient;
+    patient: Patient | undefined;
 }
 
 const PatientDetailsCard = ({ patient }: PatientDetailsCardProps) => {
@@ -12,8 +12,8 @@ const PatientDetailsCard = ({ patient }: PatientDetailsCardProps) => {
                 פרטי המטופל
             </p>
 
-            <PatientDetailCard label="עיר" value={patient.city} />
-            <PatientDetailCard label="סטטוס" value={patient.status} />
+            <PatientDetailCard label="עיר" value={patient?.city ?? ""} />
+            <PatientDetailCard label="סטטוס" value={patient?.status ?? ""} />
         </div>
 
     )

@@ -5,8 +5,8 @@ import PatientDetailsCard from './patient-details-card';
 import PatientVitalsCard from './patient-vitals-card';
 
 interface PatientVitalsCardProps {
-    patient: Patient;
-    lastPatientVitals: Vital;
+    patient: Patient | undefined;
+    lastPatientVitals: Vital | undefined;
 }
 
 const PatientCard = ({ patient, lastPatientVitals }: PatientVitalsCardProps) => {
@@ -14,7 +14,7 @@ const PatientCard = ({ patient, lastPatientVitals }: PatientVitalsCardProps) => 
         <Card className="w-[360px] h-fit mt-10">
             <CardHeader className="text-center">
                 <CardTitle className="text-2xl font-bold">
-                    {patient.name}
+                    {patient?.name}
                 </CardTitle>
             </CardHeader>
 

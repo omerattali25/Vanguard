@@ -1,11 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPatients } from "./patient.api";
+import { getPatientById, getPatients } from "./patient.api";
 
-export function usePatients() {
+export const usePatients = () => {
     const { data, isPending, error } = useQuery({
         queryKey: ['patients'],
         queryFn: getPatients,
     });
 
+    return { data, isPending, error };
+}
+
+export const usePatient = (id : string) => {
+    const { data, isPending, error } = useQuery({
+        queryKey: ['patient', id],
+        queryFn: () => getPatientById(id),
+    });
     return { data, isPending, error };
 }

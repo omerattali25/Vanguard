@@ -51,44 +51,44 @@ services:
       retries: 5
 
 
-  vitals:
-    build:
-      context: .
-      dockerfile: services/vitals/Dockerfile
-    container_name: vanguard-vitals
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    ports:
-      - "3003:3003"
-    environment:
-      VITALS_SERVICE_PORT: 3003
-      VITALS_SERVICE_URL: 0.0.0.0
-      KAFKA_HOST: kafka
-      KAFKA_PORT: 29092
-      KAFKA_CLIENT_ID: vitals-service
-      KAFKA_GROUP_ID: vitals-service
-      KAFKA_TOPIC: vitals
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: postgres
-      DATABASE_NAME: vitals
+  # vitals:
+  #   build:
+  #     context: .
+  #     dockerfile: services/vitals/Dockerfile
+  #   container_name: vanguard-vitals
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #   ports:
+  #     - "3003:3003"
+  #   environment:
+  #     VITALS_SERVICE_PORT: 3003
+  #     VITALS_SERVICE_URL: 0.0.0.0
+  #     KAFKA_HOST: kafka
+  #     KAFKA_PORT: 29092
+  #     KAFKA_CLIENT_ID: vitals-service
+  #     KAFKA_GROUP_ID: vitals-service
+  #     KAFKA_TOPIC: vitals
+  #     DATABASE_HOST: postgres
+  #     DATABASE_PORT: 5432
+  #     DATABASE_USERNAME: postgres
+  #     DATABASE_PASSWORD: postgres
+  #     DATABASE_NAME: vitals
 
-  api-gateway:
-    build:
-      context: .
-      dockerfile: apps/api-gateway/Dockerfile
-    container_name: vanguard-api-gateway
-    depends_on:
-      - vitals
-    ports:
-      - "3000:3000"
-    environment:
-      API_GATEWAY_PORT: 3000
-      VITALS_SERVICE_URL: vitals:3003
+  # api-gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api-gateway/Dockerfile
+  #   container_name: vanguard-api-gateway
+  #   depends_on:
+  #     - vitals
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     API_GATEWAY_PORT: 3000
+  #     VITALS_SERVICE_URL: vitals:3003
 
 volumes:
   postgres_data:
