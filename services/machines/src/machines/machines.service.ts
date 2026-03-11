@@ -1,4 +1,9 @@
-import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Machine } from './entity/machine.entity';
 import { Repository } from 'typeorm';
@@ -12,8 +17,7 @@ export class MachinesService {
     @InjectRepository(Machine)
     private readonly machineRepo: Repository<Machine>,
     @Inject('REDIS_CLIENT') private readonly redisClient: any,
-  ) {
-  }
+  ) {}
 
   async getMachines(): Promise<Machine[]> {
     return await this.machineRepo.find();
@@ -41,9 +45,17 @@ export class MachinesService {
     const ttl = parseInt(process.env.LOCK_TTL || '180000');
     const resource = `locks:machine:${machineId}`;
     const lockId = randomUUID();
-    const lockAcquired = await this.redisClient.set(resource, lockId, 'NX', 'PX', ttl );
+    const lockAcquired = await this.redisClient.set(
+      resource,
+      lockId,
+      'NX',
+      'PX',
+      ttl,
+    );
     if (!lockAcquired) {
-      throw new InternalServerErrorException(`Resource is already locked: ${resource}`);
+      throw new InternalServerErrorException(
+        `Resource is already locked: ${resource}`,
+      );
     }
     console.log(`Lock acquired for ${resource} with token ${lockId}`);
     return {
@@ -78,5 +90,3 @@ export class MachinesService {
     }
   }
 }
-
-
