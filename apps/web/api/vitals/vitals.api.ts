@@ -1,11 +1,12 @@
-import axios from "axios";
+import { api } from "api/axios/axios";
+import { Vital } from "types/vitals";
 
-export async function getVitals(): Promise<string> {
-    const response = await axios.get('/vitals')
+export async function getVitals(): Promise<Vital[]> {
+    const response = await api.get('/vitals')
     return response.data;
 }
 
-export const createVital = async (vital: any) => {
-    const response = await axios.post('/vitals', vital)
+export async function getPatientVitals(patientId: string): Promise<Vital[]> {
+    const response = await api.get(`/vitals/${patientId}`)
     return response.data;
 }
