@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
+import { SocketGateway } from 'src/websocket/socket.gateway';
 import { PubsubController } from './pubsub.controller';
-import { PubsubService } from './pubsub.service';
 
 @Module({
   controllers: [PubsubController],
-  providers: [PubsubService],
+  providers: [PubsubService, SocketGateway],
   exports: [PubsubService],
 })
 export class PubsubModule {}
