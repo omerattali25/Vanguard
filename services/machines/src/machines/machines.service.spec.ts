@@ -136,7 +136,7 @@ it('should update a machine', async () => {
     assigned: '',
   });
 
-  await service.updateMachine({ id: '1', name: 'New1' });
+  await service.updateMachine('1', { name: 'New1' });
 
   expect(repo.update).toHaveBeenCalled();
 });
@@ -144,8 +144,7 @@ it('should update a machine', async () => {
 it('should return error if machine not found', async () => {
   repo.findOne!.mockResolvedValue(null);
 
-  const result = await service.updateMachine({
-    id: '2',
+  const result = await service.updateMachine('2', {
     name: 'New',
     location: 'Loc',
   });

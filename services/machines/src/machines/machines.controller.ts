@@ -33,8 +33,8 @@ export class MachinesController {
   async saveMachine(@Payload() machineInputDto) {
     return await this.machinesService.saveMachine(machineInputDto);
   }
-  @Put()
-  async updateMachine(@Payload() machineUpdateDto) {
-    return await this.machinesService.updateMachine(machineUpdateDto);
+  @Put(':id')
+  async updateMachine(@Param('id') machineId: string, @Payload() machineUpdateDto: any) {
+    return await this.machinesService.updateMachine(machineId,machineUpdateDto);
   }
 }

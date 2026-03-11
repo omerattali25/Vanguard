@@ -31,12 +31,13 @@ export class MachinesService {
   }
   async saveMachine(machineInput: MachineInputDto): Promise<Machine> {
     const newMachine = this.machineRepo.create(machineInput);
-    this.redisClient.publish('machines', JSON.stringify(newMachine));
-    return await this.machineRepo.save(newMachine);
+    const savedMachine = await this.machineRepo.save(newMachine);
+    this.redisClient.publish('machines', JSON.stringify(savedMachine));
+    return savedMachine;
   }
-  async updateMachine(machineUpdateDto: MachineUpdateDto) {
+  async updateMachine(id: string, machineUpdateDto: MachineUpdateDto) {
     const machine = await this.machineRepo.findOne({
-      where: { id: machineUpdateDto.id },
+      where: { id:id },
     });
     if (!machine) return 'machine with this id not found';
     machine.name = machineUpdateDto.name || machine.name;

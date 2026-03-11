@@ -1,5 +1,5 @@
 import { IsNotEmpty } from "class-validator";
-import { IsString } from "class-validator/types/decorator/typechecker/IsString";
+import { IsString } from "class-validator";
 
 export class MachineChangePatientDto {
   @IsString()
