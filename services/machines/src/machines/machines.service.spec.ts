@@ -1,10 +1,12 @@
-import { Test} from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { MachinesService } from './machines.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Machine, MachineStatus } from './entity/machine.entity';
 import { Repository } from 'typeorm';
+import { MachineAction } from './entity/machine.action.entity';
 
 let repo: jest.Mocked<Repository<Machine>>;
+let actionsRepo: jest.Mocked<Repository<MachineAction>>;
 let redisClient: any;
 let service: MachinesService;
 
@@ -29,6 +31,14 @@ beforeEach(async () => {
         },
       },
       {
+        provide: getRepositoryToken(MachineAction),
+        useValue: {
+          create: jest.fn(),
+          save: jest.fn(),
+          find: jest.fn(),
+        },
+      },
+      {
         provide: 'REDIS_CLIENT',
         useValue: redisClient,
       },
@@ -39,6 +49,9 @@ beforeEach(async () => {
   repo = module.get(getRepositoryToken(Machine)) as jest.Mocked<
     Repository<Machine>
   >;
+  actionsRepo = module.get(getRepositoryToken(MachineAction)) as jest.Mocked<
+    Repository<MachineAction>
+  >;
 });
 
 it('should return all machines', async () => {
@@ -46,7 +59,7 @@ it('should return all machines', async () => {
     {
       id: '1',
       name: 'A',
-      location:'storage',
+      location: 'storage',
       status: MachineStatus.AVALIBLE,
       assigned: '',
     },
@@ -224,4 +237,51 @@ it('should allow only the correct token to update concurrently', async () => {
 
   expect(results[0].status).toBe('fulfilled');
   expect(results[1].status).toBe('rejected');
+});
+
+it('should write a MachineAction when connecting a new patient', async () => {
+  redisClient.get.mockResolvedValue('token123');
+
+  repo.findOne!.mockResolvedValue({
+    id: '123',
+    name: 'Machine A',
+    assigned: '',
+    location: 'storage',
+    status: MachineStatus.AVALIBLE,
+  });
+
+  repo.save!.mockResolvedValue({
+    id: '123',
+    name: 'Machine A',
+    assigned: 'John',
+    location: 'storage',
+    status: MachineStatus.AVALIBLE,
+  });
+
+  actionsRepo.create!.mockReturnValue({
+    id: '',
+    machine_id: '',
+    patient_id: '',
+    description: '',
+    trigerd_at: new Date(),
+  });
+  actionsRepo.save!.mockResolvedValue({
+    id: '',
+    machine_id: '',
+    patient_id: '',
+    description: '',
+    trigerd_at: new Date(),
+  });
+
+  await service.changePatient('123', 'John', 'token123');
+
+  expect(actionsRepo.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      machine_id: '123',
+      patient_id: 'John',
+      description: expect.stringContaining('connected patient John'),
+    }),
+  );
+
+  expect(actionsRepo.save).toHaveBeenCalledTimes(1);
 });
