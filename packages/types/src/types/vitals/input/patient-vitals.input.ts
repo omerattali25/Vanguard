@@ -12,7 +12,7 @@ export class PatientVitals{
     id: string;
 
     @IsString()
-    patientId;
+    patientId: string;
     
     @IsDateString()
     timestamp : string;
