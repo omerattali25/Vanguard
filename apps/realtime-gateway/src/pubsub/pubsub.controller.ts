@@ -16,14 +16,11 @@ export class PubsubController {
 
   @EventPattern('alerts')
   onAlerts(@Payload() alert: Alert) {
-    console.log(alert);
     this.socket.emitToRoom(`alerts`, 'alerts', alert);
   }
 
   @EventPattern('machines')
   onMachine(@Payload() machine: Machine) {
-    console.log(machine);
-
     this.socket.emitToRoom(`machines`, 'machines', machine);
   }
 }

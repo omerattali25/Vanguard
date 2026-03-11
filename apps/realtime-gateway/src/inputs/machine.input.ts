@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+
+export enum MachineStatus {
+  AVALIBLE = 'available',
+  USED = 'used',
+  IN_TRANSFER = 'in_transfer',
+}
 
 export class Machine {
   @IsUUID()
@@ -6,6 +12,9 @@ export class Machine {
 
   @IsString()
   name: string;
+
+  @IsEnum(MachineStatus)
+  status: MachineStatus;
 
   @IsString()
   location: string;
