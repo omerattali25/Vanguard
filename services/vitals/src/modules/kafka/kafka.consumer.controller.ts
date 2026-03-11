@@ -5,10 +5,10 @@ import { VitalEntity } from "@vanguard/types";
 
 @Controller('kafka')
 export class KafkaConsumerController {
-  constructor(
-    private readonly ingestionService: IngestionService) { }
+  constructor(private readonly ingestionService: IngestionService) { }
 
-  @EventPattern(process.env.KAFKA_TOPIC)
+
+  @EventPattern('updated_vitals')
   async handlePatientVitalConsume(@Payload() payload: VitalEntity) {
     //@ts-ignore
     console.log('Payload:', payload.data);

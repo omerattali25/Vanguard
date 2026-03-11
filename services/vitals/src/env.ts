@@ -1,8 +1,10 @@
 export type Environment = {
-    NODE_ENV: 'development' | 'production';
-    PORT: number;
-    
-    KAFKA_CLIENT_ID: string;
+    NODE_ENV: string;
+
+    VITALS_SERVICE_PORT: number;
+    VITALS_SERVICE_URL: string;
+
+    KAFKA_BROKER: string;
     KAFKA_GROUP_ID: string;
     KAFKA_TOPIC: string;
 

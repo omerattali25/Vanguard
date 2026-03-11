@@ -5,16 +5,21 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { 
+    cors: true
+  });
+
+  app.enableCors({ origin: 'localhost:3000' });
+
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [process.env.KAFKA_LISTENING || ""],
+        brokers: [process.env.KAFKA_BROKER || ""],
       },
       consumer: {
-        groupId: process.env.GROUP_ID || "",
+        groupId: process.env.KAFKA_GROUP_ID || "",
       },
     },
   });
@@ -27,7 +32,7 @@ async function bootstrap() {
   );
   
   app.startAllMicroservices();
-  await app.listen(process.env.PORT || 3002);
+  await app.listen(process.env.PATIENTS_SERVICE_PORT || 3002);
 }
 bootstrap();
 

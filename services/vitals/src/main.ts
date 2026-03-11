@@ -2,25 +2,30 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { AppConfig } from './config/app';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true
+  });
 
-  const config = app.get(ConfigService);
+  app.enableCors({ origin: 'localhost:3000' });
+
+  const config = app.get(ConfigService<AppConfig>);
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [config.getOrThrow<string>('kafka.brokers')],
+        brokers: [config.get('kafka.broker', { infer: true }) as string],
       },
       consumer: {
-        groupId: config.getOrThrow<string>('kafka.groupId'),
+        groupId: config.get('kafka.groupId', { infer: true }) as string,
       },
     },
   });
 
-  const port = config.getOrThrow<number>('env.port');
+  const port = config.get<number>('env.port', { infer: true });
 
   app.startAllMicroservices();
   await app.listen(port);

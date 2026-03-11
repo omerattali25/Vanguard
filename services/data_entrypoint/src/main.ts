@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { NestApplication, NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DataEntrypointModule } from './app.module';
@@ -12,13 +13,13 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [configService.get('KAFKA_LISTENING') ?? ""],
+        brokers: [configService.get('KAFKA_BROKER') ?? ""],
       },
     },
   });
 
   app.startAllMicroservices();
-  await app.listen(3000);
+  await app.listen(process.env.DATA_ENTRYPOINT_SERVICE_PORT ?? 3004);
 }
 
 bootstrap();
