@@ -19,14 +19,14 @@ export class PatientsService {
 
   async getPatients(): Promise<Patient[]> {
     const { data } = await firstValueFrom(
-      this.httpService.get<Patient[]>(`${this.baseUrl}`),
+      this.httpService.get<Patient[]>(`${this.baseUrl}/patients`),
     );
     return data;
   }
 
   async getPatientById(id: string): Promise<Patient> {
     const { data } = await firstValueFrom(
-      this.httpService.get<Patient>(`${this.baseUrl}/${id}`),
+      this.httpService.get<Patient>(`${this.baseUrl}/patients/${id}`),
     );
     return data;
   }

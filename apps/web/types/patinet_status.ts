@@ -1,5 +1,5 @@
 export enum PatientStatus {
-  Stable="יציב",    
-  Unstable="לא יציב",  
-  Critical="קריטי", 
+  Stable="stable",    
+  Unstable="unstable",  
+  Critical="critical", 
 }

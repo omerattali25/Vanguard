@@ -1,17 +1,22 @@
-import { PatientStatusBadge } from '@/components/atoms/patients/patient-status-badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { usePatients } from 'api/patients/patient.query';
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-import { Patient } from "types/patient"
-interface PatientsTableProps {
-  patients: Patient[];
-}
+import { PatientStatusBadge } from "@/components/atoms/patients/patient-status-badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { usePatients } from "../../api/patients/patient.query";
+import { useNavigate } from "react-router-dom";
 
-export const Patients: React.FC<PatientsTableProps> = (props) => {
+
+export const Patients = () => {
   const navigate = useNavigate();
   const { data, isPending, error } = usePatients();
+
   if (isPending) {
     return (
       <div className="flex justify-center mt-10">
@@ -22,14 +27,15 @@ export const Patients: React.FC<PatientsTableProps> = (props) => {
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
         </div>
-      </div>);
+      </div>
+    );
   }
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+  
   return (
     <>
-
       <Table className="w-full md:w-1/2 mt-10 border mx-auto">
         <TableCaption>מטופלים</TableCaption>
         <TableHeader>
@@ -42,10 +48,17 @@ export const Patients: React.FC<PatientsTableProps> = (props) => {
         </TableHeader>
         <TableBody>
           {data?.map((patient) => {
+            console.log(patient.status);
             return (
-
-              <TableRow onClick={() => { navigate(`/patients/${patient.id}`) }} className="cursor-pointer hover:bg-muted">
-                <TableCell className="text-center"><PatientStatusBadge status={patient.status} /></TableCell>
+              <TableRow
+                onClick={() => {
+                  navigate(`/patients/${patient.id}`);
+                }}
+                className="cursor-pointer hover:bg-muted"
+              >
+                <TableCell className="text-center">
+                  <PatientStatusBadge status={patient.status} />
+                </TableCell>
                 <TableCell className="text-center">{patient.name}</TableCell>
                 <TableCell className="text-center">{patient.city}</TableCell>
               </TableRow>
@@ -54,9 +67,7 @@ export const Patients: React.FC<PatientsTableProps> = (props) => {
         </TableBody>
       </Table>
     </>
-  )
-}
+  );
+};
 
-export default Patients
-
-
+export default Patients;
