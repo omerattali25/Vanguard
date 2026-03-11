@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.connectMicroservice<MicroserviceOptions>({
+  const microservice = app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.REDIS,
     options: {
       host: process.env.REDIS_HOST ?? '',
@@ -14,13 +14,14 @@ async function bootstrap() {
     },
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      enableDebugMessages: true,
-    }),
-  );
+  const pipe = new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    enableDebugMessages: true,
+  });
+
+  app.useGlobalPipes(pipe);
+  microservice.useGlobalPipes(pipe);
 
   await app.startAllMicroservices();
   await app.listen(process.env.PORT || 3001);
