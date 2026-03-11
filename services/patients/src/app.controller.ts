@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Controller } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import type {PatientDetails}  from './inputs/patient.input';
+import { PatientDetails } from '@vanguard/types';
 import { PatientsService } from './patients/patients.service';
 
 @Controller()
