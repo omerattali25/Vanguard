@@ -1,10 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Machine } from './entity/machine.entity';
 import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID, UUID } from 'crypto';
 
 @Injectable()
 export class MachinesService {
@@ -23,10 +23,10 @@ export class MachinesService {
     return await this.machineRepo.save(newMachine);
   }
   async updateMachine(machineUpdateDto: MachineUpdateDto) {
-    const user = await this.machineRepo.findOne({
+    const machine = await this.machineRepo.findOne({
       where: { id: machineUpdateDto.id },
     });
-    if (!user) return 'משתמש לא נמצא';
+    if (!machine) return 'machine with this id not found';
 
     await this.machineRepo.update(
       { id: machineUpdateDto.id },
@@ -40,10 +40,10 @@ export class MachinesService {
   async startChangePatient(machineId: string) {
     const ttl = parseInt(process.env.LOCK_TTL || '180000');
     const resource = `locks:machine:${machineId}`;
-    const lockId = uuidv4();
+    const lockId = randomUUID();
     const lockAcquired = await this.redisClient.set(resource, lockId, 'NX', 'PX', ttl );
     if (!lockAcquired) {
-      throw new Error(`Resource is already locked: ${resource}`);
+      throw new InternalServerErrorException(`Resource is already locked: ${resource}`);
     }
     console.log(`Lock acquired for ${resource} with token ${lockId}`);
     return {
@@ -53,13 +53,12 @@ export class MachinesService {
   }
 
   async changePatient(machineId: string, patient: string, lockId: string) {
-    console.log(`locks:machine:${machineId}`);
     const lock = await this.redisClient.get(`locks:machine:${machineId}`);
     if (!lock) {
-      throw new Error('Lock not found or expired');
+      throw new InternalServerErrorException('Lock not found or expired');
     }
     if (lock !== lockId) {
-      throw new Error('Invalid lock token');
+      throw new InternalServerErrorException('Invalid lock token');
     }
     try {
       const machine = await this.machineRepo.findOne({
