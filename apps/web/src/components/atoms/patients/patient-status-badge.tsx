@@ -11,16 +11,10 @@ const patientStatusColors: Record<PatientStatus, string> = {
   [PatientStatus.Critical]: "#fbb4b4",
 }
 
-const patientStatusLabel: Record<PatientStatus, string> = {
-  [PatientStatus.Stable]: "יציב",
-  [PatientStatus.Unstable]: "לא יציב",
-  [PatientStatus.Critical]: "קריטי",
-}
-
 export function PatientStatusBadge({ status }: PatientStatusBadgeProps) {
   return (
     <>
-    <StatusBadge color={patientStatusColors[status]} label={patientStatusLabel[status]}></StatusBadge>
+    <StatusBadge color={patientStatusColors[status]} label={status}></StatusBadge>
     </>
   )
 }

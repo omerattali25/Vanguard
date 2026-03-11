@@ -8,7 +8,6 @@ export enum PatientStatus {
 
 @Entity()
 export class Patient {
-
     @PrimaryColumn()
     id: string;
 
@@ -23,5 +22,4 @@ export class Patient {
 
     @CreateDateColumn()
     registered_at: string;
-
 }

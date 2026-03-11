@@ -1,6 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { PatientsService } from './patients.service';
-import type { UUID } from 'crypto';
 
 @Controller('patients')
 export class PatientsController {
