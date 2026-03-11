@@ -10,8 +10,3 @@ export async function getPatientVitals(patientId: string): Promise<Vital[]> {
     const response = await axios.get(`/vitals/${patientId}`)
     return response.data;
 }
-
-export const createVital = async (vital: any) => {
-    const response = await axios.post('/vitals', vital)
-    return response.data;
-}
