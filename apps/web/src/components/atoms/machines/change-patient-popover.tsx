@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Machine } from "@/types/machine";
-import { confirmChangePatient, startChangePatient } from "api/machines/machines.api";
 import { useState } from "react";
 
 interface ChangePatientPopoverProps {
@@ -33,9 +32,8 @@ export const ChangePatientPopover: React.FC<ChangePatientPopoverProps> = (
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" onClick={async () => {
-          const token = await startChangePatient(props.machine.id);
-          setChangePatientToken(token);
+        <Button variant="outline" onClick={()=>{
+          console.log("starting change patient, should return lock id and set token")
         }}>
           החלף מטופל
         </Button>
@@ -67,7 +65,7 @@ export const ChangePatientPopover: React.FC<ChangePatientPopoverProps> = (
         <button className="mt-4" onClick={
           ()=>{
             if(selectedPatient){
-              confirmChangePatient(props.machine.id, selectedPatient, changePatientToken);
+              console.log("confirming change patient with token ", changePatientToken, " for patient ", selectedPatient)
             }
             else{ alert("אנא בחר מטופל")}
           }

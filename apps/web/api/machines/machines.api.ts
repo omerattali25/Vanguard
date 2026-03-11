@@ -12,10 +12,15 @@ export const createMachine = async (machineName: string) => {
 }
 
 export const startChangePatient = async (machineId: string):Promise<string>=> {
-    const response = await axios.post(`/machines/change-patient`, { id:machineId})
-    return response.data;
+    const response:ChangePatientResponse = await axios.post(`/machines/change-patient`, { id:machineId})
+    return response.lockId;
 }
-export const confirmChangePatient = async (machineId: string, patient: string, token: string) => {
+export const changePatient = async (machineId: string, patient: string, token: string) => {
     const response = await axios.post(`/machines/change-patient/confirm`, { id:machineId, patient: patient, token: token})
     return response.data;
+}
+export interface ChangePatientResponse {
+    lockId : string;
+    expiration:number;
+
 }
