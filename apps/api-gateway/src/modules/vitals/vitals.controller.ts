@@ -5,11 +5,11 @@ import { VitalsService } from './vitals.service';
 export class VitalsController {
   constructor(private readonly vitalsService: VitalsService) {}
 
-  @Get(':patientId')
+  @Get(':id')
   getVitals(
-    @Param('patientId') patientId: string,
+    @Param('id') id: string,
     @Query('limit') limit?: number,
   ) {
-    return this.vitalsService.getVitals(patientId, limit);
+    return this.vitalsService.getVitals(id, limit);
   }
 }
