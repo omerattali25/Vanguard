@@ -552,6 +552,9 @@ importers:
       '@vanguard/types':
         specifier: workspace:*
         version: link:../../packages/types
+      class-validator:
+        specifier: ^0.15.1
+        version: 0.15.1
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1

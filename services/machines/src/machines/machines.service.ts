@@ -69,7 +69,6 @@ import { Patient } from '@vanguard/types';
           `Resource is already locked: ${resource}`,
         );
       }
-      console.log(`Lock acquired for ${resource} with token ${lockId}`);
       machine.status=MachineStatus.IN_TRANSFER;
       await this.machineRepo.save(machine);
       return {
