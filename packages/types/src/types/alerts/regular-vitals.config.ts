@@ -1,6 +1,6 @@
-import { PatientVitals } from "../vitals/input/patient-vitals.input";
+import { PatientVitals } from '../vitals/input/patient-vitals.input';
 
-export const RegularVitalsBoundries : Record<keyof Omit<PatientVitals, 'id' | 'patientId' | 'timestamp'>, {min: number; max: number}> = {
+export const RegularVitalsBoundries: Record<keyof Omit<PatientVitals, 'id' | 'patientId' | 'timestamp'>, { min: number; max: number }> = {
   heartRate: { min: 60, max: 100 },
   spO2: { min: 95, max: 100 },
   respiratoryRate: { min: 12, max: 20 },
