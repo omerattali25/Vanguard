@@ -22,13 +22,6 @@ async function bootstrap() {
     },
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-    }),
-  );
-
   app.startAllMicroservices();
   await app.listen(process.env.DATA_ENTRYPOINT_SERVICE_PORT ?? 3004);
 }
