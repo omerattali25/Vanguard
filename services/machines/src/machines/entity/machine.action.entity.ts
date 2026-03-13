@@ -17,7 +17,9 @@
     trigerd_at: Date;
     @Column({
       type: 'enum',
-      enum: MachineActionType}
+      enum: MachineActionType,
+      default:MachineActionType.CONNECTED
+    }
     )
     action_type:MachineActionType
     

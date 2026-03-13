@@ -7,7 +7,7 @@ import { MachineAction, MachineActionType } from './entity/machine.action.entity
 import {Patient} from '@vanguard/types';
 import {PatientStatus} from '@vanguard/types'
 
-let repo: jest.Mocked<Repository<Machine>>;
+let machineRepo: jest.Mocked<Repository<Machine>>;
 let actionsRepo: jest.Mocked<Repository<MachineAction>>;
 let patientsRepo: jest.Mocked<Repository<Patient>>;
 let redisClient: any;
@@ -18,6 +18,7 @@ beforeEach(async () => {
     set: jest.fn(),
     get: jest.fn(),
     del: jest.fn(),
+    publish:jest.fn()
   };
 
   const module = await Test.createTestingModule({
@@ -58,7 +59,7 @@ beforeEach(async () => {
   }).compile();
 
   service = module.get<MachinesService>(MachinesService);
-  repo = module.get(getRepositoryToken(Machine)) as jest.Mocked<
+  machineRepo = module.get(getRepositoryToken(Machine)) as jest.Mocked<
     Repository<Machine>
   >;
   actionsRepo = module.get(getRepositoryToken(MachineAction)) as jest.Mocked<
@@ -73,299 +74,308 @@ it('should be defined', () => {
   expect(service).toBeDefined();
 });
 
-it('should create a new machine', async () => {
-  const dto = { name: 'Machine X', location: 'storage', status: MachineStatus.AVALIBLE };
 
-  repo.create!.mockReturnValue({
-    id: 'm123',
-    name: 'Machine X',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: '',
+  it('returns all machines with patient names converted', async () => {
+    machineRepo.find.mockResolvedValue([
+      { id: 'm1', name: 'fnvfp', location: 'storage', status: MachineStatus.AVALIBLE, assigned: 'p1' } as any,
+    ]);
+
+    patientsRepo.findOne.mockResolvedValue({ id: 'p1', name: 'John Doe' } as any);
+
+    const result = await service.getMachines();
+
+    expect(result[0].assigned).toBe('John Doe');
   });
 
-  repo.save!.mockResolvedValue({
-    id: 'm123',
-    name: 'Machine X',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: '',
+  it('saves a new machine and publishes it', async () => {
+    const dto = { name: 'Machine X', location: 'storage' } as any;
+
+    machineRepo.create.mockReturnValue(dto);
+    machineRepo.save.mockResolvedValue({
+      id: 'm1',
+      name: 'Machine X',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    } as any);
+
+    patientsRepo.findOne.mockResolvedValue(null);
+
+    const result = await service.saveMachine(dto);
+
+    expect(machineRepo.save).toHaveBeenCalled();
+    expect(redisClient.publish).toHaveBeenCalled();
+    expect(result.id).toBe('m1');
   });
 
-  const result = await service.saveMachine(dto);
-
-  expect(repo.create).toHaveBeenCalledWith(dto);
-  expect(repo.save).toHaveBeenCalled();
-  expect(result.id).toBe('m123');
-  expect(result.name).toBe('Machine X');
-});
-
-it('should get all machines', async () => {
-  repo.find!.mockResolvedValue([
-    {
+  it('updates a machine', async () => {
+    machineRepo.findOne.mockResolvedValue({
       id: '1',
+      name: 'Old',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    } as any);
+
+    await service.updateMachine('1', { name: 'NewName' });
+
+    expect(machineRepo.save).toHaveBeenCalled();
+  });
+
+  it('returns error string if machine not found', async () => {
+    machineRepo.findOne.mockResolvedValue(null);
+
+    const result = await service.updateMachine('2', { name: 'X' });
+
+    expect(result).toBe('machine with this id not found');
+  });
+
+  it('acquires lock and returns lockId + expiration', async () => {
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
       name: 'A',
       location: 'storage',
       status: MachineStatus.AVALIBLE,
       assigned: '',
-    },
-    {
-      id: '2',
-      name: 'B',
-      location: 'room 2',
+    } as any);
+
+    redisClient.set.mockResolvedValue('OK');
+
+    const result = await service.startChangePatient('123');
+
+    expect(result.lockId).toBeDefined();
+    expect(result.expiration).toBeDefined();
+  });
+
+  it('throws if lock already exists', async () => {
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    } as any);
+
+    redisClient.set.mockResolvedValue(null);
+
+    await expect(service.startChangePatient('123')).rejects.toThrow(
+      'Resource is already locked',
+    );
+  });
+
+  it('allows only one concurrent lock', async () => {
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    } as any);
+
+    redisClient.set
+      .mockResolvedValueOnce('OK')
+      .mockResolvedValueOnce(null);
+
+    const first = service.startChangePatient('123');
+    const second = service.startChangePatient('123');
+
+    const results = await Promise.allSettled([first, second]);
+
+    expect(results[0].status).toBe('fulfilled');
+    expect(results[1].status).toBe('rejected');
+  });
+
+  it('updates machine when lock is valid', async () => {
+    redisClient.get.mockResolvedValue('token123');
+
+    patientsRepo.findOne.mockResolvedValue({ id: 'p1', name: 'John Doe' } as any);
+
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    } as any);
+
+    machineRepo.save.mockResolvedValue({
+      id: '123',
+      name: 'A',
+      location: 'storage',
       status: MachineStatus.USED,
-      assigned: 'John',
-    },
-  ]);
+      assigned: 'p1',
+    } as any);
 
-  const result = await service.getMachines();
+    actionsRepo.create.mockReturnValue({
+      id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED
+    });
+    actionsRepo.save.mockResolvedValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
 
-  expect(repo.find).toHaveBeenCalled();
-  expect(result.length).toBe(2);
-  expect(result[0].name).toBe('A');
-  expect(result[1].assigned).toBe('John');
-});
+    const result = await service.changePatient('123', 'p1', 'token123');
 
-
-it('should update a machine', async () => {
-  repo.findOne!.mockResolvedValue({
-    id: '1',
-    name: 'A',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: '',
+    expect(result.assigned).toBe('John Doe');
   });
 
-  await service.updateMachine('1', { name: 'New1' });
+  it('converts patient ID to patient name after changePatient', async () => {
+    redisClient.get.mockResolvedValue('token123');
 
-  expect(repo.update).toHaveBeenCalled();
-});
+    patientsRepo.findOne.mockResolvedValue({ id: 'p1', name: 'John Doe' } as any);
 
-it('should return error if machine not found', async () => {
-  repo.findOne!.mockResolvedValue(null);
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
+      name: 'Machine A',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+      assigned: '',
+    } as any);
 
-  const result = await service.updateMachine('2', {
-    name: 'New',
-    location: 'Loc',
+    machineRepo.save.mockResolvedValue({
+      id: '123',
+      name: 'Machine A',
+      location: 'storage',
+      status: MachineStatus.USED,
+      assigned: 'p1',
+    } as any);
+
+    actionsRepo.create.mockReturnValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
+    actionsRepo.save.mockResolvedValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
+
+    const result = await service.changePatient('123', 'p1', 'token123');
+
+    expect(result.assigned).toBe('John Doe');
   });
 
-  expect(result).toBe('machine with this id not found');
-});
+  it('throws if lock not found', async () => {
+    redisClient.get.mockResolvedValue(null);
 
-it('should acquire lock and return lockId + expiration', async () => {
-  redisClient.set.mockResolvedValue('OK');
-  const result = await service.startChangePatient('123');
-  expect(redisClient.set).toHaveBeenCalled();
-  expect(result.lockId).toBeDefined();
-  expect(result.expiration).toBeDefined();
-});
-
-it('should throw if lock already exists', async () => {
-  redisClient.set.mockResolvedValue(null);
-
-  await expect(service.startChangePatient('123')).rejects.toThrow(
-    'Resource is already locked',
-  );
-});
-
-it('should update machine when lock is valid', async () => {
-  redisClient.get.mockResolvedValue('token123');
-  patientsRepo.findOne!.mockResolvedValue({ id: 'John', name: 'John Doe',status:PatientStatus.Stable,city:"New York",registered_at:"12.1.2023"});
-
-  repo.findOne!.mockResolvedValue({
-    id: '123',
-    name: 'A',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: '',
+    await expect(
+      service.changePatient('123', 'p1', 'token123'),
+    ).rejects.toThrow('Lock not found or expired');
   });
 
-  repo.save!.mockResolvedValue({
-    id: '123',
-    name: 'A',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: 'John',
+  it('throws if lock token is invalid', async () => {
+    redisClient.get.mockResolvedValue('wrong');
+
+    await expect(
+      service.changePatient('123', 'p1', 'token123'),
+    ).rejects.toThrow('Invalid lockId');
   });
 
-  const result = await service.changePatient('123', 'John', 'token123');
+  it('throws if patient not found', async () => {
+    redisClient.get.mockResolvedValue('token123');
+    patientsRepo.findOne.mockResolvedValue(null);
 
-  expect(redisClient.get).toHaveBeenCalledWith('locks:machine:123');
-  expect(repo.save).toHaveBeenCalled();
-  expect(redisClient.del).toHaveBeenCalledWith('locks:machine:123');
-  expect(result.assigned).toBe('John');
-});
-
-
-it('should throw if lock not found', async () => {
-  redisClient.get.mockResolvedValue(null);
-
-  await expect(
-    service.changePatient('123', 'John', 'token123'),
-  ).rejects.toThrow('Lock not found or expired');
-});
-
-it('should throw if lock token is invalid', async () => {
-  redisClient.get.mockResolvedValue('wrongToken');
-
-  await expect(
-    service.changePatient('123', 'John', 'token123'),
-  ).rejects.toThrow('Invalid lock token');
-});
-
-it('should delete lock and throw if machine not found', async () => {
-  redisClient.get.mockResolvedValue('token123');
-  patientsRepo.findOne!.mockResolvedValue({ id: 'John', name: 'John Doe',status:PatientStatus.Stable,city:"New York",registered_at:"12.1.2023" });
-  repo.findOne!.mockResolvedValue(null);
-
-  await expect(
-    service.changePatient('123', 'John', 'token123'),
-  ).rejects.toThrow('Machine not found');
-
-  expect(redisClient.del).toHaveBeenCalledWith('locks:machine:123');
-});
-
-it('should allow only one concurrent lock', async () => {
-  redisClient.set.mockResolvedValueOnce('OK').mockResolvedValueOnce(null);
-
-  const first = service.startChangePatient('123');
-  const second = service.startChangePatient('123');
-
-  const results = await Promise.allSettled([first, second]);
-
-  expect(results[0].status).toBe('fulfilled');
-  expect(results[1].status).toBe('rejected');
-});
-
-it('should allow only the correct token to update concurrently', async () => {
-  redisClient.get.mockResolvedValueOnce('tokenA').mockResolvedValueOnce('tokenA');
-  patientsRepo.findOne!.mockResolvedValue({ id: 'John', name: 'John Doe',status:PatientStatus.Stable,city:"New York",registered_at:"12.1.2023"});
-
-  repo.findOne!.mockResolvedValue({
-    id: '123',
-    name: 'A',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: '',
+    await expect(
+      service.changePatient('123', 'p1', 'token123'),
+    ).rejects.toThrow('Patient not found');
   });
 
+  it('throws if machine not found', async () => {
+    redisClient.get.mockResolvedValue('token123');
+    patientsRepo.findOne.mockResolvedValue({ id: 'p1', name: 'John' } as any);
+    machineRepo.findOne.mockResolvedValue(null);
 
-  repo.save!.mockResolvedValue({
-    id: '123',
-    name: 'A',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-    assigned: 'John',
+    await expect(
+      service.changePatient('123', 'p1', 'token123'),
+    ).rejects.toThrow('Machine not found');
+
+    expect(redisClient.del).toHaveBeenCalledWith('locks:machine:123');
   });
 
-  const first = service.changePatient('123', 'John', 'tokenA');
-  const second = service.changePatient('123', 'John', 'tokenB');
+  it('writes two MachineActions when replacing an existing patient', async () => {
+    redisClient.get.mockResolvedValue('token123');
 
-  const results = await Promise.allSettled([first, second]);
+    patientsRepo.findOne.mockResolvedValue({ id: 'new', name: 'New Patient' } as any);
 
-  expect(results[0].status).toBe('fulfilled');
-  expect(results[1].status).toBe('rejected');
-});
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
+      name: 'Machine A',
+      assigned: 'old',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+    } as any);
 
-it('should write a MachineAction when connecting a new patient', async () => {
-  redisClient.get.mockResolvedValue('token123');
-  patientsRepo.findOne!.mockResolvedValue({ id: 'John', name: 'John Doe',status:PatientStatus.Stable,city:"New York",registered_at:"12.1.2023"});
+    machineRepo.save.mockResolvedValue({
+      id: '123',
+      name: 'Machine A',
+      assigned: 'new',
+      location: 'storage',
+      status: MachineStatus.USED,
+    } as any);
 
-  repo.findOne!.mockResolvedValue({
-    id: '123',
-    name: 'Machine A',
-    assigned: '',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
+    actionsRepo.create.mockReturnValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
+    actionsRepo.save.mockResolvedValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
+
+    await service.changePatient('123', 'new', 'token123');
+
+    expect(actionsRepo.save).toHaveBeenCalledTimes(2);
   });
 
-  repo.save!.mockResolvedValue({
-    id: '123',
-    name: 'Machine A',
-    assigned: 'John',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
+  it('writes only one MachineAction when there is no previous patient', async () => {
+    redisClient.get.mockResolvedValue('token123');
+
+    patientsRepo.findOne.mockResolvedValue({ id: 'new', name: 'New Patient' } as any);
+
+    machineRepo.findOne.mockResolvedValue({
+      id: '123',
+      name: 'Machine A',
+      assigned: '',
+      location: 'storage',
+      status: MachineStatus.AVALIBLE,
+    } as any);
+
+    machineRepo.save.mockResolvedValue({
+      id: '123',
+      name: 'Machine A',
+      assigned: 'new',
+      location: 'storage',
+      status: MachineStatus.USED,
+    } as any);
+
+    actionsRepo.create.mockReturnValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
+    actionsRepo.save.mockResolvedValue({id: '1234',
+      machine_id: '12345',
+      patient_id: '123',
+      description: 'vdfjkdnfkbngb',
+      trigerd_at: new Date(),
+      action_type: MachineActionType.CONNECTED});
+
+    await service.changePatient('123', 'new', 'token123');
+
+    expect(actionsRepo.save).toHaveBeenCalledTimes(1);
   });
-
-  actionsRepo.create!.mockReturnValue({id:'actionId', machine_id: '123', patient_id: 'John', description: 'connected patient John to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
-  actionsRepo.save!.mockResolvedValue({id:'actionId', machine_id: '123', patient_id: 'John', description: 'connected patient John to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
-
-  await service.changePatient('123', 'John', 'token123');
-
-  expect(actionsRepo.create).toHaveBeenCalledWith(
-    expect.objectContaining({
-      machine_id: '123',
-      patient_id: 'John',
-      description: expect.stringContaining('connected patient John'),
-    }),
-  );
-
-  expect(actionsRepo.save).toHaveBeenCalledTimes(1);
-});
-
-it('should write two MachineActions when replacing an existing patient', async () => {
-  redisClient.get.mockResolvedValue('token123');
-  patientsRepo.findOne!.mockResolvedValue({ id: 'NewPatient', name: 'New Patient',status:PatientStatus.Stable,city:"New York",registered_at:"12.1.2023" });
-
-  repo.findOne!.mockResolvedValue({
-    id: '123',
-    name: 'Machine A',
-    assigned: 'OldPatient',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-  });
-
-  repo.save!.mockResolvedValue({
-    id: '123',
-    name: 'Machine A',
-    assigned: 'NewPatient',
-    location: 'storage',
-    status: MachineStatus.AVALIBLE,
-  });
-
-  actionsRepo.create!.mockReturnValue({id:'actionId', machine_id: '123', patient_id: 'NewPatient', description: 'connected patient NewPatient to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
-  actionsRepo.save!.mockResolvedValue({id:'actionId', machine_id: '123', patient_id: 'NewPatient', description: 'connected patient NewPatient to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
-
-  await service.changePatient('123', 'NewPatient', 'token123');
-
-  expect(actionsRepo.save).toHaveBeenCalledTimes(2);
-
-  expect(actionsRepo.create).toHaveBeenCalledWith(
-    expect.objectContaining({
-      patient_id: 'NewPatient',
-      description: expect.stringContaining('connected patient NewPatient'),
-    }),
-  );
-
-  expect(actionsRepo.create).toHaveBeenCalledWith(
-    expect.objectContaining({
-      patient_id: 'OldPatient',
-      description: expect.stringContaining('disconnected patient OldPatient'),
-    }),
-  );
-});
-
-it('should NOT write MachineActions if patient not found', async () => {
-  redisClient.get.mockResolvedValue('token123');
-  patientsRepo.findOne!.mockResolvedValue(null);
-
-  await expect(
-    service.changePatient('123', 'John', 'token123'),
-  ).rejects.toThrow('Patient not found');
-
-  expect(actionsRepo.save).not.toHaveBeenCalled();
-});
-
-it('should NOT write MachineActions if machine not found', async () => {
-  redisClient.get.mockResolvedValue('token123');
-  patientsRepo.findOne!.mockResolvedValue({ id: 'John', name: 'John Doe',status:PatientStatus.Stable,city:"New York",registered_at:"12.1.2023" });
-  repo.findOne!.mockResolvedValue(null);
-
-  await expect(
-    service.changePatient('123', 'John', 'token123'),
-  ).rejects.toThrow('Machine not found');
-
-  expect(actionsRepo.save).not.toHaveBeenCalled();
-});
-
-

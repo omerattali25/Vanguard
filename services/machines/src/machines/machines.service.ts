@@ -15,6 +15,9 @@ import { MachineAction, MachineActionType } from './entity/machine.action.entity
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
 import { log } from 'console';
+import { MachineOutputDto } from './dto/machine.output.dto';
+import { threadId } from 'worker_threads';
+import { machine } from 'os';
 
 @Injectable()
 export class MachinesService {
@@ -30,19 +33,39 @@ export class MachinesService {
 
   private logger = new Logger(MachinesService.name);
 
-  async getMachines(): Promise<Machine[]> {
-    this.logger.log(`sent all the machines`)
-    return await this.machineRepo.find();
+  async getMachines(): Promise<MachineOutputDto[]> {
+    try{
+    const machines=await this.machineRepo.find();
+    this.logger.log(`got all the machines from db`)
+    let outputMachines:MachineOutputDto[]=[]
+    for(const machine of machines){
+      outputMachines.push(await this.convertPatientIdToName(machine));
+    }
+    this.logger.log(`converted all the patient ids to names`)
+   return outputMachines;
+    }
+    catch(err)
+    {
+      throw err;
+    }
   }
   async saveMachine(machineInput: MachineInputDto): Promise<Machine> {
+    try{
     const newMachine = this.machineRepo.create(machineInput);
     const savedMachine = await this.machineRepo.save(newMachine);
     this.logger.log(`saved the machine ${savedMachine} to the db`)
-    this.redisClient.publish('machines', JSON.stringify(savedMachine));
+    const outputMachine=await this.convertPatientIdToName(savedMachine)
+    this.logger.log(`converted patient id to name`)
+    this.redisClient.publish('machines', JSON.stringify(outputMachine));
     this.logger.log(`published ${savedMachine}`)
     return savedMachine;
+    }
+    catch(err){
+      throw err
+    }
   }
   async updateMachine(id: string, machineUpdateDto: MachineUpdateDto) {
+    try{
     const machine = await this.machineRepo.findOne({
       where: { id:id },
     });
@@ -57,8 +80,14 @@ export class MachinesService {
     this.redisClient.publish('machines', JSON.stringify(machine));
     this.logger.log(`published ${machine}`)
   }
+  catch(err)
+  {
+    throw err
+  }
+  }
 
   async startChangePatient(machineId: string) {
+    try{
     const machine = await this.machineRepo.findOne({
       where: { id: machineId },
     });
@@ -86,12 +115,18 @@ export class MachinesService {
     machine.status = MachineStatus.IN_TRANSFER;
     await this.machineRepo.save(machine);
     this.logger.log(`changed machine status to in trasport in machine ${machineId}`)
-    this.redisClient.publish('machines', JSON.stringify(machine));
-    this.logger.log(`published machine ${machine}`)
+    const outputMachine=await this.convertPatientIdToName(machine)
+    this.logger.log(`converted patient id to name`)
+    this.redisClient.publish('machines', JSON.stringify(outputMachine));
+    this.logger.log(`published machine ${outputMachine}`)
     return {
       lockId: lockId,
       expiration: ttl,
     };
+  }
+  catch(err){
+    throw err
+  }
   }
 
   async changePatient(machineId: string, patient: string, lockId: string) {
@@ -125,6 +160,10 @@ export class MachinesService {
       machine.status = MachineStatus.USED;
       await this.machineRepo.save(machine);
       this.logger.log(`updated machine ${machine}`)
+      const outputMachine=await this.convertPatientIdToName(machine)
+      this.logger.log(`converted patient id to name: ${outputMachine.assigned}`)
+      this.redisClient.publish('machines', JSON.stringify(outputMachine));
+      this.logger.log(`published machine ${outputMachine}`)
       let machineActionDTO = new MachineActionDto(
         machineId,
         patient,
@@ -144,16 +183,26 @@ export class MachinesService {
         machineAction = this.machineActionRepo.create(machineActionDTO);
         await this.machineActionRepo.save(machineAction);
         this.logger.log(`saved machineAction:${machineAction} to db`)
-        this.redisClient.publish('machines', JSON.stringify(machine));
-        this.logger.log(`published machine action:${machineAction}`)
       }
       await this.redisClient.del(`locks:machine:${machineId}`);
       this.logger.log(`released locks:machine:${machineId}`)
-      return machine;
+      return outputMachine;
     } catch (err) {
       await this.redisClient.del(`locks:machine:${machineId}`);
       this.logger.log(`released locks:machine:${machineId}`)
       throw err;
     }
   }
+  async convertPatientIdToName(machine:Machine):Promise<MachineOutputDto>{
+    if(machine.assigned!=''){
+    const patient=await this.patientRepo.findOne({where:{id:machine.assigned}})
+    if(patient){
+      return new MachineOutputDto(machine.name,machine.id,machine.location,machine.status,patient.name)
+    }
+    this.logger.log(`patient:${machine.assigned} wasnt found`)
+    throw new NotFoundException(`patient:${machine.assigned} wasnt found`)
+  
+  }
+  return machine;
+}
 }

@@ -23,6 +23,7 @@ export class MachinesController {
     @Param('id') machineId: string,
     @Payload() changePatientDto: MachineChangePatientDto,
   ) {
+    console.log(changePatientDto.lockID)
     return await this.machinesService.changePatient(
       machineId,
       changePatientDto.patient,
