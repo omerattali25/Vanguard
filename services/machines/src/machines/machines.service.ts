@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
 import { randomUUID } from 'crypto';
-import { MachineAction } from './entity/machine.action.entity';
+import { MachineAction, MachineActionType } from './entity/machine.action.entity';
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
 
@@ -106,6 +106,7 @@ export class MachinesService {
         machineId,
         patient,
         `connected patient ${patient} to machine ${machine.name}`,
+        MachineActionType.CONNECTED
       );
       let machineAction = this.machineActionRepo.create(machineActionDTO);
       await this.machineActionRepo.save(machineAction);
@@ -114,6 +115,7 @@ export class MachinesService {
           machineId,
           ogPatient,
           `disconnected patient ${ogPatient} from machine ${machine.name}`,
+          MachineActionType.DISSCONNECET
         );
         machineAction = this.machineActionRepo.create(machineActionDTO);
         await this.machineActionRepo.save(machineAction);

@@ -3,7 +3,7 @@ import { MachinesService } from './machines.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Machine, MachineStatus } from './entity/machine.entity';
 import { Repository } from 'typeorm';
-import { MachineAction } from './entity/machine.action.entity';
+import { MachineAction, MachineActionType } from './entity/machine.action.entity';
 import {Patient} from '@vanguard/types';
 import {PatientStatus} from '@vanguard/types'
 
@@ -287,8 +287,8 @@ it('should write a MachineAction when connecting a new patient', async () => {
     status: MachineStatus.AVALIBLE,
   });
 
-  actionsRepo.create!.mockReturnValue({id:'actionId', machine_id: '123', patient_id: 'John', description: 'connected patient John to machine Machine A', trigerd_at: new Date() });
-  actionsRepo.save!.mockResolvedValue({id:'actionId', machine_id: '123', patient_id: 'John', description: 'connected patient John to machine Machine A', trigerd_at: new Date() });
+  actionsRepo.create!.mockReturnValue({id:'actionId', machine_id: '123', patient_id: 'John', description: 'connected patient John to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
+  actionsRepo.save!.mockResolvedValue({id:'actionId', machine_id: '123', patient_id: 'John', description: 'connected patient John to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
 
   await service.changePatient('123', 'John', 'token123');
 
@@ -323,8 +323,8 @@ it('should write two MachineActions when replacing an existing patient', async (
     status: MachineStatus.AVALIBLE,
   });
 
-  actionsRepo.create!.mockReturnValue({id:'actionId', machine_id: '123', patient_id: 'NewPatient', description: 'connected patient NewPatient to machine Machine A', trigerd_at: new Date() });
-  actionsRepo.save!.mockResolvedValue({id:'actionId', machine_id: '123', patient_id: 'NewPatient', description: 'connected patient NewPatient to machine Machine A', trigerd_at: new Date() });
+  actionsRepo.create!.mockReturnValue({id:'actionId', machine_id: '123', patient_id: 'NewPatient', description: 'connected patient NewPatient to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
+  actionsRepo.save!.mockResolvedValue({id:'actionId', machine_id: '123', patient_id: 'NewPatient', description: 'connected patient NewPatient to machine Machine A', trigerd_at: new Date(),action_type:MachineActionType.CONNECTED });
 
   await service.changePatient('123', 'NewPatient', 'token123');
 
