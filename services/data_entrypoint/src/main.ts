@@ -3,9 +3,33 @@ import { NestApplication, NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DataEntrypointModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import * as winston from 'winston';
+import 'winston-daily-rotate-file';
+import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestApplication>(DataEntrypointModule);
+  const app = await NestFactory.create<NestApplication>(DataEntrypointModule, {
+    logger: WinstonModule.createLogger({
+      transports: [
+        new winston.transports.Console(),
+
+        new winston.transports.DailyRotateFile({
+          filename: 'logs/application-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: false,
+          maxSize: '20m',
+          maxFiles: '14d',
+          level: 'app',
+        }),
+
+        new winston.transports.DailyRotateFile({
+          filename: 'logs/error-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          level: 'error',
+        }),
+      ],
+    }),
+  });
 
   const configService = app.get(ConfigService);
 
