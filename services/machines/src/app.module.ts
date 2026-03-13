@@ -5,7 +5,6 @@ import { MachinesModule } from './machines/machines.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from './redis/redis.module';
-import { LoggrModule } from './loggr/loggr.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { LoggrModule } from './loggr/loggr.module';
     }),
     MachinesModule,
     RedisModule,
-    LoggrModule
 
   ],
 })
