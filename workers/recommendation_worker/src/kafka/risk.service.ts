@@ -25,6 +25,9 @@ export class RiskService {
 
   handleVitals(vitals: Vital) {
     const risk = this.calculateRisk(vitals);
+    if (risk < 0) {
+      console.log(vitals);
+    }
     this.redis.zadd('riskIndex', risk, vitals.patient_id);
   }
 }
