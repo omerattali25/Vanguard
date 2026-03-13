@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegularVitalsBoundries } from '@vanguard/types';
 import { Alert, PatientVitalField } from '@vanguard/types';
@@ -16,7 +16,7 @@ const DESCRIPTION_ON_OUT_OF_BOUNDS = "vital field out of healthy bounds";
 @Injectable()
 export class AlertsService {
     private readonly redis: Redis
-
+    private logger = new Logger(AlertsService.name);
     constructor(
         @InjectRepository(Alert)
         private alertRepo: Repository<Alert>,
@@ -51,6 +51,7 @@ export class AlertsService {
         const hasViolation = !isInBounds || await this.averageVitalService.isVitalOutOfAverage(vitals, vitalField);
 
         if (!hasViolation) {
+            this.logger.debug(`No violation for patient ${vitals.patientId} on vital field ${vitalField}. Value: ${value}`);
             if (lastAlert && lastAlertEndedAt === "ACTIVE") {
                 await this.closeActiveAlert(vitals, vitalField, lastAlertId, redisKey)
             }
@@ -78,10 +79,12 @@ export class AlertsService {
         const savedAlert = await this.alertRepo.save(newAlert);
 
         await this.redis.hset(redisKey, violation, `ACTIVE:${savedAlert.id}`);
+        this.logger.debug(`Created new alert with ID ${savedAlert.id} for patient ${vitals.patientId} on vital field ${violation}. Value: ${vitals[violation]}`);
         return savedAlert;
     }
     private async closeActiveAlert(vitals: PatientVitals, vitalField: PatientVitalField, alertId: string, redisKey: string) {
         await this.redis.hset(redisKey, vitalField, vitals.timestamp);
         await this.alertRepo.update(alertId, { ended_at: vitals.timestamp })
+        this.logger.debug(`Closed alert with ID ${alertId} for patient ${vitals.patientId} on vital field ${vitalField}. Value: ${vitals[vitalField]}`);
     }
 }
