@@ -23,7 +23,7 @@ async function bootstrap() {
   app.useGlobalPipes(pipe);
   microservice.useGlobalPipes(pipe);
 
-  await app.startAllMicroservices();
+  app.startAllMicroservices();
   await app.listen(process.env.PORT || 3001);
 }
 bootstrap();
