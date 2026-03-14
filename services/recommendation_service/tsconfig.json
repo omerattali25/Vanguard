@@ -12,10 +12,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-<<<<<<< HEAD
     "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
-=======
->>>>>>> 9c02c84b48b268ae69b872f37187bcbcffcb7f5f
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
