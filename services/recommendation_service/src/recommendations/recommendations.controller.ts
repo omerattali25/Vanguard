@@ -8,8 +8,6 @@ export class RecommendationsController {
   ) {}
   @Get()
   async getRecommendations() {
-    let data = await this.recommendationsService.getTopRecommendations();
-
-    return data;
+    return await this.recommendationsService.getTopRecommendations();
   }
 }
