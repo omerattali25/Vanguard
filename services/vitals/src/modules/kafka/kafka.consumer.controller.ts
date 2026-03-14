@@ -1,7 +1,7 @@
 import { Controller } from "@nestjs/common";
 import { EventPattern, Payload } from "@nestjs/microservices";
 import { IngestionService } from "../ingestion/ingestion.service";
-import { VitalEntity } from "@vanguard/types";
+import { PatientVitals } from "@vanguard/types"
 
 @Controller('kafka')
 export class KafkaConsumerController {
@@ -9,10 +9,9 @@ export class KafkaConsumerController {
 
 
   @EventPattern('updated_vitals')
-  async handlePatientVitalConsume(@Payload() payload: VitalEntity) {
-    //@ts-ignore
-    console.log('Payload:', payload.data);
-    //@ts-ignore
-    return this.ingestionService.create(payload.data);
+  async handlePatientVitalConsume(@Payload() payload: PatientVitals) {
+
+
+    return this.ingestionService.create(payload);
   }
 }

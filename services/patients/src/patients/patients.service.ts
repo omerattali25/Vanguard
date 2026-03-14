@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Patient, PatientDetails } from '@vanguard/types';
+import { Patient, PatientDetails, PatientStatus } from '@vanguard/types';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class PatientsService {
     }
 
     async createPatient(patient: PatientDetails): Promise<Patient> {
-        const newPatient = this.patientRepo.create(patient);
+        const newPatient = this.patientRepo.create({ ...patient, status: PatientStatus.Stable });
         return await this.patientRepo.save(newPatient);
     }
 

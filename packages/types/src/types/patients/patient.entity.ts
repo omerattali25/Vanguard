@@ -18,7 +18,7 @@ export class Patient {
     city: string;
 
     @Column({ type: 'enum', enum: PatientStatus })
-    status: string;
+    status: PatientStatus;
 
     @CreateDateColumn()
     registered_at: string;
