@@ -1,4 +1,5 @@
 import { Machine } from "@/types/machine";
+import { notifyManager } from "@tanstack/react-query";
 import axios from "axios";
 
 export async function getMachines(): Promise<Machine[]> {
@@ -23,4 +24,8 @@ export interface ChangePatientResponse {
     lockId : string;
     expiration:number;
 
+}
+export const updateMachine=async (machineId:string, location?:string,name?:string)=>{
+    const response=await axios.put(`/machines/${machineId}`,{location:location,name:name})
+    return response.data
 }
