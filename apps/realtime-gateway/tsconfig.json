@@ -16,6 +16,11 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
+"tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
+
+
+
+
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
-import { Machine } from 'src/entities/machine.entity';
+import { Machine } from '@vanguard/types';
 import { IsNull, Not, Repository } from 'typeorm';
 @Injectable()
 export class RecommendationsService {

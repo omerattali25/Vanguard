@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { ConfigModule } from '@nestjs/config';
-import { Machine } from './entities/machine.entity';
+import { Machine } from '@vanguard/types';
 
 @Module({
   imports: [
