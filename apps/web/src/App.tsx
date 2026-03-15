@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import PatientAnalytics from "./pages/analitycs/PatientAnalytics";
 import MachinesAnalytics from "./pages/analitycs/MachinesAnalyticsPage";
+import AlertsToaster from "./components/atoms/alerts/alert-toaster";
 
 function App() {
   const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ function App() {
             <Route path="/analytics/machines" element={<MachinesAnalytics />} />
             <Route path="/patients/:id" element={<PatientVitals />} />
           </Routes>
+          <AlertsToaster />
         </SidebarProvider>
         <Toaster position="bottom-right" richColors closeButton theme='system' visibleToasts={5} />
         <footer className="bg-gray-900 text-white py-12 px-6">

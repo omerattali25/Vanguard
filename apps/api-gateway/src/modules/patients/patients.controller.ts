@@ -7,6 +7,7 @@ export class PatientsController {
 
   @Get()
   getPatients() {
+    console.log('Received request to get all patients');
     return this.patientsService.getPatients();
   }
 

@@ -13,8 +13,8 @@ const PatientVitalsCard = ({ patientVitals }: PatientVitalsCardProps) => {
             </p>
 
             <p className="text-xs text-center text-muted-foreground">
-                {patientVitals ? new Date(patientVitals.timestamp).toDateString() : ""}{" "}
-                {patientVitals ? new Date(patientVitals.timestamp).toLocaleTimeString() : ""}
+                {patientVitals ? new Date(patientVitals.created_at).toDateString() : ""}{" "}
+                {patientVitals ? new Date(patientVitals.created_at).toLocaleTimeString() : ""}
             </p>
 
             <div className="grid grid-cols-2 gap-2 text-center">
