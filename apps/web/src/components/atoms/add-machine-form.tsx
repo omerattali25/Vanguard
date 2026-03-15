@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export const AddMachineForm: React.FC = () => {
+  const [machineName, setMachineName] = useState("");
   return (
     <>
       <Popover>
@@ -22,10 +24,17 @@ export const AddMachineForm: React.FC = () => {
           </PopoverHeader>
           <FieldGroup>
             <Field orientation="horizontal">
-              <Input id="name" placeholder="שם" />
+              <Input id="name" placeholder="שם"  onChange={(e) => setMachineName(e.target.value)} />
             </Field>
           </FieldGroup>
-          <Button variant="outline" className="mt-5">
+          <Button variant="outline" className="mt-5" onClick={()=>{
+            if(machineName){
+              console.log("adding machine with name ", machineName)
+            }
+            else{
+              alert("אנא הזן שם מכונה")
+            }
+          }}>
             הוסף
           </Button>
         </PopoverContent>
