@@ -25,6 +25,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@vanguard/types": "workspace:*",
+    "@vanguard/configurations": "workspace:*",
     "@nestjs/microservices": "^11.1.16",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",

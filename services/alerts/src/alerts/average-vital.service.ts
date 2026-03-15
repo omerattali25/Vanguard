@@ -1,5 +1,5 @@
 import { RedisService } from "@liaoliaots/nestjs-redis";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
 import { PatientVitalField, PatientVitals, Timeframe, TIMEFRAMES, TTL_DAYS } from "@vanguard/types";
@@ -8,7 +8,7 @@ import { PatientVitalField, PatientVitals, Timeframe, TIMEFRAMES, TTL_DAYS } fro
 @Injectable()
 export class AverageVitalService {
     private readonly redis: Redis
-
+    private readonly logger = new Logger(AverageVitalService.name);
     constructor(
         private readonly redisService: RedisService,
         private readonly configService: ConfigService

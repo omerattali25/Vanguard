@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { VitalsInput } from './inputs/vitals.input';
 import { Vitals } from './outputs/vitals.output';
 import { randomUUID } from 'crypto';
@@ -11,11 +11,15 @@ export class TransformerService {
     @Inject('KAFKA_PRODUCER') private readonly kafkaClient: ClientKafka,
   ) { }
 
+  private logger = new Logger(TransformerService.name);
+  
   async onModuleInit() {
     await this.kafkaClient.connect();
+    this.logger.log('Kafka producer connected');
   }
 
   private changeInvalidValuesToMinusOne(vitals: Vitals) {
+    this.logger.debug('Checking for invalid vital values');
     Object.keys(vitals).forEach((key) => {
       if (typeof vitals[key] === 'number' && vitals[key] < 0) {
         vitals[key] = -1;
@@ -25,8 +29,8 @@ export class TransformerService {
 
   handleVitals(message: VitalsInput) {
     if (message.patient_id === undefined) {
+      this.logger.warn('Invalid patient ID provided');
       return;
-      //log
     }
 
     const vitalsToReturn: Vitals = {
@@ -37,6 +41,7 @@ export class TransformerService {
       id: randomUUID(),
     };
 
+    this.logger.debug(`Transformed vitals for patient ID ${vitalsToReturn.patient_id}: ${JSON.stringify(vitalsToReturn)}`);
     this.changeInvalidValuesToMinusOne(vitalsToReturn);
     this.kafkaClient.emit(process.env.CREATE_TOPIC ?? '', vitalsToReturn);
   }
