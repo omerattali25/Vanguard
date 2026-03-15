@@ -1,9 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { IngestionService } from './ingestion.service';
+import { VitalEntity } from '@vanguard/types';
 
 @Controller('vitals')
 export class IngestionController {
-  constructor(private readonly ingestionService: IngestionService) { }
+  constructor(private readonly ingestionService: IngestionService)
+  {}
 
   @Get()
   getVitals() {
@@ -16,11 +18,17 @@ export class IngestionController {
   }
 
   @Get(':patientId')
-  getVitalByPatientId(
+  async getVitalByPatientId(
     @Param('patientId') patientId: string,
     @Query('limit') limit: number = 100
-  ) {
-    return this.ingestionService.getVitalByPatientId(patientId, limit);
+  ): Promise<VitalEntity[]> {
+    return await this.ingestionService.getVitalByPatientId(patientId, limit);
   }
+
+  @Post(':patientId/exit')
+  async exitVitalByPatientId(@Param('patientId') patientId: string) {
+    await this.ingestionService.exitVitalByPatientId(patientId);
+  }
+
 }
 

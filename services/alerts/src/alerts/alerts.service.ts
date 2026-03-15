@@ -78,6 +78,8 @@ export class AlertsService {
         const savedAlert = await this.alertRepo.save(newAlert);
 
         await this.redis.hset(redisKey, violation, `ACTIVE:${savedAlert.id}`);
+
+        await this.redis.publish(`alerts`, JSON.stringify(savedAlert));
         return savedAlert;
     }
     private async closeActiveAlert(vitals: PatientVitals, vitalField: PatientVitalField, alertId: string, redisKey: string) {

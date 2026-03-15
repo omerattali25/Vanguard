@@ -1,14 +1,23 @@
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient, PatientDetails } from '@vanguard/types';
 import { Repository } from 'typeorm';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class PatientsService {
+    private readonly redis: Redis
     constructor(
         @InjectRepository(Patient)
         private patientRepo: Repository<Patient>,
-    ) {}
+        private readonly redisService: RedisService,
+        private readonly configService: ConfigService,
+    ) {
+        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
+        this.redis = this.redisService.getOrThrow(namespace);
+    }
 
     async getPatientById(patient_id: string): Promise<Patient> {
         const patient = await this.patientRepo.findOne({ where: { id: patient_id } });
@@ -24,6 +33,7 @@ export class PatientsService {
 
     async createPatient(patient: PatientDetails): Promise<Patient> {
         const newPatient = this.patientRepo.create(patient);
+        await this.redis.publish(`patients`, JSON.stringify(newPatient));
         return await this.patientRepo.save(newPatient);
     }
 

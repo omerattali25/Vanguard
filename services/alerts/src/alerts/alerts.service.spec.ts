@@ -2,12 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AlertsService } from './alerts.service';
 import { Repository } from 'typeorm';
-import { RegularVitalsBoundries } from '../../../../packages/types/src/types/alerts/regular-vitals.config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import { AverageVitalService } from './average-vital.service';
-import { Alert, PatientVitalField, PatientVitals } from '@vanguard/types';
+import { Alert, PatientVitalField, PatientVitals, RegularVitalsBoundries } from '@vanguard/types';
 
 describe('AlertsService', () => {
   let service: AlertsService;
