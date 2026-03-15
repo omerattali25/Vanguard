@@ -9,3 +9,4 @@ export function useMachines() {
 
     return { data, isPending, error };
 }
+

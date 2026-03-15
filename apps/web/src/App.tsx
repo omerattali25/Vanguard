@@ -29,7 +29,7 @@ function App() {
             <Route path="/analytics/patients/:id" element={<PatientAnalyticsPage />} />
             <Route path="/analytics/machines" element={<MachinesAnalyticsPage />} />
             <Route path="/patients/:id" element={<PatientVitals />} />
-            <Route path="/machines" element={<MachinesPage machines={[]}/>}/>
+            <Route path="/machines" element={<MachinesPage/>}/>
           </Routes>
         </SidebarProvider>
         <Toaster position="bottom-right" richColors closeButton theme='system' visibleToasts={5} />

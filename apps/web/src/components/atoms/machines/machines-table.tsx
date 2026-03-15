@@ -22,6 +22,7 @@ interface MachinesTableProps {
 export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
   const [updatedName,setUpdatedName]=useState("")
   const [updated,setUpdatedLocatin]=useState("")
+
   return (
     <>
       <Table  className="w-full md:w-1/2 mt-10 border mx-auto">
@@ -44,7 +45,7 @@ export const MachinesTable: React.FC<MachinesTableProps> = (props) => {
                 <TableCell className="text-center">{machine.id}</TableCell>
                 <TableCell className="text-center"><Input value={machine.name} onChange={(e)=>{setUpdatedName(e.currentTarget.value)}}></Input></TableCell>
                 <TableCell className="text-center" >{machine.assinged}</TableCell>
-                <TableCell className="text-center" ><Input value={machine.location } onChange={(e)=>{setUpdatedName(e.currentTarget.value)}}></Input></TableCell>
+                <TableCell className="text-center" ><Input value={machine.location } onChange={(e)=>{setUpdatedLocatin(e.currentTarget.value)}}></Input></TableCell>
                 <TableCell className="text-center" ><MachineStatusBadge status={machine.status}/></TableCell>
                 <TableCell className="text-center" ><ChangePatientPopover machine={machine} patients={[]}/></TableCell>
                 <TableCell className="text-center" ><Button onClick={()=>{
