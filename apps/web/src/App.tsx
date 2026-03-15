@@ -3,77 +3,42 @@ import Home from "./pages/Home";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import AppSidebar from "./components/atoms/menu/app-sidebar";
 import Patients from "./pages/Patients";
-import { PatientStatus } from "../types/patinet_status";
-import { Patient } from "../types/patient";
-import { MachinesPage } from "./pages/Machines";
-import { MachineStatus } from "./types/machine-status";
-import PatientVitals from './pages/PatientVitals';
-
+import PatientVitals from "./pages/PatientVitals";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
+import PatientAnalyticsPage from "./pages/analitycs/PatientAnalytics";
+import MachinesAnalyticsPage from "./pages/analitycs/MachinesAnalyticsPage";
+import {MachinesPage} from './pages/Machines'
 
 
 
 function App() {
+  const queryClient = new QueryClient();
 
-  const mockPatients: Patient[] = [
-    {
-      id: "1",
-      name: "פלוני אלמוני",
-      city: "תל אביב",
-      status: PatientStatus.Stable,
-      registred_at: new Date("2025-01-10"),
-    },
-    {
-      id: "2",
-      name: "דוד כהן",
-      city: "חיפה",
-      status: PatientStatus.Unstable,
-      registred_at: new Date("2025-02-03"),
-    },
-    {
-      id: "3",
-      name: "שרה לוי",
-      city: "ירושלים",
-      status: PatientStatus.Critical,
-      registred_at: new Date("2025-02-15"),
-    },
-    {
-      id: "4",
-      name: "משה ישראלי",
-      city: "באר שבע",
-      status: PatientStatus.Stable,
-      registred_at: new Date("2025-03-01"),
-    },
-    {
-      id: "5",
-      name: "רונית פרץ",
-      city: "נתניה",
-      status: PatientStatus.Unstable,
-      registred_at: new Date("2025-03-05"),
-    },
-  ]
   return (
     <>
-      <SidebarProvider defaultOpen={false}>
+      <QueryClientProvider client={queryClient}>
+        <SidebarProvider defaultOpen={false}>
+          <AppSidebar />
 
-        <AppSidebar>
+          <SidebarTrigger></SidebarTrigger>
 
-        </AppSidebar>
-        <SidebarTrigger>
-        </SidebarTrigger>
-
-
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/patients" element={<Patients patients={mockPatients} />} />
-          <Route path="/patients/:id" element={<PatientVitals />} />
-                    <Route path="/machines" element={<MachinesPage machines={[{id:"1234",name:"פלג",assinged:"123455",location:"home",status:MachineStatus.AVELIABLE}]}/>}/>
-        </Routes>
-      </SidebarProvider>
-      <footer className="bg-gray-900 text-white py-12 px-6">
-        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p>&copy; MoReDis.</p>
-        </div>
-      </footer>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/patients" element={<Patients />} />
+            <Route path="/analytics/patients/:id" element={<PatientAnalyticsPage />} />
+            <Route path="/analytics/machines" element={<MachinesAnalyticsPage />} />
+            <Route path="/patients/:id" element={<PatientVitals />} />
+            <Route path="/machines" element={<MachinesPage machines={[]}/>}/>
+          </Routes>
+        </SidebarProvider>
+        <Toaster position="bottom-right" richColors closeButton theme='system' visibleToasts={5} />
+        <footer className="bg-gray-900 text-white py-12 px-6">
+          <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p>&copy; MoReDis.</p>
+          </div>
+        </footer>
+      </QueryClientProvider>
     </>
   );
 }

@@ -1,35 +1,45 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { MachinesService } from './machines.service';
-import { CreateMachineDto } from './dto/create-machine.dto';
-import { UpdateMachineDto } from './dto/update-machine.dto';
+import { Payload } from '@nestjs/microservices';
+import { MachineChangePatientDto } from './dto/machine.change.patient.dto';
 
-@Controller()
+@Controller('machines')
 export class MachinesController {
   constructor(private readonly machinesService: MachinesService) {}
 
-  @MessagePattern('createMachine')
-  create(@Payload() createMachineDto: CreateMachineDto) {
-    return this.machinesService.create(createMachineDto);
+  @Get()
+  async getMachines() {
+    return await this.machinesService.getMachines();
   }
 
-  @MessagePattern('findAllMachines')
-  findAll() {
-    return this.machinesService.findAll();
+  @Post('change-patient/:id')
+  async startChangePatient(@Param('id') machine: string) {
+    return await this.machinesService.startChangePatient(machine);
   }
 
-  @MessagePattern('findOneMachine')
-  findOne(@Payload() id: number) {
-    return this.machinesService.findOne(id);
+  @Put('change-patient/:id')
+  async changePatient(
+    @Param('id') machineId: string,
+    @Payload() changePatientDto: MachineChangePatientDto,
+  ) {
+    return await this.machinesService.changePatient(
+      machineId,
+      changePatientDto.patient,
+      changePatientDto.lockID,
+    );
   }
-
-  @MessagePattern('updateMachine')
-  update(@Payload() updateMachineDto: UpdateMachineDto) {
-    return this.machinesService.update(updateMachineDto.id, updateMachineDto);
+  @Post()
+  async saveMachine(@Payload() machineInputDto) {
+    return await this.machinesService.saveMachine(machineInputDto);
   }
-
-  @MessagePattern('removeMachine')
-  remove(@Payload() id: number) {
-    return this.machinesService.remove(id);
+  @Put(':id')
+  async updateMachine(
+    @Param('id') machineId: string,
+    @Payload() machineUpdateDto: any,
+  ) {
+    return await this.machinesService.updateMachine(
+      machineId,
+      machineUpdateDto,
+    );
   }
 }

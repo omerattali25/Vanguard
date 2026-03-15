@@ -2,10 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggerConfig } from '@vanguard/configurations';
 
 async function bootstrap() {
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    logger: LoggerConfig,
+  });
+
+  app.enableCors({ origin: 'localhost:3000' });
+
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
@@ -25,7 +32,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  
+
   app.startAllMicroservices();
   await app.listen(process.env.PATIENTS_SERVICE_PORT || 3002);
 }
