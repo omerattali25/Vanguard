@@ -2,7 +2,6 @@ import { Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { MachinesService } from './machines.service';
 import { Payload } from '@nestjs/microservices';
 import { MachineChangePatientDto } from './dto/machine.change.patient.dto';
-import { cwd } from 'process';
 
 @Controller('machines')
 export class MachinesController {

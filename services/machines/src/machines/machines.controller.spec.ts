@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MachinesController } from './machines.controller';
 import { MachinesService } from './machines.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Machine } from './entity/machine.entity';
+import { Machine } from '@vanguard/types';
 
 describe('MachinesController', () => {
   let controller: MachinesController;

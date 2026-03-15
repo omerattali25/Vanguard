@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Machine, MachineStatus } from './entity/machine.entity';
+import { Machine, MachineStatus } from '@vanguard/types';
 import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
@@ -18,6 +18,7 @@ import {
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
 import { MachineOutputDto } from './dto/machine.output.dto';
+
 
 @Injectable()
 export class MachinesService {

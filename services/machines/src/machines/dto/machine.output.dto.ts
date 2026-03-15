@@ -1,5 +1,5 @@
 import { IsString } from 'class-validator';
-import { MachineStatus } from '../entity/machine.entity';
+import { MachineStatus } from '@vanguard/types';
 
 export class MachineOutputDto {
   name: string;

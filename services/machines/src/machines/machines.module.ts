@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MachinesService } from './machines.service';
 import { MachinesController } from './machines.controller';
-import { Machine } from './entity/machine.entity';
+import { Machine } from '@vanguard/types';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from 'src/redis/redis.module';
 import { MachineAction } from './entity/machine.action.entity';
