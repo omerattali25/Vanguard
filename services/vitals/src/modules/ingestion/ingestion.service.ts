@@ -2,9 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PatientVitals, VitalEntity } from '@vanguard/types';
 import { Repository } from 'typeorm';
+import { PagesStateService } from '../pages-state/pages-state.service';
 
 @Injectable()
 export class IngestionService {
+<<<<<<< HEAD
   private batchBuffer: any[] = [];
   private readonly BATCH_THRESHOLD = 500;
 
@@ -17,6 +19,15 @@ export class IngestionService {
     if (this.batchBuffer.length >= this.BATCH_THRESHOLD) {
       await this.flushBatch();
     }
+=======
+  constructor(@InjectRepository(VitalEntity) private vitalRepository: Repository<VitalEntity>,
+  private readonly pagesStateService: PagesStateService) { }
+
+  async create(payload: VitalEntity): Promise<VitalEntity> {
+    const vital = this.vitalRepository.create(payload);
+    this.pagesStateService.sendToRedisTopic(vital);
+    return await this.vitalRepository.save(vital);
+>>>>>>> bcdcd135aa9a344e5820bc58e0e075edc9dea84e
   }
 
   private async flushBatch() {
@@ -34,7 +45,7 @@ export class IngestionService {
 
 
   async getVitals(): Promise<VitalEntity[]> {
-    return this.vitalRepository.find();
+    return await this.vitalRepository.find();
   }
 
   async getVitalById(id: string): Promise<VitalEntity | null> {
@@ -47,7 +58,8 @@ export class IngestionService {
   }
 
   async getVitalByPatientId(patientId: string, limit: number = 100): Promise<VitalEntity[]> {
-    return this.vitalRepository.find({
+    await this.pagesStateService.increment(patientId);
+    return await this.vitalRepository.find({
       where: {
         patient_id: patientId
       },
@@ -56,5 +68,8 @@ export class IngestionService {
       },
       take: limit
     })
+  }
+  async exitVitalByPatientId(patientId: string): Promise<void> {
+    await this.pagesStateService.decrement(patientId);
   }
 }
