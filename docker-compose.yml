@@ -50,6 +50,19 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: vanguard-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
 
   # vitals:
   #   build:
@@ -91,4 +104,5 @@ services:
   #     VITALS_SERVICE_URL: vitals:3003
 
 volumes:
-  postgres_data:
+  postgres_data:  
+  redis_data:
