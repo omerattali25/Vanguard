@@ -1,0 +1,25 @@
+  import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+    export enum MachineActionType {
+    CONNECTED = 'connected',
+    DISCONNECTED = 'disconnected',
+  }
+  @Entity()
+  export class MachineAction {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+    @Column({ default: '' })
+    machine_id: string;
+    @Column({ default: '' })
+    patient_id: string;
+    @Column({ default: '' })
+    description: string
+    @CreateDateColumn()
+    trigerd_at: Date;
+    @Column({
+      type: 'enum',
+      enum: MachineActionType,
+      default:MachineActionType.CONNECTED
+    }
+    )
+    action_type:MachineActionType
+  }
