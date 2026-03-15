@@ -12,7 +12,7 @@ export const usePatients = () => {
 
 export const usePatient = (id : string) => {
     const { data, isPending, error } = useQuery({
-        queryKey: ['patient', id],
+        queryKey: ['patients', id],
         queryFn: () => getPatientById(id),
     });
     return { data, isPending, error };

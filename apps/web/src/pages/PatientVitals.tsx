@@ -3,16 +3,44 @@ import { useParams } from "react-router-dom";
 import PatientCard from "@/components/atoms/patients/patient-card";
 import { usePatient } from "api/patients/patient.query";
 import { usePatientVitals } from "api/vitals/vitals.query";
+import { io } from "socket.io-client";
+import { useEffect, useState } from "react";
+import { Vital } from "types/vitals";
+
+const socket = io('http://localhost:3001');
 
 const PatientVitals = () => {
   const { id } = useParams();
-
+  const [patientsVitals, setPatientsVitals] = useState<Vital[]>([]);
   const { data: patient, isPending, error } = usePatient(id ?? "");
   const {
-    data: patientsVitals,
+    data,
     isPending: isVitalsPending,
     error: vitalsError,
   } = usePatientVitals(id ?? "");
+
+  setPatientsVitals(data ?? []);
+
+  useEffect(() => {
+    setPatientsVitals(data ?? []);
+  }, [data]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    socket.emit("join", `vitals:${id}`);
+
+    const newVitalHandler = (newVital: Vital) => {
+      setPatientsVitals((prev) => [...prev, newVital]);
+    };
+
+    socket.on("vitals", newVitalHandler);
+    
+    return () => {
+      socket.off("vitals", newVitalHandler);
+      socket.emit("leave", `vitals:${id}`);
+    };
+  }, [id]);
 
   if (!id) {
     return <div>Patient not found</div>;
@@ -46,7 +74,7 @@ const PatientVitals = () => {
       time: new Date(v.created_at).toLocaleTimeString(),
       vitalSign: v.body_temperature,
     })) ?? [];
-
+ 
   return (
     <>
       <PatientCard
