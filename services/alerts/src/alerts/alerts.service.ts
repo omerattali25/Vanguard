@@ -24,8 +24,7 @@ export class AlertsService {
         private readonly configService: ConfigService,
         private readonly averageVitalService: AverageVitalService,
     ) {
-        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-        this.redis = this.redisService.getOrThrow(namespace);
+        this.redis = this.redisService.getOrThrow();
     }
 
     async checkVitals(vitals: PatientVitals): Promise<Alert[]> {

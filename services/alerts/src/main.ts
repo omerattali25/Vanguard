@@ -11,20 +11,22 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: [String(process.env.KAFKA_LISTENING)],
+          brokers: [process.env.KAFKA_BROKER || ""],
         },
         consumer: {
-          groupId: String(process.env.KAFKA_GROUP_ID),
+          groupId: process.env.KAFKA_GROUP_ID || "",
         },
       },
     }
   );
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
     }),
   );
+  await app.listen();
 }
 
 bootstrap();

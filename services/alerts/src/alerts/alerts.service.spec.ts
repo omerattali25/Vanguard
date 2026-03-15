@@ -18,6 +18,7 @@ describe('AlertsService', () => {
     redisMock = {
       hget: jest.fn(),
       hset: jest.fn(),
+      publish: jest.fn(),
     } as unknown as Redis;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -57,6 +58,7 @@ describe('AlertsService', () => {
     averageVitalService = module.get<AverageVitalService>(AverageVitalService);
 
     (redisMock.hset as jest.Mock).mockResolvedValue('OK');
+    (redisMock.publish as jest.Mock).mockResolvedValue(1);
   });
 
   it('should be defined', () => {

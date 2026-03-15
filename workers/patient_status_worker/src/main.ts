@@ -24,5 +24,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  await app.listen();
 }
 bootstrap();

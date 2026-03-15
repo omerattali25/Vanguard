@@ -1,6 +1,5 @@
 import { RedisService } from "@liaoliaots/nestjs-redis";
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
 import { PatientVitalField, PatientVitals, Timeframe, TIMEFRAMES, TTL_DAYS } from "@vanguard/types";
 
@@ -11,10 +10,8 @@ export class AverageVitalService {
 
     constructor(
         private readonly redisService: RedisService,
-        private readonly configService: ConfigService
     ) {
-        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-        this.redis = this.redisService.getOrThrow(namespace);
+        this.redis = this.redisService.getOrThrow();
     }
     async isVitalOutOfAverage(vitals: PatientVitals, vitalField: PatientVitalField): Promise<boolean> {
         const timeframe = this.getTimeframe(vitals.created_at);
