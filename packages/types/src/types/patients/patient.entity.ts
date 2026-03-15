@@ -8,18 +8,18 @@ export enum PatientStatus {
 
 @Entity()
 export class Patient {
-    @PrimaryColumn()
-    id: string;
+  @PrimaryColumn()
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    city: string;
+  @Column()
+  city: string;
 
-    @Column({ type: 'enum', enum: PatientStatus })
-    status: PatientStatus;
+  @Column({ type: 'enum', enum: PatientStatus })
+  status: PatientStatus;
 
-    @CreateDateColumn()
-    registered_at: string;
+  @CreateDateColumn()
+  registered_at: string;
 }
