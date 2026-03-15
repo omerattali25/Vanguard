@@ -33,7 +33,7 @@ export const Patients = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  
+
   return (
     <>
       <Table className="w-full md:w-1/2 mt-10 border mx-auto">
@@ -48,7 +48,6 @@ export const Patients = () => {
         </TableHeader>
         <TableBody>
           {data?.map((patient) => {
-            console.log(patient.status);
             return (
               <TableRow
                 onClick={() => {
