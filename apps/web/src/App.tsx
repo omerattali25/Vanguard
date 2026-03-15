@@ -6,6 +6,7 @@ import Patients from "./pages/Patients";
 import PatientVitals from "./pages/PatientVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { MachinesPage } from './pages/Machines'
 import PatientAnalytics from "./pages/analitycs/PatientAnalytics";
 import MachinesAnalytics from "./pages/analitycs/MachinesAnalyticsPage";
 import AlertsToaster from "./components/atoms/alerts/alert-toaster";
@@ -27,6 +28,7 @@ function App() {
             <Route path="/analytics/patients/:id" element={<PatientAnalytics />} />
             <Route path="/analytics/machines" element={<MachinesAnalytics />} />
             <Route path="/patients/:id" element={<PatientVitals />} />
+            <Route path="/machines" element={<MachinesPage/>}/>
           </Routes>
           <AlertsToaster />
         </SidebarProvider>
