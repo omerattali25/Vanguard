@@ -1,7 +1,9 @@
 import { MachinesTable } from "@/components/atoms/machines/machines-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMachines } from "api/machines/machines.query";
+import { Machine } from "@/types/machine";
 import React from "react";
+import { MachineStatus } from "@/types/machine-status";
 
 export const MachinesPage: React.FC = () => {
   const { data, isPending, error } = useMachines();
@@ -22,11 +24,15 @@ export const MachinesPage: React.FC = () => {
     return <div>Error: {error.message}</div>;
   }
   console.log(data)
-  if (data!=undefined) {
-    return (
-      <>
-        <MachinesTable machines={data} />
-      </>
-    );
-  }
+//   if (data!=undefined) {
+//     return (
+//       <>
+//         <MachinesTable machines={data} />
+//       </>
+//     );
+//   }
+  return(
+    <MachinesTable/>
+  )
+
 };

@@ -1,9 +1,6 @@
-import { Button } from "@/components/ui/button";  
 import {
   PopoverContent,
   PopoverHeader,
-  PopoverTrigger,
-  Popover,
   PopoverTitle,
   PopoverDescription,
 } from "@/components/ui/popover";
@@ -16,28 +13,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Machine } from "@/types/machine";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useChangePatient } from "api/machines/machines.query";
+import { usePatients } from "api/patients/patient.query";
 import { useState } from "react";
 
 interface ChangePatientPopoverProps {
-  machine: Machine  
-  patients: string[];
+  machineId: string;
+  lockId:string;
 }
 export const ChangePatientPopover: React.FC<ChangePatientPopoverProps> = (
-
   props,
 ) => {
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
-  const [changePatientToken, setChangePatientToken] = useState<string>("");
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" onClick={()=>{
-          console.log("starting change patient, should return lock id and set token")
-        }}>
-          החלף מטופל
-        </Button>
-      </PopoverTrigger>
+  const { data, isPending, error } = usePatients();
+  const {mutate:changePatient}=useChangePatient()
+  if (isPending) {
+    return (
+      <div className="flex justify-center mt-10">
+        <div className="w-full md:w-1/2 space-y-4">
+          <Skeleton className="h-8 w-40 mx-auto" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      </div>
+    );
+  }
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  if (data) {
+    return (
       <PopoverContent>
         <PopoverHeader>
           <PopoverTitle>החלף מטופל </PopoverTitle>
@@ -45,32 +53,33 @@ export const ChangePatientPopover: React.FC<ChangePatientPopoverProps> = (
             בחר מטופל אחר כדי להעביר את מכונת ההנשמה
           </PopoverDescription>
         </PopoverHeader>
-        <Select onValueChange={(value)=>setSelectedPatient(value)}>
+        <Select onValueChange={(value) => setSelectedPatient(value)}>
           <SelectTrigger className="w-full max-w-48">
-            <SelectValue placeholder="בחר מטופל"/>
+            <SelectValue placeholder="בחר מטופל" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>מטופלים</SelectLabel>
-              {
-                props.patients.map(patient=>{
-                  return(
-                    <SelectItem value={patient}>{patient}</SelectItem>
-                  )
-                })
-              }
+              {data.map((patient) => {
+                return <SelectItem value={patient.id}>{patient.name}</SelectItem>;
+              })}
             </SelectGroup>
           </SelectContent>
         </Select>
-        <button className="mt-4" onClick={
-          ()=>{
-            if(selectedPatient){
-              console.log("confirming change patient with token ", changePatientToken, " for patient ", selectedPatient)
+        <button
+          className="mt-4"
+          onClick={() => {
+            if (selectedPatient) {
+                changePatient({machineId:props.machineId, patient:selectedPatient, token:props.lockId })
+            } 
+            else {
+              alert("אנא בחר מטופל");
             }
-            else{ alert("אנא בחר מטופל")}
-          }
-        }>אשר החלפה</button>
+          }}
+        >
+          אשר החלפה
+        </button>
       </PopoverContent>
-    </Popover>
-  );
+    );
+  }
 };
