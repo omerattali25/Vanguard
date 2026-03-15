@@ -20,7 +20,6 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
-    "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo"
+    "noFallthroughCasesInSwitch": false
   }
 }
