@@ -1,4 +1,4 @@
-import { Home, Stethoscope } from 'lucide-react'
+import { ChartNetwork, Home, Stethoscope } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../../ui/sidebar'
 import { Link } from 'react-router-dom'
 
@@ -12,6 +12,11 @@ const menu_items = [
         title : "כל המטופלים",
         url : "/patients",
         icon : Stethoscope
+    },
+    {
+        title : "ניתוח מכונות",
+        url : "/analytics/machines",
+        icon : ChartNetwork
     }
 ]
 

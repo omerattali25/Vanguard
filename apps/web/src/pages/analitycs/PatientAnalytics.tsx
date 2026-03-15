@@ -30,14 +30,13 @@ const PatientAnalyticsPage = () => {
                         return (
                             <TableRow
                                 onClick={() => {
-                                    navigate(`/patients/${patient.patient_id}`);
+                                    navigate(`/patients/${id}`);
                                 }}
                                 className="cursor-pointer hover:bg-muted"
                             >
-                                <TableCell className="text-center">{patient.machine_name}</TableCell>
+                                <TableCell className="text-center">{patient.patient_name}</TableCell>
                                 <TableCell className="text-center">{patient.description}</TableCell>
                                 <TableCell className="text-center">{patient.trigerd_at.toLocaleDateString()}</TableCell>
-                                <TableCell className="text-center">{patient.patient_id}</TableCell>
                             </TableRow>
                         );
                     })}

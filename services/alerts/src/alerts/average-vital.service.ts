@@ -43,7 +43,7 @@ export class AverageVitalService {
         const avg =
             values.reduce((a, b) => a + b, 0) / values.length;
 
-        const deviation = Math.abs(vitals[vitalField as keyof PatientVitals] - avg) / avg;
+        const deviation = Math.abs((vitals[vitalField as keyof PatientVitals] as number) - avg) / avg;
 
         return deviation > 0.2;
     }

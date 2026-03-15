@@ -37,7 +37,7 @@ const MachinesAnalyticsPage = () => {
                                 <TableCell className="text-center">{machine.machine_name}</TableCell>
                                 <TableCell className="text-center">{machine.description}</TableCell>
                                 <TableCell className="text-center">{machine.trigerd_at.toLocaleDateString()}</TableCell>
-                                <TableCell className="text-center">{machine.patient_id}</TableCell>
+                                <TableCell className="text-center">{machine.patient_name}</TableCell>
                             </TableRow>
                         );
                     })}
