@@ -19,7 +19,10 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [configService.get('KAFKA_BROKER') ?? ""],
+        brokers: [configService.get('KAFKA_BROKER') ?? ''],
+      },
+      consumer: {
+        groupId: 'transformer-consumer-group',
       },
     },
   });
