@@ -31,12 +31,12 @@ export class PatientsService {
     }
 
     async getPatients(): Promise<Patient[]> {
-        this.logger.log('Fetching all patients');
+        console.log('Fetching all patients');
         return await this.patientRepo.find();
     }
 
     async createPatient(patient: PatientDetails): Promise<Patient> {
-        this.logger.log(`Creating patient with ID ${patient.patient_id}`);
+        this.logger.log(`Creating patient with ID ${patient.id}`);
         const newPatient = this.patientRepo.create(patient);
         await this.redis.publish(this.configService.get<string>('REDIS_PATIENTS_TOPIC') ?? 'patients', JSON.stringify(newPatient));
         return await this.patientRepo.save(newPatient);

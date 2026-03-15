@@ -28,22 +28,22 @@ const PatientVitals = () => {
 
   const heart_rate_data =
     patientsVitals?.map((v) => ({
-      time: new Date(v.timestamp).toLocaleTimeString(),
+      time: new Date(v.created_at).toLocaleTimeString(),
       vitalSign: v.heart_rate,
     })) ?? [];
   const spO2_data =
     patientsVitals?.map((v) => ({
-      time: new Date(v.timestamp).toLocaleTimeString(),
+      time: new Date(v.created_at).toLocaleTimeString(),
       vitalSign: v.spO2,
     })) ?? [];
   const respiratory_rate_data =
     patientsVitals?.map((v) => ({
-      time: new Date(v.timestamp).toLocaleTimeString(),
+      time: new Date(v.created_at).toLocaleTimeString(),
       vitalSign: v.respiratory_rate,
     })) ?? [];
   const body_temperature_data =
     patientsVitals?.map((v) => ({
-      time: new Date(v.timestamp).toLocaleTimeString(),
+      time: new Date(v.created_at).toLocaleTimeString(),
       vitalSign: v.body_temperature,
     })) ?? [];
 
@@ -56,28 +56,28 @@ const PatientVitals = () => {
       <div className="w-full h-full">
         <div className="w-full h-full grid grid-cols-2 gap-4">
           <LineGraph
-            data={heart_rate_data}
+            data={heart_rate_data.reverse()}
             datakey="דופק"
             y_domain={30}
             medical_units="bpm"
             stroke="#a92e2e"
           />
           <LineGraph
-            data={spO2_data}
+            data={spO2_data.reverse()}
             datakey="SpO₂"
             y_domain={90}
             medical_units="%"
             stroke="#2e7aa9"
           />
           <LineGraph
-            data={respiratory_rate_data}
+            data={respiratory_rate_data.reverse()}
             datakey="קצב נשימה"
             y_domain={10}
             medical_units="breaths/min"
             stroke="#552ea9"
           />
           <LineGraph
-            data={body_temperature_data}
+            data={body_temperature_data.reverse()}
             datakey="טמפ' גוף"
             y_domain={35}
             medical_units="°C"

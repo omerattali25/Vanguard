@@ -34,7 +34,6 @@ async function bootstrap() {
   const port = config.get<number>('env.port', { infer: true });
 
   app.startAllMicroservices();
-  this.logger.log(`Vitals service listening on port ${port}`);
   await app.listen(port);
 }
 bootstrap();

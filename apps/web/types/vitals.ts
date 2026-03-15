@@ -5,5 +5,5 @@ export interface Vital {
     respiratory_rate: number;
     body_temperature: number;
     spO2: number;
-    timestamp: string;
+    created_at: string;
 }
