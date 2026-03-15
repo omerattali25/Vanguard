@@ -14,7 +14,7 @@ import { randomUUID } from 'crypto';
 import {
   MachineAction,
   MachineActionType,
-} from './entity/machine.action.entity';
+} from '@vanguard/types';
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
 import { MachineOutputDto } from './dto/machine.output.dto';
@@ -140,7 +140,7 @@ export class MachinesService {
         machineId,
         ogPatient,
         `disconnected patient ${ogPatient} from machine ${machine.name}`,
-        MachineActionType.DISSCONNECET,
+        MachineActionType.DISCONNECTED
       );
       machineAction = this.machineActionRepo.create(machineActionDTO);
       await this.machineActionRepo.save(machineAction);
@@ -154,13 +154,13 @@ export class MachinesService {
         where: { id: machine.assigned },
       });
       if (patient) {
-        return new MachineOutputDto(
-          machine.name,
-          machine.id,
-          machine.location,
-          machine.status,
-          patient.name,
-        );
+        return {
+          name:machine.name,
+          id:machine.id,
+          location:machine.location,
+          status:machine.status,
+          assigned:patient.name,
+        }
       }
       this.logger.error(`patient:${machine.assigned} wasnt found`);
       throw new NotFoundException(`patient:${machine.assigned} wasnt found`);

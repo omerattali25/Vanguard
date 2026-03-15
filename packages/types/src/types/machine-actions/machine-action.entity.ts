@@ -1,7 +1,7 @@
   import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
     export enum MachineActionType {
     CONNECTED = 'connected',
-    DISSCONNECET = 'disconnected',
+    DISCONNECTED = 'disconnected',
   }
   @Entity()
   export class MachineAction {
@@ -22,5 +22,4 @@
     }
     )
     action_type:MachineActionType
-    
   }

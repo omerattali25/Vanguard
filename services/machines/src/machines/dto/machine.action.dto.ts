@@ -1,5 +1,5 @@
 import { IsString } from 'class-validator';
-import { MachineActionType } from '../entity/machine.action.entity';
+import { MachineActionType } from '@vanguard/types';
 
 export class MachineActionDto {
   @IsString()
