@@ -1,11 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { MachinesService } from './machines.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Machine, MachineStatus } from '@vanguard/types';
 import { Repository } from 'typeorm';
-import { MachineAction, MachineActionType } from './entity/machine.action.entity';
-import {Patient} from '@vanguard/types';
-import {PatientStatus} from '@vanguard/types'
+import {MachineAction,Machine,MachineActionType,MachineStatus,Patient} from '@vanguard/types'
 
 let machineRepo: jest.Mocked<Repository<Machine>>;
 let actionsRepo: jest.Mocked<Repository<MachineAction>>;
