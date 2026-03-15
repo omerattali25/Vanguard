@@ -11,7 +11,10 @@ import { Repository } from 'typeorm';
 import { MachineInputDto } from './dto/machine.input.dto';
 import { MachineUpdateDto } from './dto/machine.update.dto';
 import { randomUUID } from 'crypto';
-import { MachineAction, MachineActionType } from './entity/machine.action.entity';
+import {
+  MachineAction,
+  MachineActionType,
+} from './entity/machine.action.entity';
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
 import { log } from 'console';
@@ -34,65 +37,39 @@ export class MachinesService {
   private logger = new Logger(MachinesService.name);
 
   async getMachines(): Promise<MachineOutputDto[]> {
-    try{
-    const machines=await this.machineRepo.find();
-    this.logger.log(`got all the machines from db`)
-    let outputMachines:MachineOutputDto[]=[]
-    for(const machine of machines){
-      outputMachines.push(await this.convertPatientIdToName(machine));
-    }
-    this.logger.log(`converted all the patient ids to names`)
-   return outputMachines;
-    }
-    catch(err)
-    {
-      throw err;
-    }
+    const machines = await this.machineRepo.find();
+    const outputMachines = await Promise.all(
+      machines.map((machine) => this.convertPatientIdToName(machine)),
+    );
+    return outputMachines;
   }
   async saveMachine(machineInput: MachineInputDto): Promise<Machine> {
-    try{
     const newMachine = this.machineRepo.create(machineInput);
     const savedMachine = await this.machineRepo.save(newMachine);
-    this.logger.log(`saved the machine ${savedMachine} to the db`)
-    const outputMachine=await this.convertPatientIdToName(savedMachine)
-    this.logger.log(`converted patient id to name`)
+    const outputMachine = await this.convertPatientIdToName(savedMachine);
     this.redisClient.publish('machines', JSON.stringify(outputMachine));
-    this.logger.log(`published ${savedMachine}`)
     return savedMachine;
-    }
-    catch(err){
-      throw err
-    }
   }
   async updateMachine(id: string, machineUpdateDto: MachineUpdateDto) {
-    try{
     const machine = await this.machineRepo.findOne({
-      where: { id:id },
+      where: { id: id },
     });
-    if (!machine){ 
-      this.logger.error(`machine ${machine} wasent found`)
+    if (!machine) {
+      this.logger.error(`machine ${machine} wasent found`);
       return 'machine with this id not found';
     }
     machine.name = machineUpdateDto.name || machine.name;
     machine.location = machineUpdateDto.location || machine.location;
     await this.machineRepo.save(machine);
-    this.logger.log(`upadeted machine ${machine}`)
     this.redisClient.publish('machines', JSON.stringify(machine));
-    this.logger.log(`published ${machine}`)
-  }
-  catch(err)
-  {
-    throw err
-  }
   }
 
   async startChangePatient(machineId: string) {
-    try{
     const machine = await this.machineRepo.findOne({
       where: { id: machineId },
     });
     if (!machine) {
-      this.logger.error(`machine ${machine} wasent found`)
+      this.logger.error(`machine ${machine} wasent found`);
       throw new NotFoundException('Machine not found');
     }
     const ttl = parseInt(process.env.LOCK_TTL || '180000');
@@ -106,103 +83,90 @@ export class MachinesService {
       ttl,
     );
     if (!lockAcquired) {
-      this.logger.error(`Resource is already locked: ${resource}`)
+      this.logger.error(`Resource is already locked: ${resource}`);
       throw new InternalServerErrorException(
         `Resource is already locked: ${resource}`,
       );
     }
-    this.logger.log(`lock machine ${machineId}`)
     machine.status = MachineStatus.IN_TRANSFER;
     await this.machineRepo.save(machine);
-    this.logger.log(`changed machine status to in trasport in machine ${machineId}`)
-    const outputMachine=await this.convertPatientIdToName(machine)
-    this.logger.log(`converted patient id to name`)
+    const outputMachine = await this.convertPatientIdToName(machine);
     this.redisClient.publish('machines', JSON.stringify(outputMachine));
-    this.logger.log(`published machine ${outputMachine}`)
     return {
       lockId: lockId,
       expiration: ttl,
     };
   }
-  catch(err){
-    throw err
-  }
-  }
 
   async changePatient(machineId: string, patient: string, lockId: string) {
     const lock = await this.redisClient.get(`locks:machine:${machineId}`);
     if (!lock) {
-      this.logger.error(`{the lock ${lock} wasent found`)
+      this.logger.error(`{the lock ${lock} wasent found`);
       throw new InternalServerErrorException('Lock not found or expired');
     }
     if (lock !== lockId) {
-      this.logger.error(`the recived lockId:${lockId} was not correct`)
+      this.logger.error(`the recived lockId:${lockId} was not correct`);
       throw new InternalServerErrorException('Invalid lockId');
     }
-    try {
-      const patientRecord = await this.patientRepo.findOne({
-        where: { id: patient },
-      });
-      if (!patientRecord) {
-        this.logger.error(`the recived patient:${patient} wasnt found`)
-        throw new NotFoundException('Patient not found');
-      }
-      const machine = await this.machineRepo.findOne({
-        where: { id: machineId },
-      });
-      if (!machine) {
-        this.logger.error(`the recived machine:${machineId} wasent found`)
-        this.redisClient.del(`locks:machine:${machineId}`);
-        throw new NotFoundException('Machine not found');
-      }
-      const ogPatient = machine.assigned;
-      machine.assigned = patient;
-      machine.status = MachineStatus.USED;
-      await this.machineRepo.save(machine);
-      this.logger.log(`updated machine ${machine}`)
-      const outputMachine=await this.convertPatientIdToName(machine)
-      this.logger.log(`converted patient id to name: ${outputMachine.assigned}`)
-      this.redisClient.publish('machines', JSON.stringify(outputMachine));
-      this.logger.log(`published machine ${outputMachine}`)
-      let machineActionDTO = new MachineActionDto(
+    const patientRecord = await this.patientRepo.findOne({
+      where: { id: patient },
+    });
+    if (!patientRecord) {
+      this.logger.error(`the recived patient:${patient} wasnt found`);
+      throw new NotFoundException('Patient not found');
+    }
+    const machine = await this.machineRepo.findOne({
+      where: { id: machineId },
+    });
+    if (!machine) {
+      this.logger.error(`the recived machine:${machineId} wasent found`);
+      this.redisClient.del(`locks:machine:${machineId}`);
+      throw new NotFoundException('Machine not found');
+    }
+    const ogPatient = machine.assigned;
+    machine.assigned = patient;
+    machine.status = MachineStatus.USED;
+    await this.machineRepo.save(machine);
+    const outputMachine = await this.convertPatientIdToName(machine);
+    this.redisClient.publish('machines', JSON.stringify(outputMachine));
+    let machineActionDTO = new MachineActionDto(
+      machineId,
+      patient,
+      `connected patient ${patient} to machine ${machine.name}`,
+      MachineActionType.CONNECTED,
+    );
+    let machineAction = this.machineActionRepo.create(machineActionDTO);
+    await this.machineActionRepo.save(machineAction);
+    if (ogPatient !== '') {
+      machineActionDTO = new MachineActionDto(
         machineId,
-        patient,
-        `connected patient ${patient} to machine ${machine.name}`,
-        MachineActionType.CONNECTED
+        ogPatient,
+        `disconnected patient ${ogPatient} from machine ${machine.name}`,
+        MachineActionType.DISSCONNECET,
       );
-      let machineAction = this.machineActionRepo.create(machineActionDTO);
-      this.logger.log(`saved machineAction:${machineAction} to db`)
+      machineAction = this.machineActionRepo.create(machineActionDTO);
       await this.machineActionRepo.save(machineAction);
-      if (ogPatient !== '') {
-        machineActionDTO = new MachineActionDto(
-          machineId,
-          ogPatient,
-          `disconnected patient ${ogPatient} from machine ${machine.name}`,
-          MachineActionType.DISSCONNECET
+    }
+    await this.redisClient.del(`locks:machine:${machineId}`);
+    return outputMachine;
+  }
+  async convertPatientIdToName(machine: Machine): Promise<MachineOutputDto> {
+    if (machine.assigned != '') {
+      const patient = await this.patientRepo.findOne({
+        where: { id: machine.assigned },
+      });
+      if (patient) {
+        return new MachineOutputDto(
+          machine.name,
+          machine.id,
+          machine.location,
+          machine.status,
+          patient.name,
         );
-        machineAction = this.machineActionRepo.create(machineActionDTO);
-        await this.machineActionRepo.save(machineAction);
-        this.logger.log(`saved machineAction:${machineAction} to db`)
       }
-      await this.redisClient.del(`locks:machine:${machineId}`);
-      this.logger.log(`released locks:machine:${machineId}`)
-      return outputMachine;
-    } catch (err) {
-      await this.redisClient.del(`locks:machine:${machineId}`);
-      this.logger.log(`released locks:machine:${machineId}`)
-      throw err;
+      this.logger.error(`patient:${machine.assigned} wasnt found`);
+      throw new NotFoundException(`patient:${machine.assigned} wasnt found`);
     }
+    return machine;
   }
-  async convertPatientIdToName(machine:Machine):Promise<MachineOutputDto>{
-    if(machine.assigned!=''){
-    const patient=await this.patientRepo.findOne({where:{id:machine.assigned}})
-    if(patient){
-      return new MachineOutputDto(machine.name,machine.id,machine.location,machine.status,patient.name)
-    }
-    this.logger.log(`patient:${machine.assigned} wasnt found`)
-    throw new NotFoundException(`patient:${machine.assigned} wasnt found`)
-  
-  }
-  return machine;
-}
 }

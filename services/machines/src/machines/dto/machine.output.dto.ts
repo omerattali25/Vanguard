@@ -8,10 +8,11 @@ export class MachineOutputDto{
         assigned: string;
 
         constructor(name:string,id:string,location:string,status:MachineStatus,assigned:string){
-            this.id=id
             this.name=name
             this.location=location
+            this.id=id
             this.status=status
             this.assigned=assigned
         }
+
 }
