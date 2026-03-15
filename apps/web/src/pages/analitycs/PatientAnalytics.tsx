@@ -1,43 +1,43 @@
 import { TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { useMachinesAnalytics } from 'api/analytics/machines-analytics/machines-analytics.query';
+import { usePatientAnalytics } from 'api/analytics/patients-analytics/patients-analitycs.query';
 import { Table } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const MachinesAnalyticsPage = () => {
+const PatientAnalyticsPage = () => {
     const navigate = useNavigate();
-    const {data, isPending, error} = useMachinesAnalytics();
-    if(isPending) {
+    const { id } = useParams();
+    const { data, isPending, error } = usePatientAnalytics(id ?? '');
+    if (isPending) {
         return <div>...טוען את כל הנתונים</div>
     }
-    if(error) {
+    if (error) {
         return <div>שגיאה: {error.message}</div>
     }
     return (
         <>
             <Table className="w-full md:w-1/2 mt-10 border mx-auto">
-                <TableCaption>אירועי מכונות</TableCaption>
+                <TableCaption>אירועי מטופל</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="text-center">שם מכונה </TableHead>
+                        <TableHead className="text-center">שם מטופל</TableHead>
                         <TableHead className="text-center">תיאור הפעולה</TableHead>
                         <TableHead className="text-center">זמן הפעולה</TableHead>
-                        <TableHead className="text-center">מטופל</TableHead>
                         <TableHead className="text-center"></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data?.map((machine) => {
+                    {data?.map((patient) => {
                         return (
                             <TableRow
                                 onClick={() => {
-                                    navigate(`/machines/${machine.id}`);
+                                    navigate(`/patients/${patient.patient_id}`);
                                 }}
                                 className="cursor-pointer hover:bg-muted"
                             >
-                                <TableCell className="text-center">{machine.machine_name}</TableCell>
-                                <TableCell className="text-center">{machine.description}</TableCell>
-                                <TableCell className="text-center">{machine.trigerd_at.toLocaleDateString()}</TableCell>
-                                <TableCell className="text-center">{machine.patient_id}</TableCell>
+                                <TableCell className="text-center">{patient.machine_name}</TableCell>
+                                <TableCell className="text-center">{patient.description}</TableCell>
+                                <TableCell className="text-center">{patient.trigerd_at.toLocaleDateString()}</TableCell>
+                                <TableCell className="text-center">{patient.patient_id}</TableCell>
                             </TableRow>
                         );
                     })}
@@ -47,4 +47,4 @@ const MachinesAnalyticsPage = () => {
     )
 }
 
-export default MachinesAnalyticsPage
+export default PatientAnalyticsPage
