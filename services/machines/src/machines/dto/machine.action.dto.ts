@@ -1,5 +1,5 @@
-import { IsString } from "class-validator";
-import { MachineActionType } from "../entity/machine.action.entity";
+import { IsString } from 'class-validator';
+import { MachineActionType } from '../entity/machine.action.entity';
 
 export class MachineActionDto {
   @IsString()
@@ -8,12 +8,17 @@ export class MachineActionDto {
   patient_id: string;
   @IsString()
   description: string;
-  type:MachineActionType
+  type: MachineActionType;
 
-  constructor(machine_id: string, patient_id: string, description: string,type:MachineActionType) {
+  constructor(
+    machine_id: string,
+    patient_id: string,
+    description: string,
+    type: MachineActionType,
+  ) {
     this.machine_id = machine_id;
     this.patient_id = patient_id;
     this.description = description;
-    this.type=type;
+    this.type = type;
   }
 }

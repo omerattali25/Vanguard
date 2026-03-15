@@ -23,7 +23,6 @@ export class MachinesController {
     @Param('id') machineId: string,
     @Payload() changePatientDto: MachineChangePatientDto,
   ) {
-    console.log(changePatientDto.lockID)
     return await this.machinesService.changePatient(
       machineId,
       changePatientDto.patient,
@@ -35,7 +34,13 @@ export class MachinesController {
     return await this.machinesService.saveMachine(machineInputDto);
   }
   @Put(':id')
-  async updateMachine(@Param('id') machineId: string, @Payload() machineUpdateDto: any) {
-    return await this.machinesService.updateMachine(machineId,machineUpdateDto);
+  async updateMachine(
+    @Param('id') machineId: string,
+    @Payload() machineUpdateDto: any,
+  ) {
+    return await this.machinesService.updateMachine(
+      machineId,
+      machineUpdateDto,
+    );
   }
 }

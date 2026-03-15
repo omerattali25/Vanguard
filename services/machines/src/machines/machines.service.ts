@@ -17,10 +17,7 @@ import {
 } from './entity/machine.action.entity';
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
-import { log } from 'console';
 import { MachineOutputDto } from './dto/machine.output.dto';
-import { threadId } from 'worker_threads';
-import { machine } from 'os';
 
 @Injectable()
 export class MachinesService {
