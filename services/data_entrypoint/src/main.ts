@@ -3,6 +3,7 @@ import { NestApplication, NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DataEntrypointModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestApplication>(DataEntrypointModule);
@@ -13,7 +14,10 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [configService.get('KAFKA_BROKER') ?? ""],
+        brokers: [configService.get('KAFKA_BROKER') ?? ''],
+      },
+      consumer: {
+        groupId: 'transformer-consumer-group',
       },
     },
   });
