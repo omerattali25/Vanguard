@@ -17,7 +17,7 @@ export class AverageVitalService {
         this.redis = this.redisService.getOrThrow(namespace);
     }
     async isVitalOutOfAverage(vitals: PatientVitals, vitalField: PatientVitalField): Promise<boolean> {
-        const timeframe = this.getTimeframe(vitals.timestamp);
+        const timeframe = this.getTimeframe(vitals.created_at);
         if (!timeframe) return false;
 
         const formattedTimeframe = `${timeframe.start}-${timeframe.end}`;
@@ -26,12 +26,12 @@ export class AverageVitalService {
 
         for (let i = 1; i <= TTL_DAYS; i++) {
 
-            const date = new Date(vitals.timestamp);
+            const date = new Date(vitals.created_at);
             date.setDate(date.getDate() - i);
 
             const day = date.toISOString().slice(0, 10);
 
-            const key = `vital-average:${vitals.patientId}:${day}:${formattedTimeframe}`;
+            const key = `vital-average:${vitals.patient_id}:${day}:${formattedTimeframe}`;
 
             promises.push(this.redis.hget(key, vitalField));
         }

@@ -6,10 +6,9 @@ export const redis_alerts_config: RedisModuleAsyncOptions = {
     inject: [ConfigService],
     useFactory: (configService: ConfigService) => ({
         config: {
-            namespace: configService.get('REDIS_NAMESPACE_RECENT_ALERT'),
+            namespace: configService.get('REDIS_NAMESPACE'),
             host: configService.get<string>('REDIS_HOST'),
             port: configService.get<number>('REDIS_PORT'),
-            password: configService.get<string>('REDIS_PASSWORD'),
         },
     }),
 };

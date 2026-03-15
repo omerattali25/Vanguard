@@ -6,28 +6,21 @@ import { PagesStateService } from '../pages-state/pages-state.service';
 
 @Injectable()
 export class IngestionService {
-<<<<<<< HEAD
-  private batchBuffer: any[] = [];
+  private batchBuffer: PatientVitals[] = [];
   private readonly BATCH_THRESHOLD = 500;
 
-  constructor(@InjectRepository(VitalEntity) private vitalRepository: Repository<VitalEntity>) { }
+  constructor(@InjectRepository(VitalEntity) private vitalRepository: Repository<VitalEntity>,
+    private readonly pagesStateService: PagesStateService) { }
 
-  async create(payload: PatientVitals) {
-    this.batchBuffer.push(payload);
+  async create(patientVitals: PatientVitals) {
+    this.batchBuffer.push(patientVitals);
+    const vital = this.vitalRepository.create(patientVitals);
+    this.pagesStateService.sendToRedisTopic(vital);
 
     // Only save when we hit the threshold
     if (this.batchBuffer.length >= this.BATCH_THRESHOLD) {
       await this.flushBatch();
     }
-=======
-  constructor(@InjectRepository(VitalEntity) private vitalRepository: Repository<VitalEntity>,
-  private readonly pagesStateService: PagesStateService) { }
-
-  async create(payload: VitalEntity): Promise<VitalEntity> {
-    const vital = this.vitalRepository.create(payload);
-    this.pagesStateService.sendToRedisTopic(vital);
-    return await this.vitalRepository.save(vital);
->>>>>>> bcdcd135aa9a344e5820bc58e0e075edc9dea84e
   }
 
   private async flushBatch() {

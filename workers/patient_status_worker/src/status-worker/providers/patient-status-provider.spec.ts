@@ -10,12 +10,12 @@ describe('PatientStatusProvider', () => {
 
   const baseVitals: PatientVitals = {
     id: 'patient-1',
-    patientId: 'patient-1',
-    heartRate: 80,
+    patient_id: 'patient-1',
+    heart_rate: 80,
     spO2: 98,
-    respiratoryRate: 16,
-    bodyTemperature: 36.5,
-    timestamp: new Date().toISOString(),
+    respiratory_rate: 16,
+    body_temperature: 36.5,
+    created_at: new Date().toISOString(),
   };
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('PatientStatusProvider', () => {
   it('should return Unstable when one vital is irregular', () => {
     const vitals = {
       ...baseVitals,
-      heartRate: RegularVitalsBoundries.heartRate.max + 1,
+      heart_rate: RegularVitalsBoundries.heart_rate.max + 1,
     };
 
     const result = provider.providePatientStatus(vitals);
@@ -41,7 +41,7 @@ describe('PatientStatusProvider', () => {
   it('should return Unstable when two vitals are irregular', () => {
     const vitals = {
       ...baseVitals,
-      heartRate: RegularVitalsBoundries.heartRate.max + 1,
+      heartRate: RegularVitalsBoundries.heart_rate.max + 1,
       spO2: RegularVitalsBoundries.spO2.max + 1,
     };
 
@@ -53,10 +53,10 @@ describe('PatientStatusProvider', () => {
   it('should return Critical when four or more vitals are irregular', () => {
     const vitals = {
       ...baseVitals,
-      heartRate: RegularVitalsBoundries.heartRate.max + 1,
+      heartRate: RegularVitalsBoundries.heart_rate.max + 1,
       spO2: RegularVitalsBoundries.spO2.max + 1,
-      respiratoryRate: RegularVitalsBoundries.respiratoryRate.max + 1,
-      bodyTemperature: RegularVitalsBoundries.bodyTemperature.max + 1,
+      respiratoryRate: RegularVitalsBoundries.respiratory_rate.max + 1,
+      bodyTemperature: RegularVitalsBoundries.body_temperature.max + 1,
     };
 
     const result = provider.providePatientStatus(vitals);

@@ -68,12 +68,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '123',
-      patientId: 'p1',
-      heartRate: 120,
+      patient_id: 'p1',
+      heart_rate: 120,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
@@ -86,7 +86,7 @@ describe('AlertsService', () => {
     expect(alerts[0].vital_field).toBe(PatientVitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `recent-alerts:${vitals.patientId}`,
+      `recent-alerts:${vitals.patient_id}`,
       PatientVitalField.HEART_RATE,
       `ACTIVE:a1`
     );
@@ -97,12 +97,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '456',
-      patientId: 'p1',
-      heartRate: 80,
+      patient_id: 'p1',
+      heart_rate: 80,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue('ACTIVE:a1');
@@ -110,12 +110,12 @@ describe('AlertsService', () => {
 
     const alerts = await service.checkVitals(vitals);
 
-    expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.timestamp });
+    expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.created_at });
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `recent-alerts:${vitals.patientId}`,
+      `recent-alerts:${vitals.patient_id}`,
       PatientVitalField.HEART_RATE,
-      vitals.timestamp
+      vitals.created_at
     );
 
     expect(alerts.length).toBe(0);
@@ -126,12 +126,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '789',
-      patientId: 'p1',
-      heartRate: 80,
+      patient_id: 'p1',
+      heart_rate: 80,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
@@ -147,12 +147,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '111',
-      patientId: 'p1',
-      heartRate: 80,
+      patient_id: 'p1',
+      heart_rate: 80,
       spO2: 98,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
@@ -168,12 +168,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '222',
-      patientId: 'p1',
-      heartRate: 120,
+      patient_id: 'p1',
+      heart_rate: 120,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue('ACTIVE:a1');
@@ -189,12 +189,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '333',
-      patientId: 'p1',
-      heartRate: 120,
+      patient_id: 'p1',
+      heart_rate: 120,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue('ENDED:a1');
@@ -212,12 +212,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '444',
-      patientId: 'p1',
-      heartRate: 120,
+      patient_id: 'p1',
+      heart_rate: 120,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue(null);
@@ -232,12 +232,12 @@ describe('AlertsService', () => {
   it('should create alert entity correctly', async () => {
     const vitals: PatientVitals = {
       id: '555',
-      patientId: 'p1',
-      heartRate: 120,
+      patient_id: 'p1',
+      heart_rate: 120,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (repo.create as jest.Mock).mockImplementation(a => a);
@@ -250,7 +250,7 @@ describe('AlertsService', () => {
     const alert = await service.createNewAlert(
       vitals,
       PatientVitalField.HEART_RATE,
-      `recent-alerts:${vitals.patientId}`,
+      `recent-alerts:${vitals.patient_id}`,
       true
     );
 
@@ -258,7 +258,7 @@ describe('AlertsService', () => {
     expect(alert.vital_field).toBe(PatientVitalField.HEART_RATE);
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `recent-alerts:${vitals.patientId}`,
+      `recent-alerts:${vitals.patient_id}`,
       PatientVitalField.HEART_RATE,
       `ACTIVE:a1`
     );
@@ -269,12 +269,12 @@ describe('AlertsService', () => {
 
     const vitals: PatientVitals = {
       id: '666',
-      patientId: 'p1',
-      heartRate: 80,
+      patient_id: 'p1',
+      heart_rate: 80,
       spO2: 97,
-      respiratoryRate: 16,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toString(),
+      respiratory_rate: 16,
+      body_temperature: 36.5,
+      created_at: new Date().toString(),
     };
 
     (redisMock.hget as jest.Mock).mockResolvedValue('ACTIVE:a1');
@@ -282,12 +282,12 @@ describe('AlertsService', () => {
 
     const alerts = await service.checkVitals(vitals);
 
-    expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.timestamp });
+    expect(repo.update).toHaveBeenCalledWith('a1', { ended_at: vitals.created_at });
 
     expect(redisMock.hset).toHaveBeenCalledWith(
-      `recent-alerts:${vitals.patientId}`,
+      `recent-alerts:${vitals.patient_id}`,
       PatientVitalField.HEART_RATE,
-      vitals.timestamp
+      vitals.created_at
     );
 
     expect(alerts.length).toBe(0);

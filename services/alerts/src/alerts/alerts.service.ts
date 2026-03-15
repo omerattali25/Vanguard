@@ -42,7 +42,7 @@ export class AlertsService {
         const bounds = RegularVitalsBoundries[key];
         const value = vitals[key];
         const vitalField = key as PatientVitalField;
-        const redisKey = `recent-alerts:${vitals.patientId}`
+        const redisKey = `recent-alerts:${vitals.patient_id}`
 
         const lastAlert = await this.redis.hget(redisKey, vitalField)
         const [lastAlertEndedAt, lastAlertId] = lastAlert?.split(':') ?? []
@@ -67,10 +67,10 @@ export class AlertsService {
         const description = (isOutOfBounds) ? DESCRIPTION_ON_OUT_OF_BOUNDS : DESCRIPTION_ON_OUT_OF_AVERAGE;
 
         const alert: Omit<Alert, 'id'> = {
-            patient_id: vitals.patientId,
+            patient_id: vitals.patient_id,
             vital_field: violation,
             description: `${violation} ${description}`,
-            started_at: vitals.timestamp,
+            started_at: vitals.created_at,
             ended_at: null,
         }
 
@@ -79,11 +79,11 @@ export class AlertsService {
 
         await this.redis.hset(redisKey, violation, `ACTIVE:${savedAlert.id}`);
 
-        await this.redis.publish(`alerts`, JSON.stringify(savedAlert));
+        await this.redis.publish(this.configService.get<string>('REDIS_CREATE_TOPIC') ?? 'alerts', JSON.stringify(savedAlert));
         return savedAlert;
     }
     private async closeActiveAlert(vitals: PatientVitals, vitalField: PatientVitalField, alertId: string, redisKey: string) {
-        await this.redis.hset(redisKey, vitalField, vitals.timestamp);
-        await this.alertRepo.update(alertId, { ended_at: vitals.timestamp })
+        await this.redis.hset(redisKey, vitalField, vitals.created_at);
+        await this.alertRepo.update(alertId, { ended_at: vitals.created_at })
     }
 }

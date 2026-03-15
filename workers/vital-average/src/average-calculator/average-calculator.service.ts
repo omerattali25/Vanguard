@@ -25,14 +25,9 @@ export class AverageCalculatorService {
   constructor(
     @InjectRepository(VitalEntity)
     private readonly vitalRepo: Repository<VitalEntity>,
-
-    private readonly configService: ConfigService,
     private readonly redisService: RedisService,
   ) {
-
-    const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-    this.redis = this.redisService.getOrThrow(namespace);
-
+    this.redis = this.redisService.getOrThrow();
   }
 
   async calculateAndSaveAverage(timeframe: Timeframe) {

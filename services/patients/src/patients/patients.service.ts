@@ -15,8 +15,7 @@ export class PatientsService {
         private readonly redisService: RedisService,
         private readonly configService: ConfigService,
     ) {
-        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-        this.redis = this.redisService.getOrThrow(namespace);
+        this.redis = this.redisService.getOrThrow();
     }
 
     async getPatientById(patient_id: string): Promise<Patient> {
@@ -32,12 +31,8 @@ export class PatientsService {
     }
 
     async createPatient(patient: PatientDetails): Promise<Patient> {
-<<<<<<< HEAD
-        const newPatient = this.patientRepo.create({ ...patient, status: PatientStatus.Stable });
-=======
         const newPatient = this.patientRepo.create(patient);
-        await this.redis.publish(`patients`, JSON.stringify(newPatient));
->>>>>>> bcdcd135aa9a344e5820bc58e0e075edc9dea84e
+        await this.redis.publish(this.configService.get<string>('REDIS_PATIENTS_TOPIC') ?? 'patients', JSON.stringify(newPatient));
         return await this.patientRepo.save(newPatient);
     }
 
