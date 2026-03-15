@@ -19,5 +19,5 @@
     })
     status: MachineStatus;
     @Column({ nullable: true, default: '' })
-    assigned: MachineStatus;
+    assigned: string;
   }

@@ -1,4 +1,4 @@
-  import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
+  import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
     export enum MachineActionType {
     CONNECTED = 'connected',
     DISSCONNECET = 'disconnected',
