@@ -25,6 +25,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ data, datakey, y_domain, medical_
                         stroke={stroke || "#a92e2e"}
                         strokeWidth={2}
                         name={datakey}
+                        isAnimationActive={false}
                     />
                 </LineChart>
             </ResponsiveContainer>
