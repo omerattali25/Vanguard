@@ -3,9 +3,15 @@ import { NestApplication, NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DataEntrypointModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import * as winston from 'winston';
+import 'winston-daily-rotate-file';
+import { WinstonModule } from 'nest-winston';
+import { LoggerConfig } from '@vanguard/configurations';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestApplication>(DataEntrypointModule);
+  const app = await NestFactory.create<NestApplication>(DataEntrypointModule, {
+    logger: LoggerConfig,
+  });
 
   const configService = app.get(ConfigService);
 
@@ -13,7 +19,10 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [configService.get('KAFKA_BROKER') ?? ""],
+        brokers: [configService.get('KAFKA_BROKER') ?? ''],
+      },
+      consumer: {
+        groupId: 'transformer-consumer-group',
       },
     },
   });

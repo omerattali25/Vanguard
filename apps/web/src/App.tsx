@@ -6,6 +6,8 @@ import Patients from "./pages/Patients";
 import PatientVitals from "./pages/PatientVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import PatientAnalyticsPage from "./pages/analitycs/PatientAnalytics";
+import MachinesAnalyticsPage from "./pages/analitycs/MachinesAnalyticsPage";
 
 function App() {
   const queryClient = new QueryClient();
@@ -21,6 +23,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/patients" element={<Patients />} />
+            <Route path="/analytics/patients/:id" element={<PatientAnalyticsPage />} />
+            <Route path="/analytics/machines" element={<MachinesAnalyticsPage />} />
             <Route path="/patients/:id" element={<PatientVitals />} />
           </Routes>
         </SidebarProvider>
