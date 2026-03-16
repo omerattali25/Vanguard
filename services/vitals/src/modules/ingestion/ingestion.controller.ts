@@ -25,7 +25,7 @@ export class IngestionController {
     return await this.ingestionService.getVitalByPatientId(patientId, limit);
   }
 
-  @Get(':patientId/exit')
+  @Post(':patientId/exit')
   async exitVitalByPatientId(@Param('patientId') patientId: string) {
     await this.ingestionService.exitVitalByPatientId(patientId);
   }

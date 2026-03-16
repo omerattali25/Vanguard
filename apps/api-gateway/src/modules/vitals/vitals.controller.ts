@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { VitalsService } from './vitals.service';
 
 @Controller('vitals')
@@ -11,5 +11,9 @@ export class VitalsController {
     @Query('limit') limit?: number,
   ) {
     return this.vitalsService.getVitals(id, limit);
+  }
+  @Post(':id/exit')
+  async exitVitals(@Param('id') id: string) {
+    return await this.vitalsService.exitVitals(id);
   }
 }
