@@ -40,7 +40,7 @@ export class StatusWorkerService implements OnModuleDestroy {
 
       const cachedValues = await this.redis.mget(...redisKeys);
       const statusCache = new Map<string, string>();
-      
+
       uniqueIds.forEach((id, index) => {
         statusCache.set(id, cachedValues[index] || PatientStatus.Stable);
       });
@@ -90,7 +90,7 @@ export class StatusWorkerService implements OnModuleDestroy {
       console.error('[StatusWorker] Flush Error:', error);
     } finally {
       this.isFlushing = false;
-      
+
       if (this.buffer.length >= 500) {
         this.flush();
       }
