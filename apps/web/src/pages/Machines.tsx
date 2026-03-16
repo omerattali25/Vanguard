@@ -4,6 +4,7 @@ import { useMachines } from "api/machines/machines.query";
 import { Machine } from "@/types/machine";
 import React from "react";
 import { MachineStatus } from "@/types/machine-status";
+import { ChangePatientContextProvider } from "@/contexts/machines/change-patient-context-provider";
 
 export const MachinesPage: React.FC = () => {
   const { data, isPending, error } = useMachines();
@@ -24,15 +25,10 @@ export const MachinesPage: React.FC = () => {
     return <div>Error: {error.message}</div>;
   }
   console.log(data)
-//   if (data!=undefined) {
-//     return (
-//       <>
-//         <MachinesTable machines={data} />
-//       </>
-//     );
-//   }
   return(
-    <MachinesTable/>
+    <ChangePatientContextProvider>
+     <MachinesTable/>
+    </ChangePatientContextProvider>
   )
 
 };

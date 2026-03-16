@@ -14,20 +14,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChangePatientContext } from "@/contexts/machines/change-patient-context";
 import { useChangePatient } from "api/machines/machines.query";
 import { usePatients } from "api/patients/patient.query";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
-interface ChangePatientPopoverProps {
-  machineId: string;
-  lockId:string;
-}
-export const ChangePatientPopover: React.FC<ChangePatientPopoverProps> = (
+
+export const ChangePatientPopover: React.FC = (
   props,
 ) => {
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
   const { data, isPending, error } = usePatients();
   const {mutate:changePatient}=useChangePatient()
+  const {machineId,lockId}=useContext(ChangePatientContext)
   if (isPending) {
     return (
       <div className="flex justify-center mt-10">
@@ -70,7 +69,7 @@ export const ChangePatientPopover: React.FC<ChangePatientPopoverProps> = (
           className="mt-4"
           onClick={() => {
             if (selectedPatient) {
-                changePatient({machineId:props.machineId, patient:selectedPatient, token:props.lockId })
+                changePatient({machineId:machineId, patient:selectedPatient, lockId:lockId})
             } 
             else {
               alert("אנא בחר מטופל");
