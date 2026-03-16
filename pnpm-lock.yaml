@@ -269,6 +269,9 @@ importers:
       '@types/axios':
         specifier: ^0.14.4
         version: 0.14.4
+      '@vanguard/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       axios:
         specifier: ^1.13.6
         version: 1.13.6
