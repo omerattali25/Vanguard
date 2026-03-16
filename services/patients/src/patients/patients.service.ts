@@ -38,8 +38,10 @@ export class PatientsService {
     async createPatient(patient: PatientDetails): Promise<Patient> {
         this.logger.log(`Creating patient with ID ${patient.id}`);
         const newPatient = this.patientRepo.create(patient);
-        await this.redis.publish(this.configService.get<string>('REDIS_PATIENTS_TOPIC') ?? 'patients', JSON.stringify(newPatient));
-        return await this.patientRepo.save(newPatient);
+        const savedPatient = await this.patientRepo.save(newPatient);
+        await this.redis.publish(this.configService.get<string>('REDIS_PATIENTS_TOPIC') ?? 'patients', JSON.stringify(savedPatient));
+        console.log('Published new patient to Redis:', savedPatient);
+        return savedPatient;
     }
 
 }

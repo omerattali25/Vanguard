@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getPatientVitals, getVitals } from "./vitals.api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { exitPatientVitals, getPatientVitals, getVitals } from "./vitals.api";
 
 export function useVitals() {
     const { data, isPending, error } = useQuery({
@@ -16,4 +16,12 @@ export function usePatientVitals(id : string) {
         queryFn: () => getPatientVitals(id),
     });
     return { data, isPending, error };
+}
+
+export function useExitPatientVitals(id : string) {
+    const { mutate, isPending, error } = useMutation({
+        mutationKey: ['vitals', id, 'exit'],
+        mutationFn: () => exitPatientVitals(id),
+    });
+    return { mutate, isPending, error };
 }

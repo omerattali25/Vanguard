@@ -39,9 +39,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: vanguard
-      POSTGRES_DB: vanguard
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -102,6 +100,7 @@ services:
   #   environment:
   #     API_GATEWAY_PORT: 3000
   #     VITALS_SERVICE_URL: vitals:3003
+
 
 volumes:
   postgres_data:  

@@ -1,20 +1,47 @@
-import { PatientStatusBadge } from "@/components/atoms/patients/patient-status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
   TableCaption,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { usePatients } from "../../api/patients/patient.query";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Patient } from "types/patient";
+import { io } from "socket.io-client";
+import { PatientRow } from "@/components/atoms/patients/patient-row";
+
+export const socket = io(import.meta.env.VITE_API_REALTIME_GATEWAY_URL);
 
 export const Patients = () => {
   const navigate = useNavigate();
+  const [patients, setPatients] = useState<Patient[]>([]);
   const { data, isPending, error } = usePatients();
+
+  useEffect(() => {
+    setPatients(data ?? []);
+  }, [data]);
+
+  useEffect(() => {
+
+    socket.emit("join", `patients`);
+    socket.emit("join", `patient-status`);
+
+    const newPatientHandler = (newPatient: Patient) => {
+      setPatients((prev) => [newPatient, ...prev]);
+    };
+
+    socket.on("patients", newPatientHandler);
+
+    return () => {
+      socket.off("patients", newPatientHandler);
+      socket.emit("leave", `patients`);
+      socket.emit("leave", `patient-status`);
+    };
+  });
 
   if (isPending) {
     return (
@@ -46,22 +73,14 @@ export const Patients = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map((patient) => {
+          {patients?.map((patient) => {
             return (
-              <TableRow
-                onClick={() => {
-                  navigate(`/patients/${patient.id}`);
-                }}
-                className="cursor-pointer hover:bg-muted"
-              >
-                <TableCell className="text-center">
-                  <PatientStatusBadge status={patient.status} />
-                </TableCell>
-                <TableCell className="text-center">{patient.name}</TableCell>
-                <TableCell className="text-center">{patient.city}</TableCell>
-              </TableRow>
-            );
-          })}
+              <PatientRow
+                key={patient.id}
+                patient={patient}
+                onClick={() => navigate(`/patients/${patient.id}`)}
+              />
+          )})}
         </TableBody>
       </Table>
     </>

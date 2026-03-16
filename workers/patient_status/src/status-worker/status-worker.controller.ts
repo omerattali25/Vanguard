@@ -8,7 +8,7 @@ export class StatusWorkerController {
   constructor(private readonly statusWorkerService: StatusWorkerService) {}
 
   @EventPattern(process.env.LISTEN_TOPIC)
-  updatePatientVitalStatus(@Payload() patientVitals: PatientVitals) {
-    void this.statusWorkerService.consumeVitals(patientVitals);
+  async updatePatientVitalStatus(@Payload() patientVitals: PatientVitals) {
+    await this.statusWorkerService.consumeVitals(patientVitals);
   }
 }
