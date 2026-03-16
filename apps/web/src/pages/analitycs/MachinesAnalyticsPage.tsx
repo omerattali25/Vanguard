@@ -1,11 +1,11 @@
-import { TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { useMachinesAnalytics } from 'api/analytics/machines-analytics/machines-analytics.query';
-import { Table } from 'lucide-react';
+import { TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from '@/components/ui/table';
+import { useMachinesAnalytics } from '../../../api/analytics/machines-analytics/machines-analytics.query';
 import { useNavigate } from 'react-router-dom';
 
 const MachinesAnalytics = () => {
     const navigate = useNavigate();
     const {data, isPending, error} = useMachinesAnalytics();
+    console.log(data);
     if(isPending) {
         return <div>...טוען את כל הנתונים</div>
     }
