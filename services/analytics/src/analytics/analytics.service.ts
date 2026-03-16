@@ -28,7 +28,7 @@ export class AnalyticsService {
       WHERE trigerd_at >= NOW() - INTERVAL '${days} days'
       GROUP BY machine_id
       ORDER BY COUNT(*) DESC
-        LIMIT 1
+      LIMIT 1
     `);
 
     if (!result.length) {
@@ -64,8 +64,6 @@ export class AnalyticsService {
 
     return result;
   }
-
-  async getMostUsedMachine(): {};
 
   async getAllMachineActions(): Promise<MachineAction[]> {
     return await this.machineActionRepo.find();

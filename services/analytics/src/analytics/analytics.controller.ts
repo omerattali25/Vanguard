@@ -1,7 +1,6 @@
-import { Controller, Get, Param, ParseEnumPipe, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseEnumPipe, ParseIntPipe } from '@nestjs/common';
 import { AnalyticsService, MachineUsageRanking } from './analytics.service';
 import { Machine, MachineAction, Patient } from '@vanguard/types';
-import { dateTimestampProvider } from 'rxjs/internal/scheduler/dateTimestampProvider';
 
 @Controller('analytics')
 export class AnalyticsController {
@@ -16,11 +15,6 @@ export class AnalyticsController {
   getMachineByUsageRanking(
     @Param('ranking', new ParseEnumPipe(MachineUsageRanking)) ranking: MachineUsageRanking): Promise<Patient | null> {
     return this.analyticsService.getMachineByUsageRanking(ranking);
-  }
-
-  @Get('machine-usage/most-used-machine')
-  getMostUsedMachine() {
-    return this.analyticsService.getMostUsedMachine();
   }
 
   @Get('patients/new-per-day/:days')
