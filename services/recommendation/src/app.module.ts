@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { ConfigModule } from '@nestjs/config';
 import { Machine } from '@vanguard/types';
+import { Patient } from '@vanguard/types';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { Machine } from '@vanguard/types';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Machine],
+      entities: [Machine, Patient],
       synchronize: true,
     }),
   ],

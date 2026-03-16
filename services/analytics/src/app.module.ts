@@ -1,11 +1,16 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { Module } from '@nestjs/common';
 import { AnalyticsController } from './analytics/analytics.controller';
 import { AnalyticsService } from './analytics/analytics.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { MachineAction, Patient } from '@vanguard/types';
 
 @Module({
   imports: [
+    AnalyticsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -19,9 +24,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: process.env.DB,
       autoLoadEntities: true,
       synchronize: true,
+      entities: [MachineAction, Patient],
     }),
   ],
   controllers: [AnalyticsController],
-  providers: [ AnalyticsService],
+  providers: [],
 })
 export class AppModule {}

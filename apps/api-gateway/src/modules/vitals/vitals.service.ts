@@ -25,4 +25,9 @@ export class VitalsService {
     );
     return data;
   }
+  async exitVitals(id: string): Promise<void> {
+    await firstValueFrom(
+      this.httpService.post(`${this.baseUrl}/vitals/${id}/exit`),
+    );
+  }
 }
