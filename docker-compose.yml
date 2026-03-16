@@ -39,7 +39,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: vanguard
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -47,6 +47,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: vanguard-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
 
 
   # vitals:
@@ -87,15 +100,8 @@ services:
   #   environment:
   #     API_GATEWAY_PORT: 3000
   #     VITALS_SERVICE_URL: vitals:3003
-  redis:
-    image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
 
 
 volumes:
-  postgres_data:
+  postgres_data:  
   redis_data:

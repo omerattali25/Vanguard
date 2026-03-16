@@ -1,0 +1,2 @@
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:cfbd8ff7-b6a3-4649-b416-278868fc6c28","stack":[null]}
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:f322d58c-d831-4f9b-97a0-e9a2bda1bf0a","stack":[null]}

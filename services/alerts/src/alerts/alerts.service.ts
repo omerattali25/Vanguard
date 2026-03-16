@@ -50,7 +50,7 @@ export class AlertsService {
         const hasViolation = !isInBounds || await this.averageVitalService.isVitalOutOfAverage(vitals, vitalField);
 
         if (!hasViolation) {
-            this.logger.debug(`No violation for patient ${vitals.patient_id} on vital field ${vitalField}. Value: ${value}`);
+            // this.logger.debug(`No violation for patient ${vitals.patient_id} on vital field ${vitalField}. Value: ${value}`);
             if (lastAlert && lastAlertEndedAt === "ACTIVE") {
                 await this.closeActiveAlert(vitals, vitalField, lastAlertId, redisKey)
             }

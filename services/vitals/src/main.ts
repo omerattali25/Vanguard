@@ -11,7 +11,6 @@ import { LoggerConfig } from '@vanguard/configurations';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
-    logger: LoggerConfig
   });
 
   app.enableCors({ origin: 'localhost:3000' });

@@ -1,0 +1,7 @@
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:930341bf-a8f1-4d4d-9cd6-88e3260f97de","stack":[null]}
+{"context":"MachinesService","level":"error","message":"{the lock null wasent found","stack":[null]}
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:930341bf-a8f1-4d4d-9cd6-88e3260f97de","stack":[null]}
+{"context":"MachinesService","level":"error","message":"{the lock null wasent found","stack":[null]}
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:930341bf-a8f1-4d4d-9cd6-88e3260f97de","stack":[null]}
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:930341bf-a8f1-4d4d-9cd6-88e3260f97de","stack":[null]}
+{"context":"MachinesService","level":"error","message":"Resource is already locked: locks:machine:930341bf-a8f1-4d4d-9cd6-88e3260f97de","stack":[null]}

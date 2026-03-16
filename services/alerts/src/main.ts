@@ -2,10 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
-import { LoggerConfig } from '@vanguard/configurations';
 
 async function bootstrap() {
-
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
@@ -18,7 +16,6 @@ async function bootstrap() {
           groupId: process.env.KAFKA_GROUP_ID || "",
         },
       },
-      logger: LoggerConfig,
     }
   );
 

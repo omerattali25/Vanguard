@@ -31,7 +31,13 @@ const PatientVitals = () => {
     socket.emit("join", `vitals:${id}`);
 
     const newVitalHandler = (newVital: Vital) => {
-      setPatientsVitals((prev) => [...prev, newVital]);
+      setPatientsVitals((prev) => {
+        const newVitals = [...prev, newVital];
+
+        newVitals.shift();
+
+        return newVitals;
+      });
     };
 
     socket.on("vitals", newVitalHandler);
@@ -85,28 +91,28 @@ const PatientVitals = () => {
       <div className="w-full h-full">
         <div className="w-full h-full grid grid-cols-2 gap-4">
           <LineGraph
-            data={heart_rate_data.reverse()}
+            data={[...heart_rate_data.reverse()]}
             datakey="דופק"
             y_domain={30}
             medical_units="bpm"
             stroke="#a92e2e"
           />
           <LineGraph
-            data={spO2_data.reverse()}
+            data={[...spO2_data.reverse()]}
             datakey="SpO₂"
             y_domain={90}
             medical_units="%"
             stroke="#2e7aa9"
           />
           <LineGraph
-            data={respiratory_rate_data.reverse()}
+            data={[...respiratory_rate_data.reverse()]}
             datakey="קצב נשימה"
             y_domain={10}
             medical_units="breaths/min"
             stroke="#552ea9"
           />
           <LineGraph
-            data={body_temperature_data.reverse()}
+            data={[...body_temperature_data.reverse()]}
             datakey="טמפ' גוף"
             y_domain={35}
             medical_units="°C"
