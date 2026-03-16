@@ -1,10 +1,10 @@
 import { IsDateString, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export enum PatientVitalField {
-  HEART_RATE = 'heartRate',
-  SP_O2 = 'spO2',
-  RESPIRATORY_RATE = 'respiratoryRate',
-  BODY_TEMPERATURE = 'bodyTemperature',
+    HEART_RATE = 'heart_rate',
+    SP_O2 = 'spO2',
+    RESPIRATORY_RATE = 'respiratory_rate',
+    BODY_TEMPERATURE = 'body_temperature',
 }
 
 export class PatientVitals {
@@ -12,20 +12,20 @@ export class PatientVitals {
   id: string;
 
   @IsString()
-  patientId: string;
-
+  patient_id: string;
+  
   @IsDateString()
-  timestamp: string;
+  created_at : string;
 
   @IsNumber()
-  heartRate: number;
+  heart_rate : number;
 
   @IsNumber()
-  spO2: number;
+  spO2 : number;
+      
+  @IsNumber()
+  respiratory_rate : number;
 
   @IsNumber()
-  respiratoryRate: number;
-
-  @IsNumber()
-  bodyTemperature: number;
+  body_temperature : number;
 }

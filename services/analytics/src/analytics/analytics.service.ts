@@ -13,20 +13,21 @@ export class AnalyticsService {
   constructor(
     @InjectRepository(MachineAction)
     private readonly machineActionRepo: Repository<MachineAction>,
+
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
-  ) {}
+  ) { }
 
   async getAllMachineActions(): Promise<MachineAction[]> {
     return await this.machineActionRepo.find();
   }
 
-  async getPatientWithMostMachineUsage(): Promise<Patient | null> {
-    return await this.getPatientByMachineUsageRanking(MachineUsageRanking.MOST);
-  }
-
-  async getPatientWithLeastMachineUsage(): Promise<Patient | null> {
-    return await this.getPatientByMachineUsageRanking(MachineUsageRanking.LEAST);
+  async getMachineByUsageRanking(ranking: MachineUsageRanking): Promise<Patient | null> {
+    if (ranking === MachineUsageRanking.MOST) {
+      return await this.getPatientByMachineUsageRanking(MachineUsageRanking.MOST);
+    } else {
+      return await this.getPatientByMachineUsageRanking(MachineUsageRanking.LEAST);
+    }
   }
 
   async getPatientByMachineUsageRanking(ranking: MachineUsageRanking): Promise<Patient | null> {
@@ -56,7 +57,7 @@ export class AnalyticsService {
       return null;
     }
 
-    return this.patientRepository.findOne({
+    return await this.patientRepository.findOne({
       where: { id: result[0].patient_id },
     });
   }

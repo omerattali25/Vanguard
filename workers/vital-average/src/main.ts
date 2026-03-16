@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AverageCalculatorModule } from './average-calculator/average-calculator.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AverageCalculatorModule);
+  await NestFactory.createApplicationContext(AppModule);
 }
 
 bootstrap();

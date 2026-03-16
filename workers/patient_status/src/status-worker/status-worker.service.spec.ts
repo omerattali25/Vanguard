@@ -37,12 +37,12 @@ describe('StatusWorkerService', () => {
   it('should update patient status based on vitals', async () => {
     const vitals: PatientVitals = {
       id: 'patient-1',
-      patientId: 'patient-1',
-      heartRate: 80,
+      patient_id: 'patient-1',
+      heart_rate: 80,
       spO2: 98,
-      respiratoryRate: 15,
-      bodyTemperature: 36.5,
-      timestamp: new Date().toISOString(),
+      respiratory_rate: 15,
+      body_temperature: 36.5,
+      created_at: new Date().toISOString(),
     };
 
     provider.providePatientStatus.mockReturnValue(PatientStatus.Stable);

@@ -11,15 +11,10 @@ import {
 } from "@/components/ui/table";
 import { usePatients } from "../../api/patients/patient.query";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Patient } from "types/patient";
 
 export const Patients = () => {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState<Patient[]>([]);
   const { data, isPending, error } = usePatients();
-
-  setPatients(data ?? []);
 
   if (isPending) {
     return (
@@ -51,7 +46,7 @@ export const Patients = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {patients.map((patient) => {
+          {data?.map((patient) => {
             return (
               <TableRow
                 onClick={() => {
