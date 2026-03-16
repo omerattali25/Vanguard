@@ -5,5 +5,5 @@ export class MachineChangePatientDto {
   patient: string;
 
   @IsString()
-  lockID: string;
+  lockId: string;
 }
