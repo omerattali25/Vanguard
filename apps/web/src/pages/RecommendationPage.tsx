@@ -38,8 +38,8 @@ export const Recommendations = () => {
         <TableCaption>מטופלים</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-center">מדד סיכון</TableHead>
             <TableHead className="text-center">שם המטופל</TableHead>
+            <TableHead className="text-center">מדד סיכון</TableHead>
             <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
