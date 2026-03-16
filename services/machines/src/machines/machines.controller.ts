@@ -26,7 +26,7 @@ export class MachinesController {
     return await this.machinesService.changePatient(
      id,
       changePatientDto.patient,
-      changePatientDto.lockID,
+      changePatientDto.lockId
     );
   }
 

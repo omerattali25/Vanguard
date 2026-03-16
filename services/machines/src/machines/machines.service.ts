@@ -75,7 +75,9 @@ export class MachinesService {
     }
 
     await this.machineRepo.save(machine);
-    this.redisClient.publish('machines', JSON.stringify(machine));
+    const outputMachine = await this.convertPatientIdToName(machine);
+    this.redisClient.publish('machines', JSON.stringify(outputMachine));
+    return outputMachine
   }
 
   async startChangePatient(machineId: string) {

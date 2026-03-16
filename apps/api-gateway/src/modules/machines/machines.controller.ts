@@ -28,8 +28,16 @@ export class MachinesController {
       dto.lockId,
     );
   }
+
   @Post()
   postMachine(@Body() dto: { name: string }) {
     return this.machinesService.saveMachine(dto.name);
   }
+
+  @Put(':id')
+  updateMachine(@Param('id') id:string,@Body() dto:{name?:string,location?:string}){
+    return this.machinesService.updateMachine(id,dto.name,dto.location)
+  }
+
+  
 }

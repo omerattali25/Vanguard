@@ -32,9 +32,9 @@ export class MachinesService {
     return data;
   }
 
-  async updateMachine(location?: string, name?: string): Promise<Machine> {
+  async updateMachine(id:string,name?: string, location?: string): Promise<Machine> {
     const { data } = await firstValueFrom(
-      this.httpService.put<Machine>(`${this.baseUrl}/machines`,{location:location,name:name})
+      this.httpService.put<Machine>(`${this.baseUrl}/machines/${id}`,{name:name,location:location})
     );
     return data
   }

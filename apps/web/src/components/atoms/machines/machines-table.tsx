@@ -69,18 +69,18 @@ export const MachinesTable: React.FC =() => {
                   <TableCell className="text-center">{machine.id}</TableCell>
                   <TableCell className="text-center">
                     <Input
-                      value={machine.name}
+                      placeholder={machine.name}
                       onChange={(e) => {
                         setUpdatedName(e.currentTarget.value);
                       }}
                     ></Input>
                   </TableCell>
                   <TableCell className="text-center">
-                    {machine.assinged}
+                    {machine.assigned}
                   </TableCell>
                   <TableCell className="text-center">
                     <Input
-                      value={machine.location}
+                      placeholder={machine.location}
                       onChange={(e) => {
                         setUpdatedLocatin(e.currentTarget.value);
                       }}
