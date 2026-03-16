@@ -31,7 +31,7 @@ export class PagesStateService {
     }
     async sendToRedisTopic(Vital: VitalEntity): Promise<void> {
         if(await this.hasCount(Vital.patient_id)) {
-            await this.redis.publish(`vitals`, JSON.stringify(Vital));
+            await this.redis.publish(this.configService.get<string>('REDIS_VITALS_TOPIC') ?? 'vitals', JSON.stringify(Vital));
         }
     }
 

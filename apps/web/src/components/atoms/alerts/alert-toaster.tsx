@@ -1,5 +1,5 @@
-import { useAlert } from '@/hooks/use-alert';
-import React, { useEffect } from 'react'
+import { useAlert } from "../../../hooks/use-alert";
+import { useEffect } from 'react'
 import { io } from "socket.io-client";
 import { Toaster } from 'sonner';
 

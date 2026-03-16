@@ -17,7 +17,7 @@ export class Patient {
   @Column()
   city: string;
 
-  @Column({ type: 'enum', enum: PatientStatus })
+  @Column({ type: 'enum', enum: PatientStatus, default: PatientStatus.Stable })
   status: PatientStatus;
 
   @CreateDateColumn()

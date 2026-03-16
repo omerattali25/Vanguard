@@ -5,7 +5,8 @@ import { PatientVitals } from '@vanguard/types';
 
 @Controller()
 export class KafkaController {
-    constructor(private exceptionalAlertsService: AlertsService) { }
+    constructor(
+        private exceptionalAlertsService: AlertsService) { }
 
     @EventPattern(process.env.KAFKA_LISTEN_TOPIC)
     async handleVitalCreated(

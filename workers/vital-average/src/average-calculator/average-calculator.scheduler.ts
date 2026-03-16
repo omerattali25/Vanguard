@@ -26,6 +26,7 @@ export class TimeframeScheduler {
 
     if (!timeframe) return;
 
+    console.log(`Calculating averages for timeframe ${timeframe.start} - ${timeframe.end} at ${now.toISOString()}`);
     await this.averageCalculatorService.calculateAndSaveAverage(timeframe);
   }
 }

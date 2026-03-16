@@ -10,7 +10,7 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: [String(process.env.KAFKA_LISTENING)],
+          brokers: [String(process.env.KAFKA_BROKER)],
         },
         consumer: {
           groupId: String(process.env.KAFKA_GROUP_ID),
@@ -24,5 +24,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  await app.listen();
 }
 bootstrap();

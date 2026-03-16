@@ -15,10 +15,6 @@ describe('MachinesController', () => {
     create: jest.fn(),
   };
 
-  const mockRedlock = {
-    acquire: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MachinesController],
@@ -27,10 +23,6 @@ describe('MachinesController', () => {
         {
           provide: getRepositoryToken(Machine),
           useValue: mockRepo,
-        },
-        {
-          provide: 'REDLOCK',
-          useValue: mockRedlock,
         },
       ],
     }).compile();

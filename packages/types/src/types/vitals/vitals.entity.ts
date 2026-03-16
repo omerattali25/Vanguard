@@ -1,9 +1,8 @@
-
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 
 @Entity()
+@Index(["patient_id", "created_at"])
 export class VitalEntity {
-  @Column()
   @PrimaryColumn()  
   id: string;
 
@@ -23,5 +22,5 @@ export class VitalEntity {
   spO2: number;
 
   @Column({ type: 'timestamptz' })
-  timestamp: string;
+  created_at: string;
 }
