@@ -23,8 +23,8 @@ export class RiskService {
     );
   }
 
-  handleVitals(vitals: Vital) {
+  async handleVitals(vitals: Vital) {
     const risk = this.calculateRisk(vitals);
-    this.redis.zadd('riskIndex', risk, vitals.patient_id);
+    await this.redis.zadd('riskIndex', risk, vitals.patient_id);
   }
 }

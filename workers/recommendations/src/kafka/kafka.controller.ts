@@ -1,5 +1,6 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
+import { BadRequestException } from '@nestjs/common';
 import { Vital } from 'src/types/vitals.input';
 import { RiskService } from './risk.service';
 
@@ -8,7 +9,14 @@ export class KafkaController {
   constructor(private readonly riskService: RiskService) {}
 
   @EventPattern(process.env.KAFKA_TOPIC ?? 'updated_vitals')
-  async handleVitals(vitals: Vital) {
-    await this.riskService.handleVitals(vitals);
+  async handleVitals(@Payload() vitals: Vital) {
+    try {
+      await this.riskService.handleVitals(vitals);
+    } catch (err) {
+      if (err instanceof BadRequestException) {
+        return;
+      }
+      throw err;
+    }
   }
 }
