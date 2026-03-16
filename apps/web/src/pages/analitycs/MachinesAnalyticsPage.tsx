@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 const MachinesAnalytics = () => {
     const navigate = useNavigate();
     const {data, isPending, error} = useMachinesAnalytics();
-    console.log(data);
     if(isPending) {
         return <div>...טוען את כל הנתונים</div>
     }
