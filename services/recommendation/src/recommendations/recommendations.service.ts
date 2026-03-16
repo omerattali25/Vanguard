@@ -4,7 +4,6 @@ import Redis from 'ioredis';
 import { Machine, Patient } from '@vanguard/types';
 import { IsNull, Not, Repository } from 'typeorm';
 import { Recommendation } from '@vanguard/types';
-import { get } from 'https';
 
 @Injectable()
 export class RecommendationsService {
@@ -28,6 +27,7 @@ export class RecommendationsService {
         assigned: Not(IsNull()),
       },
     });
+
     return machines.map((m) => m.assigned);
   }
 

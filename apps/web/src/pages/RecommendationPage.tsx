@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useRecommendations } from "api/recommendations/recommendations.query";
 
-export const Patients = () => {
+export const Recommendations = () => {
   const navigate = useNavigate();
   const { data, isPending, error } = useRecommendations();
 
@@ -44,24 +44,23 @@ export const Patients = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {for (const [key, value] of Object.entries(groups)) {
-            <TableRow
-                            onClick={() => {
-                              navigate(`/patients/${patient.id}`);
-                            }}
-                            className="cursor-pointer hover:bg-muted"
-                          >
-                            <TableCell className="text-center">
-                              <PatientStatusBadge status={patient.status} />
-                            </TableCell>
-                            <TableCell className="text-center">{patient.name}</TableCell>
-                            <TableCell className="text-center">{patient.city}</TableCell>
-                          </TableRow>
-        }}
+           {data?.map((patient) => {
+                      return (
+                        <TableRow
+                          onClick={() => {
+                            navigate(`/patients/${patient.id}`);
+                          }}
+                          className="cursor-pointer hover:bg-muted"
+                        >
+                          <TableCell className="text-center">{patient.name}</TableCell>
+                          <TableCell className="text-center">{patient.score}</TableCell>
+                        </TableRow>
+                      );
+                    })}
         </TableBody>
       </Table>
     </>
   );
 };
 
-export default Patients;
+export default Recommendations;
