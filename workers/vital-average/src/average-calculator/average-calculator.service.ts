@@ -25,14 +25,9 @@ export class AverageCalculatorService {
   constructor(
     @InjectRepository(VitalEntity)
     private readonly vitalRepo: Repository<VitalEntity>,
-
-    private readonly configService: ConfigService,
     private readonly redisService: RedisService,
   ) {
-
-    const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-    this.redis = this.redisService.getOrThrow(namespace);
-
+    this.redis = this.redisService.getOrThrow();
   }
 
   async calculateAndSaveAverage(timeframe: Timeframe) {
@@ -43,9 +38,9 @@ export class AverageCalculatorService {
     // 1. USE SQL AGGREGATION - This is the key change
     // We group by patientId and get averages for all fields in one query
     const query = this.vitalRepo.createQueryBuilder('v')
-      .select('v.patientId', 'patientId')
-      .where('v.timestamp BETWEEN :start AND :end', { start: startDate, end: endDate })
-      .groupBy('v.patientId');
+      .select('v.patient_id', 'patient_id')
+      .where('v.created_at BETWEEN :start AND :end', { start: startDate, end: endDate })
+      .groupBy('v.patient_id');
 
     // Dynamically add AVG for each VitalField (HeartRate, SpO2, etc.)
     Object.values(VitalField).forEach(field => {

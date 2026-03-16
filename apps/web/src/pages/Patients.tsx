@@ -12,7 +12,6 @@ import {
 import { usePatients } from "../../api/patients/patient.query";
 import { useNavigate } from "react-router-dom";
 
-
 export const Patients = () => {
   const navigate = useNavigate();
   const { data, isPending, error } = usePatients();

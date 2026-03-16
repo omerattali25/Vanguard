@@ -1,7 +1,7 @@
-import { IsString,IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty } from "class-validator";
 
-export class MachineInputDto{
+export class MachineInputDto {
     @IsString()
     @IsNotEmpty()
-    name:string
+    name: string
 }

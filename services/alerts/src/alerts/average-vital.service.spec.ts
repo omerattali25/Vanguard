@@ -43,12 +43,12 @@ describe('AverageVitalService', () => {
 
         const vitals: PatientVitals = {
             id: 'a',
-            patientId: '123',
-            timestamp: new Date().toISOString(),
-            heartRate: 80,
+            patient_id: '123',
+            created_at: new Date().toISOString(),
+            heart_rate: 80,
             spO2: 97,
-            respiratoryRate: 97.5,
-            bodyTemperature: 36.5
+            respiratory_rate: 97.5,
+            body_temperature: 36.5
         };
 
         const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
@@ -62,12 +62,12 @@ describe('AverageVitalService', () => {
 
         const vitals: PatientVitals = {
             id: 'a',
-            patientId: '123',
-            timestamp: new Date().toISOString(),
-            heartRate: 82, // within 20% of average
+            patient_id: '123',
+            created_at: new Date().toISOString(),
+            heart_rate: 82, // within 20% of average
             spO2: 97,
-            respiratoryRate: 97.5,
-            bodyTemperature: 36.5
+            respiratory_rate: 97.5,
+            body_temperature: 36.5
         };
 
         const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
@@ -81,12 +81,12 @@ describe('AverageVitalService', () => {
 
         const vitals: PatientVitals = {
             id: 'a',
-            patientId: '123',
-            timestamp: new Date().toISOString(),
-            heartRate: 99, // >20% above average ~76
+            patient_id: '123',
+            created_at: new Date().toISOString(),
+            heart_rate: 99, // >20% above average ~76
             spO2: 97,
-            respiratoryRate: 97.5,
-            bodyTemperature: 36.5
+            respiratory_rate: 97.5,
+            body_temperature: 36.5
         };
 
         const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);
@@ -101,12 +101,12 @@ describe('AverageVitalService', () => {
 
         const vitals: PatientVitals = {
             id: 'a',
-            patientId: '123',
-            timestamp: new Date().toISOString(),
-            heartRate: 100,
+            patient_id: '123',
+            created_at: new Date().toISOString(),
+            heart_rate: 100,
             spO2: 97,
-            respiratoryRate: 97.5,
-            bodyTemperature: 36.5
+            respiratory_rate: 97.5,
+            body_temperature: 36.5
         };
 
         // avg = (80+82+78)/3 = 80
@@ -117,12 +117,12 @@ describe('AverageVitalService', () => {
     it('should return false if timestamp is invalid', async () => {
         const vitals: PatientVitals = {
             id: 'a',
-            patientId: '123',
-            timestamp: 'invalid-date',
-            heartRate: 80,
+            patient_id: '123',
+            created_at: 'invalid-date',
+            heart_rate: 80,
             spO2: 97,
-            respiratoryRate: 97.5,
-            bodyTemperature: 36.5
+            respiratory_rate: 97.5,
+            body_temperature: 36.5
         };
 
         const result = await service.isVitalOutOfAverage(vitals, PatientVitalField.HEART_RATE);

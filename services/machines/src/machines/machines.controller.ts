@@ -5,7 +5,7 @@ import { MachineChangePatientDto } from './dto/machine.change.patient.dto';
 
 @Controller('machines')
 export class MachinesController {
-  constructor(private readonly machinesService: MachinesService) {}
+  constructor(private readonly machinesService: MachinesService) { }
 
   @Get()
   async getMachines() {
@@ -28,18 +28,14 @@ export class MachinesController {
       changePatientDto.lockID,
     );
   }
+
   @Post()
   async saveMachine(@Payload() machineInputDto) {
     return await this.machinesService.saveMachine(machineInputDto);
   }
+
   @Put(':id')
-  async updateMachine(
-    @Param('id') machineId: string,
-    @Payload() machineUpdateDto: any,
-  ) {
-    return await this.machinesService.updateMachine(
-      machineId,
-      machineUpdateDto,
-    );
+  async updateMachine(@Param('id') machineId: string, @Payload() machineUpdateDto: any) {
+    return await this.machinesService.updateMachine(machineId, machineUpdateDto);
   }
 }
