@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MachineAction, MachineActionType, Patient } from '@vanguard/types';
+import { Machine, MachineAction, MachineActionType, Patient } from '@vanguard/types';
 import { Repository } from 'typeorm';
 
 export enum MachineUsageRanking {
@@ -16,9 +16,33 @@ export class AnalyticsService {
 
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
-  ) { }
 
-  async getNewPatientCountInLastDays(days: number): Promise<Map<number, number>> {
+    @InjectRepository(Machine)
+    private readonly machineRepository: Repository<Machine>,
+  ) {}
+
+  async getMachineWithMostActionsInLastDays(days: number): Promise<Machine | null> {
+    const result = await this.machineActionRepo.query(`
+      SELECT machine_id
+      FROM machine_action
+      WHERE trigerd_at >= NOW() - INTERVAL '${days} days'
+      GROUP BY machine_id
+      ORDER BY COUNT(*) DESC
+        LIMIT 1
+    `);
+
+    if (!result.length) {
+      return null;
+    }
+
+    return this.machineRepository.findOne({
+      where: { id: result[0].machine_id },
+    });
+  }
+
+  async getNewPatientCountInLastDays(
+    days: number,
+  ): Promise<Map<number, number>> {
     const rows = await this.patientRepository.query(`
       SELECT
         (CURRENT_DATE - DATE(registered_at)) AS day_diff,
@@ -41,23 +65,29 @@ export class AnalyticsService {
     return result;
   }
 
-  async getMostUsedMachine(): {
-
-  };
+  async getMostUsedMachine(): {};
 
   async getAllMachineActions(): Promise<MachineAction[]> {
     return await this.machineActionRepo.find();
   }
 
-  async getMachineByUsageRanking(ranking: MachineUsageRanking): Promise<Patient | null> {
+  async getMachineByUsageRanking(
+    ranking: MachineUsageRanking,
+  ): Promise<Patient | null> {
     if (ranking === MachineUsageRanking.MOST) {
-      return await this.getPatientByMachineUsageRanking(MachineUsageRanking.MOST);
+      return await this.getPatientByMachineUsageRanking(
+        MachineUsageRanking.MOST,
+      );
     } else {
-      return await this.getPatientByMachineUsageRanking(MachineUsageRanking.LEAST);
+      return await this.getPatientByMachineUsageRanking(
+        MachineUsageRanking.LEAST,
+      );
     }
   }
 
-  async getPatientByMachineUsageRanking(ranking: MachineUsageRanking): Promise<Patient | null> {
+  async getPatientByMachineUsageRanking(
+    ranking: MachineUsageRanking,
+  ): Promise<Patient | null> {
     const result = await this.machineActionRepo.query(`
       SELECT patient_id
       FROM (

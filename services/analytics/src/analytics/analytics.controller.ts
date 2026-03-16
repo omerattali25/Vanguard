@@ -1,10 +1,11 @@
 import { Controller, Get, Param, ParseEnumPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { AnalyticsService, MachineUsageRanking } from './analytics.service';
-import { MachineAction, Patient } from '@vanguard/types';
+import { Machine, MachineAction, Patient } from '@vanguard/types';
+import { dateTimestampProvider } from 'rxjs/internal/scheduler/dateTimestampProvider';
 
 @Controller('analytics')
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) { }
+  constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Get()
   getAllMachineActions(): Promise<MachineAction[]> {
@@ -26,5 +27,11 @@ export class AnalyticsController {
   getNewPatientCountInLastDays(
     @Param('days', new ParseIntPipe()) days: number): Promise<Map<number, number>> {
     return this.analyticsService.getNewPatientCountInLastDays(days);
+  }
+
+  @Get('machines/most-actions/:days')
+  getMachineWithMostActionsInLastDays(
+    @Param('days', new ParseIntPipe()) days: number): Promise<Machine | null> {
+    return this.analyticsService.getMachineWithMostActionsInLastDays(days);
   }
 }
