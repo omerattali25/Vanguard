@@ -4,27 +4,41 @@ import { Redis } from 'ioredis';
 
 @Injectable()
 export class RiskService {
-  redis: Redis;
+  private redis: Redis;
+  private buffer: (string | number)[] = [];
+  private readonly BATCH_SIZE = 500;
+
   constructor() {
     this.redis = new Redis({
-      host: process.env.REDIS_HOST ?? '',
-      port: parseInt(process.env.REDIS_PORT ?? '1'),
+      host: process.env.REDIS_HOST ?? 'localhost',
+      port: parseInt(process.env.REDIS_PORT ?? '6379'),
     });
   }
 
   private calculateRisk(vitals: Vital): number {
-    if (vitals.respiratory_rate === 0) {
-      return 10000; // THE MAN IS NOT BREATHING, HE IS DEAD, GIVE HIM A HIGH RISK SCORE
-    }
-    return (
-      vitals.spO2 /
-      parseFloat(process.env.ROOM_OXYGEN_LEVEL ?? '0.21') /
-      vitals.respiratory_rate
-    );
+    if (vitals.respiratory_rate === 0) return 10000;
+    
+    const roomOxygen = parseFloat(process.env.ROOM_OXYGEN_LEVEL ?? '0.21');
+    return vitals.spO2 / roomOxygen / vitals.respiratory_rate;
   }
 
-  handleVitals(vitals: Vital) {
+  async handleVitals(vitals: Vital) {
     const risk = this.calculateRisk(vitals);
-    this.redis.zadd('riskIndex', risk, vitals.patient_id);
+    
+    this.buffer.push(risk, vitals.patient_id);
+
+    if (this.buffer.length >= this.BATCH_SIZE * 2) {
+      await this.flush();
+    }
+  }
+
+  private async flush() {
+    const batch = this.buffer.splice(0, this.BATCH_SIZE * 2);
+    
+    try {
+      await this.redis.zadd('riskIndex', ...batch);
+    } catch (error) {
+      console.error('Redis Batch Write Error:', error);
+    }
   }
 }

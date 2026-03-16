@@ -9,6 +9,9 @@ export class KafkaController {
 
   @EventPattern(process.env.KAFKA_TOPIC ?? 'updated_vitals')
   async handleVitals(vitals: Vital) {
+    if(vitals.respiratory_rate < 0 || vitals.spO2 < 0){
+      return;
+    }
     await this.riskService.handleVitals(vitals);
   }
 }
