@@ -14,7 +14,6 @@ import { useRecommendations } from "api/recommendations/recommendations.query";
 export const Recommendations = () => {
   const navigate = useNavigate();
   const { data, isPending, error } = useRecommendations();
-
   if (isPending) {
     return (
       <div className="flex justify-center mt-10">
@@ -40,7 +39,6 @@ export const Recommendations = () => {
           <TableRow>
             <TableHead className="text-center">שם המטופל</TableHead>
             <TableHead className="text-center">מדד סיכון</TableHead>
-            <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
