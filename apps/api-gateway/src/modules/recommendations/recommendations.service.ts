@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import { Recommendation } from '@vanguard/types';
 @Injectable()
 export class RecommendationsService {
   private readonly baseUrl: string;
@@ -18,9 +19,7 @@ export class RecommendationsService {
   }
   async getRecommendations() {
     const { data } = await firstValueFrom(
-      this.httpService.get<Record<string, number>>(
-        `${this.baseUrl}/recommendations`,
-      ),
+      this.httpService.get<Recommendation[]>(`${this.baseUrl}/recommendations`),
     );
     return data;
   }
