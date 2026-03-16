@@ -11,6 +11,7 @@ import PatientAnalytics from "./pages/analitycs/PatientAnalytics";
 import MachinesAnalytics from "./pages/analitycs/MachinesAnalyticsPage";
 import AlertsToaster from "./components/atoms/alerts/alert-toaster";
 import { Recommendations } from "./pages/RecommendationPage";
+import Analytics from "./pages/analitycs/AnalyticsPage";
 
 function App() {
   const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ function App() {
             />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/analytics/machines" element={<MachinesAnalytics />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/patients/:id" element={<PatientVitals />} />
             <Route path="/machines" element={<MachinesPage />} />
           </Routes>

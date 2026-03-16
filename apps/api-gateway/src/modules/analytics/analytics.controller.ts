@@ -9,4 +9,14 @@ export class AnalyticsController {
   getMachinesAnalytics() {
     return this.analyticsService.getMachinesAnalytics();
   }
+
+  @Get('/all-stats/most-connected-patient')
+  getMostConnectedPatient() {
+    return this.analyticsService.getMostConnectedPatient();
+  }
+
+  @Get('/all-stats/least-connected-patient')
+  getLeastConnectedPatient() {
+    return this.analyticsService.getLeastConnectedPatient();
+  }
 }

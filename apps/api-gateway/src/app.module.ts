@@ -12,10 +12,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     VitalsModule,
     PatientsModule,
     MachinesModule,
-<<<<<<< HEAD
-=======
     RecommendationsModule,
->>>>>>> c9a4b431bba50b2295897d66f9feb0b59067fd91
     AnalyticsModule
   ],
 })

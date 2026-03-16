@@ -23,4 +23,18 @@ export class AnalyticsService {
     );
     return data;
   }
+
+  async getMostConnectedPatient(): Promise<Patient> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Patient>(`${this.baseUrl}/analytics/machine-usage/DESC`),
+    );
+    return data;
+  }
+
+  async getLeastConnectedPatient(): Promise<Patient> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Patient>(`${this.baseUrl}/analytics/machine-usage/ASC`),
+    );
+    return data;
+  }
 }
