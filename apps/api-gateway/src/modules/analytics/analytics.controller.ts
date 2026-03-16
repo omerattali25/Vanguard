@@ -7,7 +7,6 @@ export class AnalyticsController {
 
   @Get('/machines')
   getMachinesAnalytics() {
-    console.log('Received request to get all machines analytics');
     return this.analyticsService.getMachinesAnalytics();
   }
 }
