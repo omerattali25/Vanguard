@@ -21,7 +21,6 @@ export class MachinesController {
     @Param('id') machineId: string,
     @Body() dto: { lockId: string, patient: string},
   ) {
-    console.log(dto.lockId);
     return this.machinesService.changePatient(
       machineId,
       dto.patient,

@@ -18,7 +18,6 @@ import {
 import { MachineActionDto } from './dto/machine.action.dto';
 import { Patient } from '@vanguard/types';
 import { MachineOutputDto } from './dto/machine.output.dto';
-import { cwd } from 'process';
 
 
 @Injectable()
@@ -122,7 +121,6 @@ export class MachinesService {
   }
 
   async changePatient(machineId: string, patient: string, lockId: string) {
-    console.log(lockId)
     const lock = await this.redisClient.get(`locks:machine:${machineId}`);
     if (!lock || lock !== lockId) {
       this.logger.error(`The lock: ${lock} wasn't found or is not correct`);

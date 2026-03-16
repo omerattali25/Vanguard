@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,14 +20,42 @@ import { Popover, PopoverTrigger } from "@/components/ui/popover.tsx";
 import { useMachines, useStartChangePatient, useUpdateMachineMutate } from "api/machines/machines.query.ts";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { ChangePatientContext } from "@/contexts/machines/change-patient-context.ts";
+import {Machine} from '../../../types/machine.ts'
+import { io } from "socket.io-client";
 
+const socket = io('http://localhost:3001');
 export const MachinesTable: React.FC =() => {
   const [updatedName, setUpdatedName] = useState("");
   const [updatedLocation, setUpdatedLocatin] = useState("");
   const {data,isPending,error}=useMachines();
   const {mutate:updateMachine}=useUpdateMachineMutate();
   const {mutateAsync:startChangePatient}=useStartChangePatient();
-  const {changeLockId,changeMachineId}=useContext(ChangePatientContext)
+  const {changeLockId,changeMachineId}=useContext(ChangePatientContext);
+  const [machines,setMachines]=useState<Machine[]>([])
+
+      useEffect(() => {
+    setMachines(data ?? []);
+  }, [data]);
+
+    useEffect(() => {
+      socket.emit("join", `machines`);
+  
+      const newMachineHandler = (newMachine: Machine) => {
+        setMachines((prev) => {
+          const removedOriginal=prev.filter(machine=>machine.id!=newMachine.id)
+          const newMachines = [...removedOriginal, newMachine];
+          return newMachines;
+        });
+      };
+  
+      socket.on("machines", newMachineHandler);
+      
+      return () => {
+        socket.off("machines", newMachineHandler);
+        socket.emit("leave", `machines`);
+      };
+    }, []);
+
   if(isPending){
      return (
       <div className="flex justify-center mt-10">
@@ -63,7 +91,7 @@ export const MachinesTable: React.FC =() => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((machine) => {
+            {machines.map((machine) => {
               return (
                 <TableRow>
                   <TableCell className="text-center">{machine.id}</TableCell>
@@ -98,7 +126,6 @@ export const MachinesTable: React.FC =() => {
                          changeMachineId(machine.id)
                           try{
                           const res=await startChangePatient(machine.id)
-                          alert(res)
                           changeLockId(res)
                           }
                           catch(err){
