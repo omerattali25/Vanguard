@@ -21,7 +21,7 @@ function App() {
         <SidebarProvider defaultOpen={false}>
           <AppSidebar />
 
-          <SidebarTrigger></SidebarTrigger>
+          <SidebarTrigger/>
 
           <Routes>
             <Route path="/" element={<Home />} />
@@ -37,13 +37,6 @@ function App() {
           </Routes>
           <AlertsToaster />
         </SidebarProvider>
-        <Toaster
-          position="bottom-right"
-          richColors
-          closeButton
-          theme="system"
-          visibleToasts={5}
-        />
         <footer className="bg-gray-900 text-white py-12 px-6">
           <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
             <p>&copy; MoReDis.</p>
