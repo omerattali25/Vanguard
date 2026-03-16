@@ -19,7 +19,7 @@ export class MachinesController {
   @Put(`/change-patient/:id`)
   changePatient(
     @Param('id') machineId: string,
-    @Body() dto: { patient: string; lockId: string },
+    @Body() dto: { lockId: string, patient: string},
   ) {
     console.log(dto.lockId);
     return this.machinesService.changePatient(
