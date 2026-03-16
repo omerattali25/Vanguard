@@ -18,6 +18,33 @@ export class AnalyticsService {
     private readonly patientRepository: Repository<Patient>,
   ) { }
 
+  async getNewPatientCountInLastDays(days: number): Promise<Map<number, number>> {
+    const rows = await this.patientRepository.query(`
+      SELECT
+        (CURRENT_DATE - DATE(registered_at)) AS day_diff,
+        COUNT(*) AS count
+      FROM patient
+      WHERE registered_at >= CURRENT_DATE - INTERVAL '${days} days'
+      GROUP BY day_diff
+      ORDER BY day_diff
+    `);
+
+    const result = new Map<number, number>();
+    for (let i = 0; i < days; i++) {
+      result.set(i, 0);
+    }
+
+    for (const row of rows) {
+      result.set(Number(row.day_diff), Number(row.count));
+    }
+
+    return result;
+  }
+
+  async getMostUsedMachine(): {
+
+  };
+
   async getAllMachineActions(): Promise<MachineAction[]> {
     return await this.machineActionRepo.find();
   }
