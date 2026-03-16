@@ -9,10 +9,10 @@ import { defaultMessage } from '../../config/default-messages.config';
 export class TransformerService {
   constructor(
     @Inject('KAFKA_PRODUCER') private readonly kafkaClient: ClientKafka,
-  ) { }
+  ) {}
 
   private logger = new Logger(TransformerService.name);
-  
+
   async onModuleInit() {
     await this.kafkaClient.connect();
     this.logger.log('Kafka producer connected');
@@ -35,13 +35,15 @@ export class TransformerService {
 
     const vitalsToReturn: Vitals = {
       ...defaultMessage,
-      ...message,
       created_at: new Date().toISOString(),
-      patient_id: message.patient_id + "",
+      ...message,
+      patient_id: message.patient_id + '',
       id: randomUUID(),
     };
 
-    this.logger.debug(`Transformed vitals for patient ID ${vitalsToReturn.patient_id}: ${JSON.stringify(vitalsToReturn)}`);
+    this.logger.debug(
+      `Transformed vitals for patient ID ${vitalsToReturn.patient_id}: ${JSON.stringify(vitalsToReturn)}`,
+    );
     this.changeInvalidValuesToMinusOne(vitalsToReturn);
     this.kafkaClient.emit(process.env.CREATE_TOPIC ?? '', vitalsToReturn);
   }

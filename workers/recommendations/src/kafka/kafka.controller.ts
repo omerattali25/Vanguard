@@ -7,7 +7,7 @@ import { RiskService } from './risk.service';
 export class KafkaController {
   constructor(private readonly riskService: RiskService) {}
 
-  @EventPattern(process.env.KAFKA_TOPIC ?? '')
+  @EventPattern(process.env.KAFKA_TOPIC ?? 'updated_vitals')
   async handleVitals(vitals: Vital) {
     await this.riskService.handleVitals(vitals);
   }

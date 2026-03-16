@@ -9,6 +9,7 @@ import { MachinesPage } from "./pages/Machines";
 import PatientAnalytics from "./pages/analitycs/PatientAnalytics";
 import MachinesAnalytics from "./pages/analitycs/MachinesAnalyticsPage";
 import AlertsToaster from "./components/atoms/alerts/alert-toaster";
+import { Recommendations } from "./pages/RecommendationPage";
 
 function App() {
   const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ function App() {
               path="/analytics/patients/:id"
               element={<PatientAnalytics />}
             />
+            <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/analytics/machines" element={<MachinesAnalytics />} />
             <Route path="/patients/:id" element={<PatientVitals />} />
             <Route path="/machines" element={<MachinesPage />} />
