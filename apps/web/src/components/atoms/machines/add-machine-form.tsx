@@ -9,9 +9,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { usePostMachineMutate } from "api/machines/machines.query";
 
 export const AddMachineForm: React.FC = () => {
   const [machineName, setMachineName] = useState("");
+    const {mutate:addMachine}=usePostMachineMutate()
   return (
     <>
       <Popover>
@@ -29,14 +31,14 @@ export const AddMachineForm: React.FC = () => {
           </FieldGroup>
           <Button variant="outline" className="mt-5" onClick={()=>{
             if(machineName){
-              console.log("adding machine with name ", machineName)
+              addMachine(machineName)
             }
             else{
               alert("אנא הזן שם מכונה")
             }
           }}>
             הוסף
-          </Button>
+          </Button >
         </PopoverContent>
       </Popover>
     </>

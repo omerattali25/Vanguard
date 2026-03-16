@@ -2,12 +2,12 @@ import LineGraph from "@/components/atoms/graphs/line-graph";
 import { useParams } from "react-router-dom";
 import PatientCard from "@/components/atoms/patients/patient-card";
 import { usePatient } from "api/patients/patient.query";
-import { usePatientVitals } from "api/vitals/vitals.query";
+import { useExitPatientVitals, usePatientVitals } from "api/vitals/vitals.query";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { Vital } from "types/vitals";
 
-const socket = io('http://localhost:3001');
+const socket = io(import.meta.env.VITE_API_REALTIME_GATEWAY_URL);
 
 const PatientVitals = () => {
   const { id } = useParams();
@@ -18,6 +18,8 @@ const PatientVitals = () => {
     isPending: isVitalsPending,
     error: vitalsError,
   } = usePatientVitals(id ?? "");
+
+  const { mutate: exitVitals } = useExitPatientVitals(id ?? "");
 
   useEffect(() => {
     setPatientsVitals(data ?? []);
@@ -43,6 +45,7 @@ const PatientVitals = () => {
     return () => {
       socket.off("vitals", newVitalHandler);
       socket.emit("leave", `vitals:${id}`);
+      exitVitals();
     };
   }, [id]);
 

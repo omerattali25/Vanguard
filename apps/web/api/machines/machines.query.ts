@@ -40,13 +40,13 @@ export const useStartChangePatient = () => {
 interface ChangePatientInput {
   machineId: string;
   patient: string;
-  token: string;
+  lockId: string;
 }
 
 export const useChangePatient = () => {
   return useMutation({
-    mutationFn: ({ machineId, patient, token }: ChangePatientInput) =>
-      changePatient(machineId, patient, token),
+    mutationFn: ({ machineId, patient, lockId }: ChangePatientInput) =>
+      changePatient(machineId, patient, lockId),
   });
 };
 

@@ -74,7 +74,9 @@ export class MachinesService {
     }
 
     await this.machineRepo.save(machine);
-    this.redisClient.publish('machines', JSON.stringify(machine));
+    const outputMachine = await this.convertPatientIdToName(machine);
+    this.redisClient.publish('machines', JSON.stringify(outputMachine));
+    return outputMachine
   }
 
   async startChangePatient(machineId: string) {
@@ -120,7 +122,6 @@ export class MachinesService {
 
   async changePatient(machineId: string, patient: string, lockId: string) {
     const lock = await this.redisClient.get(`locks:machine:${machineId}`);
-
     if (!lock || lock !== lockId) {
       this.logger.error(`The lock: ${lock} wasn't found or is not correct`);
       throw new InternalServerErrorException(`Lock: ${lock} wasn't found or is not correct`);
