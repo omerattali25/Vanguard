@@ -3,7 +3,7 @@ import { usePatientAnalytics } from 'api/analytics/patients-analytics/patients-a
 import { Table } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const PatientAnalyticsPage = () => {
+const PatientAnalytics = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const { data, isPending, error } = usePatientAnalytics(id ?? '');
@@ -46,4 +46,4 @@ const PatientAnalyticsPage = () => {
     )
 }
 
-export default PatientAnalyticsPage
+export default PatientAnalytics

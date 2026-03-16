@@ -9,9 +9,7 @@ import { WinstonModule } from 'nest-winston';
 import { LoggerConfig } from '@vanguard/configurations';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestApplication>(DataEntrypointModule, {
-    logger: LoggerConfig,
-  });
+  const app = await NestFactory.create<NestApplication>(DataEntrypointModule);
 
   const configService = app.get(ConfigService);
 
@@ -19,7 +17,10 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [configService.get('KAFKA_BROKER') ?? ""],
+        brokers: [configService.get('KAFKA_BROKER') ?? ''],
+      },
+      consumer: {
+        groupId: 'transformer-consumer-group',
       },
     },
   });

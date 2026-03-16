@@ -1,6 +1,5 @@
 import { RedisService } from "@liaoliaots/nestjs-redis";
 import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
 import { PatientVitalField, PatientVitals, Timeframe, TIMEFRAMES, TTL_DAYS } from "@vanguard/types";
 
@@ -11,13 +10,11 @@ export class AverageVitalService {
     private readonly logger = new Logger(AverageVitalService.name);
     constructor(
         private readonly redisService: RedisService,
-        private readonly configService: ConfigService
     ) {
-        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-        this.redis = this.redisService.getOrThrow(namespace);
+        this.redis = this.redisService.getOrThrow();
     }
     async isVitalOutOfAverage(vitals: PatientVitals, vitalField: PatientVitalField): Promise<boolean> {
-        const timeframe = this.getTimeframe(vitals.timestamp);
+        const timeframe = this.getTimeframe(vitals.created_at);
         if (!timeframe) return false;
 
         const formattedTimeframe = `${timeframe.start}-${timeframe.end}`;
@@ -26,12 +23,12 @@ export class AverageVitalService {
 
         for (let i = 1; i <= TTL_DAYS; i++) {
 
-            const date = new Date(vitals.timestamp);
+            const date = new Date(vitals.created_at);
             date.setDate(date.getDate() - i);
 
             const day = date.toISOString().slice(0, 10);
 
-            const key = `vital-average:${vitals.patientId}:${day}:${formattedTimeframe}`;
+            const key = `vital-average:${vitals.patient_id}:${day}:${formattedTimeframe}`;
 
             promises.push(this.redis.hget(key, vitalField));
         }

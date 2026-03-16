@@ -3,7 +3,7 @@ import { useMachinesAnalytics } from 'api/analytics/machines-analytics/machines-
 import { Table } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const MachinesAnalyticsPage = () => {
+const MachinesAnalytics = () => {
     const navigate = useNavigate();
     const {data, isPending, error} = useMachinesAnalytics();
     if(isPending) {
@@ -47,4 +47,4 @@ const MachinesAnalyticsPage = () => {
     )
 }
 
-export default MachinesAnalyticsPage
+export default MachinesAnalytics
