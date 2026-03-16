@@ -4,11 +4,11 @@ export * from './types/vitals/input/patient-vitals.input';
 export * from './types/machines/machine.entity';
 export * from './types/alerts/alert.entity';
 export * from './types/patients/patient.entity';
-
+export * from './types/recommendation/recommendation.output';
 export * from './types/alerts/regular-vitals.config';
 export * from './types/alerts/timeframes.config';
 export * from './types/patients/patient.entity';
 export * from './types/patients/patient.input';
 
 export * from './types/alerts/alert.entity';
-export * from './types/machine-actions/machine-action.entity'
+export * from './types/machine-actions/machine-action.entity';
