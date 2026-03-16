@@ -26,7 +26,7 @@ export class MachinesService {
 
   async saveMachine(name: string): Promise<Machine> {
     const { data } = await firstValueFrom(
-      this.httpService.post<Machine>(`${this.baseUrl}/machines`)
+      this.httpService.post<Machine>(`${this.baseUrl}/machines`,{name:name})
     );
 
     return data;
@@ -34,21 +34,21 @@ export class MachinesService {
 
   async updateMachine(location?: string, name?: string): Promise<Machine> {
     const { data } = await firstValueFrom(
-      this.httpService.put<Machine>(`${this.baseUrl}/machines`)
+      this.httpService.put<Machine>(`${this.baseUrl}/machines`,{location:location,name:name})
     );
     return data
   }
 
   async startChangePatient(machineId: string): Promise<string> {
     const { data } = await firstValueFrom(
-      this.httpService.post<{ lockId: string, expiration: number }>(`${this.baseUrl}/machines/${machineId}`)
+      this.httpService.post<{ lockId: string, expiration: number }>(`${this.baseUrl}/machines/change-patient/${machineId}`)
     )
     return data.lockId
   }
 
   async changePatient(machineId: string, patient_id: string, lockId: string): Promise<Machine> {
     const { data } = await firstValueFrom(
-      this.httpService.put<Machine>(`${this.baseUrl}/machines/${machineId}`)
+      this.httpService.put<Machine>(`${this.baseUrl}/machines/change-patient/${machineId}`,{patient_id:patient_id,lockId:lockId})
     )
     return data
   }

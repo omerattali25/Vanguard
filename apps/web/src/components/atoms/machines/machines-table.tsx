@@ -1,5 +1,4 @@
-import type { Machine } from "@/types/machine";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,21 +13,21 @@ import {
   ChangePatientPopover,
 } from "./change-patient-popover.tsx";
 import { MachineStatusBadge } from "./machine-status-badge.tsx";
-import { AddMachineForm } from "../add-machine-form.tsx";
+import { AddMachineForm } from "./add-machine-form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Popover, PopoverTrigger } from "@/components/ui/popover.tsx";
 import { useMachines, useStartChangePatient, useUpdateMachineMutate } from "api/machines/machines.query.ts";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { ChangePatientContext } from "@/contexts/machines/change-patient-context.ts";
 
 export const MachinesTable: React.FC =() => {
   const [updatedName, setUpdatedName] = useState("");
   const [updatedLocation, setUpdatedLocatin] = useState("");
-  const [changePatientMachineId, setChangePatientMachineId] = useState("");
   const {data,isPending,error}=useMachines();
   const {mutate:updateMachine}=useUpdateMachineMutate();
-  const {mutate:startChangePatient,data:startChangeRes,error:startChangeErr}=useStartChangePatient();
-  const [lockId,setLockId]=useState("")
+  const {mutateAsync:startChangePatient}=useStartChangePatient();
+  const {changeLockId,changeMachineId}=useContext(ChangePatientContext)
   if(isPending){
      return (
       <div className="flex justify-center mt-10">
@@ -49,7 +48,7 @@ export const MachinesTable: React.FC =() => {
   return (
     <>
       <Popover>
-        <ChangePatientPopover machineId={changePatientMachineId} lockId={lockId} />
+        <ChangePatientPopover />
         <Table className="w-full md:w-1/2 mt-10 border mx-auto">
           <TableCaption>מכונות</TableCaption>
           <TableHeader>
@@ -95,15 +94,17 @@ export const MachinesTable: React.FC =() => {
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        onClick={() => {
-                          setChangePatientMachineId(machine.id)
-                          startChangePatient(machine.id)
-                          if(startChangeRes){
-                          setLockId(startChangeRes)
+                        onClick={async() => {
+                         changeMachineId(machine.id)
+                          try{
+                          const res=await startChangePatient(machine.id)
+                          alert(res)
+                          changeLockId(res)
                           }
-                          if(startChangeErr){
-                            alert(startChangeErr)
+                          catch(err){
+                            alert(err)
                           }
+                          
                         }}
                       >
                         החלף מטופל
@@ -121,7 +122,9 @@ export const MachinesTable: React.FC =() => {
             })}
           </TableBody>
           <TableFooter>
-            <AddMachineForm />
+            <TableRow>
+              <TableCell>    <AddMachineForm /></TableCell>
+            </TableRow>
           </TableFooter>
         </Table>
       </Popover>
