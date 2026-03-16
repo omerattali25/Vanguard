@@ -23,29 +23,34 @@ export class MachinesService {
     );
     return data;
   }
-  async saveMachine(name:string):Promise<Machine>{
-    const {data}=await firstValueFrom(
+
+  async saveMachine(name: string): Promise<Machine> {
+    const { data } = await firstValueFrom(
       this.httpService.post<Machine>(`${this.baseUrl}/machines`)
     );
+
     return data;
   }
-  async updateMachine(location?:string,name?:string):Promise<Machine>{
-    const {data}=await firstValueFrom(
+
+  async updateMachine(location?: string, name?: string): Promise<Machine> {
+    const { data } = await firstValueFrom(
       this.httpService.put<Machine>(`${this.baseUrl}/machines`)
     );
     return data
   }
-  async startChangePatient(machineId:string):Promise<string>{
-    const {data}=await firstValueFrom(
-      this.httpService.post<{lockId:string,expiration:number}>(`${this.baseUrl}/machines/${machineId}`)
+
+  async startChangePatient(machineId: string): Promise<string> {
+    const { data } = await firstValueFrom(
+      this.httpService.post<{ lockId: string, expiration: number }>(`${this.baseUrl}/machines/${machineId}`)
     )
     return data.lockId
   }
-  async changePatient(machineId:string,patient_id:string,lockId:string):Promise<Machine>{
-    const {data}=await firstValueFrom(
+
+  async changePatient(machineId: string, patient_id: string, lockId: string): Promise<Machine> {
+    const { data } = await firstValueFrom(
       this.httpService.put<Machine>(`${this.baseUrl}/machines/${machineId}`)
     )
     return data
   }
-  
+
 }
