@@ -21,7 +21,6 @@ import { useContext, useState } from "react";
 
 
 export const ChangePatientPopover: React.FC = (
-  props,
 ) => {
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
   const { data, isPending, error } = usePatients();

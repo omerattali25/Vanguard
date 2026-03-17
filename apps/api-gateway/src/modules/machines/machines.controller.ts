@@ -38,5 +38,15 @@ export class MachinesController {
     return this.machinesService.updateMachine(id,dto.name,dto.location)
   }
 
-  
+
+  @Put(`/change-patient/exit/:id`)
+  exitChangePatient(
+    @Param('id') machineId: string,
+    @Body() dto: { lockId: string},
+  ) {
+    return this.machinesService.exitChangePatient(
+      machineId,
+      dto.lockId,
+    );
+  }
 }

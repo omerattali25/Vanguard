@@ -107,13 +107,21 @@ export class MachinesService {
         `Resource is already locked: ${resource}`,
       );
     }
-
+    const originalStatus=machine.status;
     machine.status = MachineStatus.IN_TRANSFER;
 
     await this.machineRepo.save(machine);
     const outputMachine = await this.convertPatientIdToName(machine);
     this.redisClient.publish('machines', JSON.stringify(outputMachine));
 
+
+    const wroteStatus = await this.redisClient.set(
+      `status:machine:${machineId}`,
+      originalStatus,
+      'NX',
+      'PX',
+      ttl,
+    );
     return {
       lockId: lockId,
       expiration: ttl,
@@ -143,6 +151,7 @@ export class MachinesService {
     if (!machine) {
       this.logger.error(`The received machine: ${machineId} wasn't found`);
       this.redisClient.del(`locks:machine:${machineId}`);
+      this.redisClient.del(`status:machine:${machineId}`);
       throw new NotFoundException(`Machine: ${machineId} wasn't found`);
     }
 
@@ -154,15 +163,8 @@ export class MachinesService {
     const machineWithPatientName = await this.convertPatientIdToName(machine);
     this.redisClient.publish('machines', JSON.stringify(machineWithPatientName));
 
-    let machineActionDTO: MachineActionDto = {
-      machine_id: machineId,
-      patient_id: patient,
-      description: `Connected patient: ${patient} to machine: ${machine.name}`,
-      type: MachineActionType.CONNECTED,
-    };
-
-    let machineAction = this.machineActionRepo.create(machineActionDTO);
-    await this.machineActionRepo.save(machineAction);
+    let machineActionDTO;
+    let machineAction;
 
     if (originalPatient !== '') {
       machineActionDTO = {
@@ -176,8 +178,20 @@ export class MachinesService {
       await this.machineActionRepo.save(machineAction);
     }
 
-    await this.redisClient.del(`locks:machine:${machineId}`);
+       machineActionDTO = {
+      machine_id: machineId,
+      patient_id: patient,
+      description: `Connected patient: ${patient} to machine: ${machine.name}`,
+      type: MachineActionType.CONNECTED,
+    };
 
+     machineAction = this.machineActionRepo.create(machineActionDTO);
+    await this.machineActionRepo.save(machineAction);
+
+
+    await this.redisClient.del(`locks:machine:${machineId}`);
+    await this.redisClient.del(`status:machine:${machineId}`);
+    
     return machineWithPatientName;
   }
 
@@ -200,5 +214,34 @@ export class MachinesService {
       status: machine.status,
       assigned: patient.name,
     }
+
+  }
+  async exitChangePatient(machineId:string,lockId:string){
+    const lock = await this.redisClient.get(`locks:machine:${machineId}`);
+    if (!lock || lock !== lockId) {
+      this.logger.error(`The lock: ${lock} wasn't found or is not correct`);
+      throw new InternalServerErrorException(`Lock: ${lock} wasn't found or is not correct`);
+    }
+     const machine = await this.machineRepo.findOne({
+      where: { id: machineId },
+    });
+
+    if (!machine) {
+      this.logger.error(`The received machine: ${machineId} wasn't found`);
+      this.redisClient.del(`locks:machine:${machineId}`);
+      this.redisClient.del(`status:machine:${machineId}`);
+      throw new NotFoundException(`Machine: ${machineId} wasn't found`);
+    }
+     const originalStatus = await this.redisClient.get(`status:machine:${machineId}`);
+      if (!originalStatus) {
+      this.logger.error(`The status: ${originalStatus} wasn't found `);
+      throw new InternalServerErrorException(`The status: ${originalStatus} wasn't found`);
+    }
+     machine.status=originalStatus;
+      await this.redisClient.del(`status:machine:${machineId}`);
+      await this.machineRepo.save(machine);
+      const machineWithPatientName = await this.convertPatientIdToName(machine);
+      this.redisClient.publish('machines', JSON.stringify(machineWithPatientName));
+      return machineWithPatientName;
   }
 }

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { changePatient, createMachine, getMachines, startChangePatient, updateMachine } from "./machines.api";
+import { changePatient, createMachine, exitChangePatient, getMachines, startChangePatient, updateMachine } from "./machines.api";
 import { Machine } from "@/types/machine";
 
 export function useMachines() {
@@ -47,6 +47,19 @@ export const useChangePatient = () => {
   return useMutation({
     mutationFn: ({ machineId, patient, lockId }: ChangePatientInput) =>
       changePatient(machineId, patient, lockId),
+  });
+};
+
+
+interface ExistChangePatientInput {
+  machineId: string;
+  lockId: string;
+}
+
+export const useExitChangePatient = () => {
+  return useMutation({
+    mutationFn: ({ machineId,lockId }:ExistChangePatientInput) =>
+      exitChangePatient(machineId,lockId),
   });
 };
 

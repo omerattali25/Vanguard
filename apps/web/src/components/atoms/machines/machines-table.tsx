@@ -17,7 +17,7 @@ import { AddMachineForm } from "./add-machine-form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Popover, PopoverTrigger } from "@/components/ui/popover.tsx";
-import { useMachines, useStartChangePatient, useUpdateMachineMutate } from "api/machines/machines.query.ts";
+import { useExitChangePatient, useMachines, useStartChangePatient, useUpdateMachineMutate } from "api/machines/machines.query.ts";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { ChangePatientContext } from "@/contexts/machines/change-patient-context.ts";
 import {Machine} from '../../../types/machine.ts'
@@ -30,8 +30,16 @@ export const MachinesTable: React.FC =() => {
   const {data,isPending,error}=useMachines();
   const {mutate:updateMachine}=useUpdateMachineMutate();
   const {mutateAsync:startChangePatient}=useStartChangePatient();
-  const {changeLockId,changeMachineId}=useContext(ChangePatientContext);
+  const {changeLockId,changeMachineId,lockId,machineId}=useContext(ChangePatientContext);
   const [machines,setMachines]=useState<Machine[]>([])
+  const {mutate:exitChangePatient}=useExitChangePatient()
+  const [open, setOpen] = useState(false)
+    const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen)
+    if (!isOpen) {
+      exitChangePatient({machineId:machineId, lockId:lockId})
+    }
+  }
 
       useEffect(() => {
     setMachines(data ?? []);
@@ -75,7 +83,7 @@ export const MachinesTable: React.FC =() => {
   if(data){
   return (
     <>
-      <Popover>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         <ChangePatientPopover />
         <Table className="w-full md:w-1/2 mt-10 border mx-auto">
           <TableCaption>מכונות</TableCaption>
@@ -97,7 +105,7 @@ export const MachinesTable: React.FC =() => {
                   <TableCell className="text-center">{machine.id}</TableCell>
                   <TableCell className="text-center">
                     <Input
-                      placeholder={machine.name}
+                      defaultValue={machine.name}
                       onChange={(e) => {
                         setUpdatedName(e.currentTarget.value);
                       }}
@@ -108,7 +116,7 @@ export const MachinesTable: React.FC =() => {
                   </TableCell>
                   <TableCell className="text-center">
                     <Input
-                      placeholder={machine.location}
+                      defaultValue={machine.location}
                       onChange={(e) => {
                         setUpdatedLocatin(e.currentTarget.value);
                       }}
@@ -129,7 +137,7 @@ export const MachinesTable: React.FC =() => {
                           changeLockId(res)
                           }
                           catch(err){
-                            alert(err)
+                            alert("המכונה תפוסה על ידי אחות אחרת ")
                           }
                           
                         }}

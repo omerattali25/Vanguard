@@ -25,3 +25,8 @@ export const updateMachine=async (machineId:string, name?:string,location?:strin
     const response=await api.put(`/machines/${machineId}`,{name:name,location:location})
     return response.data
 }
+
+export const exitChangePatient=async(machineId:string,lockId:string)=>{
+    const response = await api.put(`/machines/change-patient/exit/${machineId}`, {lockId: lockId})
+    return response.data;
+}

@@ -53,4 +53,11 @@ export class MachinesService {
     return data
   }
 
+    async exitChangePatient(machineId: string, lockId: string): Promise<Machine> {
+    const { data } = await firstValueFrom(
+      this.httpService.put<Machine>(`${this.baseUrl}/machines/change-patient/exit/${machineId}`,{lockId:lockId})
+    )
+    return data
+  }
+
 }
