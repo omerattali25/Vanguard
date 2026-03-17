@@ -12,3 +12,4 @@ export * from './types/patients/patient.input';
 
 export * from './types/alerts/alert.entity';
 export * from './types/machine-actions/machine-action.entity';
+export * from './types/config/buffer-size';

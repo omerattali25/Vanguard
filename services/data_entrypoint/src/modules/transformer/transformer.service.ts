@@ -15,11 +15,9 @@ export class TransformerService {
 
   async onModuleInit() {
     await this.kafkaClient.connect();
-    this.logger.log('Kafka producer connected');
   }
 
   private changeInvalidValuesToMinusOne(vitals: Vitals) {
-    this.logger.debug('Checking for invalid vital values');
     Object.keys(vitals).forEach((key) => {
       if (typeof vitals[key] === 'number' && vitals[key] < 0) {
         vitals[key] = -1;
@@ -40,10 +38,6 @@ export class TransformerService {
       patient_id: message.patient_id + '',
       id: randomUUID(),
     };
-
-    this.logger.debug(
-      `Transformed vitals for patient ID ${vitalsToReturn.patient_id}: ${JSON.stringify(vitalsToReturn)}`,
-    );
     this.changeInvalidValuesToMinusOne(vitalsToReturn);
     this.kafkaClient.emit(process.env.CREATE_TOPIC ?? '', vitalsToReturn);
   }

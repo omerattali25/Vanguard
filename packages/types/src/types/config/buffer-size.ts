@@ -1,0 +1,1 @@
+export const bufferSize = 100;

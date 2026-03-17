@@ -34,7 +34,7 @@ function App() {
             <Route path="/patients/:id" element={<PatientVitals />} />
             <Route path="/machines" element={<MachinesPage />} />
           </Routes>
-          {/* <AlertsToaster /> */}
+          <AlertsToaster />
         </SidebarProvider>
         <footer className="bg-gray-900 text-white py-12 px-6">
           <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
