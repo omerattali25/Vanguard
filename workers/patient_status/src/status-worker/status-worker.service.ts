@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Redis } from 'ioredis';
-import { Patient, PatientStatus, PatientVitals } from '@vanguard/types';
+import { bufferSize, Patient, PatientStatus, PatientVitals } from '@vanguard/types';
 import { PatientStatusProvider } from './providers/patient-status-provider';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 
@@ -11,6 +11,7 @@ export class StatusWorkerService implements OnModuleDestroy {
   private buffer: PatientVitals[] = [];
   private readonly redis: Redis;
   private isFlushing = false;
+  private batchSize = bufferSize;
 
   constructor(
     @InjectRepository(Patient)
@@ -23,7 +24,7 @@ export class StatusWorkerService implements OnModuleDestroy {
 
   async consumeVitals(patientVital: PatientVitals) {
     this.buffer.push(patientVital);
-    if (this.buffer.length >= 500 && !this.isFlushing) {
+    if (this.buffer.length >= this.batchSize && !this.isFlushing) {
       this.flush();
     }
   }
@@ -91,7 +92,7 @@ export class StatusWorkerService implements OnModuleDestroy {
     } finally {
       this.isFlushing = false;
 
-      if (this.buffer.length >= 500) {
+      if (this.buffer.length >= this.batchSize) {
         this.flush();
       }
     }

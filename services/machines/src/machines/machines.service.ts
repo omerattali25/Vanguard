@@ -258,6 +258,7 @@ export class MachinesService {
     }
     machine.status = originalStatus;
     await this.redisClient.del(`status:machine:${machineId}`);
+    await this.redisClient.del(`locks:machine:${machineId}`);
     await this.machineRepo.save(machine);
     const machineWithPatientName = await this.convertPatientIdToName(machine);
     this.redisClient.publish(

@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Vital } from 'src/types/vitals.input';
 import { Redis } from 'ioredis';
+import { bufferSize } from '@vanguard/types';
 
 @Injectable()
 export class RiskService {
   private redis: Redis;
   private buffer: (string | number)[] = [];
-  private readonly BATCH_SIZE = 500;
+  private readonly BATCH_SIZE = bufferSize;
 
   constructor() {
     this.redis = new Redis({

@@ -6,10 +6,10 @@ import Patients from "./pages/Patients";
 import PatientVitals from "./pages/PatientVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MachinesPage } from "./pages/Machines";
-import PatientAnalytics from "./pages/analitycs/PatientAnalytics";
 import MachinesAnalytics from "./pages/analitycs/MachinesAnalyticsPage";
 import { Recommendations } from "./pages/RecommendationPage";
 import Analytics from "./pages/analitycs/AnalyticsPage";
+import AlertsToaster from "./components/atoms/alerts/alert-toaster";
 
 function App() {
   const queryClient = new QueryClient();
@@ -25,10 +25,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/patients" element={<Patients />} />
-            <Route
-              path="/analytics/patients/:id"
-              element={<PatientAnalytics />}
-            />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/analytics/machines" element={<MachinesAnalytics />} />
             <Route path="/analytics" element={<Analytics />} />
@@ -36,7 +32,7 @@ function App() {
             <Route path="/machines" element={<MachinesPage />} />
             <Route path="/recommendations" element={<Recommendations />} />
           </Routes>
-          
+          <AlertsToaster />
         </SidebarProvider>
         <footer className="bg-gray-900 text-white py-12 px-6">
           <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
