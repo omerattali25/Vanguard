@@ -1,5 +1,5 @@
-export enum MachineStatus{
-    AVELIABLE= "פנוי",
-    USED="בשימוש" ,
-    IN_TRANSFER="בתנועה"
+export enum MachineStatus {
+  AVALIBLE = 'available',
+  USED = 'used',
+  IN_TRANSFER = 'in_transfer',
 }
