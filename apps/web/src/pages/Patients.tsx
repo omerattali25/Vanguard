@@ -1,4 +1,3 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -13,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Patient } from "types/patient";
 import { io } from "socket.io-client";
 import { PatientRow } from "@/components/atoms/patients/patient-row";
+import LoadingPage from "@/components/atoms/generic/loading-page";
 
 export const socket = io(import.meta.env.VITE_API_REALTIME_GATEWAY_URL);
 
@@ -45,15 +45,7 @@ export const Patients = () => {
 
   if (isPending) {
     return (
-      <div className="flex justify-center mt-10">
-        <div className="w-full md:w-1/2 space-y-4">
-          <Skeleton className="h-8 w-40 mx-auto" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </div>
-      </div>
+      <LoadingPage/>
     );
   }
   if (error) {

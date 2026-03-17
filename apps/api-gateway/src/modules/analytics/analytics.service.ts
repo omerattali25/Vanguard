@@ -37,4 +37,18 @@ export class AnalyticsService {
     );
     return data;
   }
+
+  async getMostUsedMachine() {
+    const { data } = await firstValueFrom(
+      this.httpService.get(`${this.baseUrl}/analytics/machines/most-actions/30`),
+    );
+    return data;
+  }
+
+  async getPatientsPerDay() {
+    const { data } = await firstValueFrom(
+      this.httpService.get(`${this.baseUrl}/analytics/patients/new-per-day/30`),
+    );
+    return data;
+  }
 }

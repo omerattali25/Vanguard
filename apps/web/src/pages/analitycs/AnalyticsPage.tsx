@@ -4,105 +4,56 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { Badge } from "@/components/ui/badge";
-
-import React from 'react'
 import StatsCard from "@/components/atoms/analytics/stats-card";
+import { useLeastConnectedPatient, useMostUsedMachine, usePatientAnalytics, usePatientsPerDay } from "api/analytics/statistics/statistics.query";
+import LineGraph from "@/components/atoms/graphs/line-graph";
+import LoadingPage from "@/components/atoms/generic/loading-page";
 
 const Analytics = () => {
+  const { data: mostConnectedPatient, isPending: isMostConnectedPatientPending, error: mostConnectedPatientError } = usePatientAnalytics();
+  const { data: leastConnectedPatient, isPending: isLeastConnectedPatientPending, error: leastConnectedPatientError } = useLeastConnectedPatient();
+  const { data: mostUsedMachine, isPending: isMostUsedMachinePending, error: mostUsedMachineError } = useMostUsedMachine();
+  const { data: patientsPerDay, isPending: isPatientsPerDayPending, error: patientsPerDayError } = usePatientsPerDay();
+
+  if (isMostConnectedPatientPending || isLeastConnectedPatientPending || isMostUsedMachinePending || isPatientsPerDayPending) {
+    return <LoadingPage />
+  }
+  if (mostConnectedPatientError || leastConnectedPatientError || mostUsedMachineError || patientsPerDayError) {
+    return <div>שגיאה: {mostConnectedPatientError?.message || leastConnectedPatientError?.message || mostUsedMachineError?.message || patientsPerDayError?.message}</div>
+  }
   return (
     <div className="w-full p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">סטטיסטיקות</h1>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatsCard title="מטופל שהיה מחובר הכי הרבה זמן" value="128" />
-        <StatsCard title="מטופל שהיה מחובר הכי פחות זמן" value="6" />
-        <StatsCard title="מכונה הכי משומשת" value="82 BPM" />
-        <StatsCard title="מכונה הכי פחות משומשת" value="97%" />
+        <StatsCard title="מטופל שהיה מחובר הכי הרבה זמן" value={mostConnectedPatient?.name || "N/A"} />
+        <StatsCard title="מטופל שהיה מחובר הכי פחות זמן" value={leastConnectedPatient?.name || "N/A"} />
+        <StatsCard title="מכונה הכי משומשת" value={mostUsedMachine?.name || "N/A"} />
       </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>Vitals Overview</CardTitle>
+          <CardTitle>כמות מטופלים חדשים לפי יום</CardTitle>
         </CardHeader>
 
         <CardContent>
           <div className="h-64 flex items-center justify-center text-muted-foreground">
-            Graph will be here
+            <LineGraph
+              data={patientsPerDay
+                ? Array.from(patientsPerDay.entries()).map(
+                  ([time, count]) => ({
+                    time: new Date(time).toLocaleDateString(),
+                    vitalSign: count,
+                  })
+                )
+                : []}
+              datakey="כמות אנשים"
+              y_domain={0}
+              medical_units=""
+              stroke="#4b4192"
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Alerts table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Alerts</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Patient</TableHead>
-                <TableHead>Vital</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Time</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>Heart Rate</TableCell>
-                <TableCell>130</TableCell>
-                <TableCell>
-                  <Badge variant="destructive">
-                    Critical
-                  </Badge>
-                </TableCell>
-                <TableCell>12:32</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Alice</TableCell>
-                <TableCell>SpO2</TableCell>
-                <TableCell>88%</TableCell>
-                <TableCell>
-                  <Badge variant="destructive">
-                    Low
-                  </Badge>
-                </TableCell>
-                <TableCell>12:30</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Bob</TableCell>
-                <TableCell>Temperature</TableCell>
-                <TableCell>38.9</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">
-                    Warning
-                  </Badge>
-                </TableCell>
-                <TableCell>12:28</TableCell>
-              </TableRow>
-
-            </TableBody>
-          </Table>
-
         </CardContent>
       </Card>
 

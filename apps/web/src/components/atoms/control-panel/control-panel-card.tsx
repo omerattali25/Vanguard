@@ -1,6 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import React from 'react'
-import { Button } from 'react-day-picker'
 import { useNavigate } from 'react-router-dom';
 
 interface ControlPanelCardProps {
