@@ -6,6 +6,7 @@ import { useExitPatientVitals, usePatientVitals } from "api/vitals/vitals.query"
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { Vital } from "types/vitals";
+import LoadingPage from "@/components/atoms/generic/loading-page";
 
 const socket = io(import.meta.env.VITE_API_REALTIME_GATEWAY_URL);
 
@@ -54,7 +55,7 @@ const PatientVitals = () => {
   }
 
   if (isPending || isVitalsPending) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   if (error || vitalsError) {
