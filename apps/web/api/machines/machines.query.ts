@@ -1,22 +1,29 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { changePatient, createMachine, getMachines, startChangePatient, updateMachine } from "./machines.api";
+import {
+  changePatient,
+  createMachine,
+  exitChangePatient,
+  getMachines,
+  startChangePatient,
+  updateMachine,
+} from "./machines.api";
 import { Machine } from "@/types/machine";
 
 export function useMachines() {
-    const { data, isPending, error } = useQuery({
-        queryKey: ['machines'],
-        queryFn: getMachines,
-    });
+  const { data, isPending, error } = useQuery({
+    queryKey: ["machines"],
+    queryFn: getMachines,
+  });
 
-    return { data, isPending, error };
+  return { data, isPending, error };
 }
 
-export function usePostMachineMutate(){
-    return useMutation(
-        {
-            mutationFn:(name:string)=>{return createMachine(name)}
-        }
-    )
+export function usePostMachineMutate() {
+  return useMutation({
+    mutationFn: (name: string) => {
+      return createMachine(name);
+    },
+  });
 }
 interface UpdateMachineInput {
   machineId: string;
@@ -26,14 +33,18 @@ interface UpdateMachineInput {
 
 export function useUpdateMachineMutate() {
   return useMutation({
-    mutationFn: ({ machineId, updatedName, updatedLocation }:UpdateMachineInput) =>
-      updateMachine(machineId, updatedName,updatedLocation)
+    mutationFn: ({
+      machineId,
+      updatedName,
+      updatedLocation,
+    }: UpdateMachineInput) =>
+      updateMachine(machineId, updatedName, updatedLocation),
   });
 }
 
 export const useStartChangePatient = () => {
-  return useMutation<string,Error,string>({
-    mutationFn: (machineId: string) => startChangePatient(machineId)
+  return useMutation<string, any, string>({
+    mutationFn: (machineId: string) => startChangePatient(machineId),
   });
 };
 
@@ -50,4 +61,14 @@ export const useChangePatient = () => {
   });
 };
 
+interface ExistChangePatientInput {
+  machineId: string;
+  lockId: string;
+}
 
+export const useExitChangePatient = () => {
+  return useMutation({
+    mutationFn: ({ machineId, lockId }: ExistChangePatientInput) =>
+      exitChangePatient(machineId, lockId),
+  });
+};

@@ -39,4 +39,11 @@ export class MachinesController {
   async updateMachine(@Param('id') machineId: string, @Body() machineUpdateDto: any) {
     return await this.machinesService.updateMachine(machineId, machineUpdateDto);
   }
+  @Put('change-patient/exit/:id')
+  async changePatientExit(
+    @Param('id') id: string,
+    @Body() dto:{lockId:string}
+  ) {
+    return await this.machinesService.exitChangePatient(id,dto.lockId)
+  }
 }

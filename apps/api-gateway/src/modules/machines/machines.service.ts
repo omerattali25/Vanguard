@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Machine, Patient } from '@vanguard/types';
@@ -18,39 +18,108 @@ export class MachinesService {
   }
 
   async getMachines(): Promise<Machine[]> {
-    const { data } = await firstValueFrom(
-      this.httpService.get<Machine[]>(`${this.baseUrl}/machines`),
-    );
-    return data;
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get<Machine[]>(`${this.baseUrl}/machines`),
+      );
+      return data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+      throw new HttpException('Machine service unavailable', 503);
+    }
   }
 
   async saveMachine(name: string): Promise<Machine> {
-    const { data } = await firstValueFrom(
-      this.httpService.post<Machine>(`${this.baseUrl}/machines`,{name:name})
-    );
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.post<Machine>(`${this.baseUrl}/machines`, {
+          name: name,
+        }),
+      );
 
-    return data;
+      return data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+      throw new HttpException('Machine service unavailable', 503);
+    }
   }
 
-  async updateMachine(id:string,name?: string, location?: string): Promise<Machine> {
-    const { data } = await firstValueFrom(
-      this.httpService.put<Machine>(`${this.baseUrl}/machines/${id}`,{name:name,location:location})
-    );
-    return data
+  async updateMachine(
+    id: string,
+    name?: string,
+    location?: string,
+  ): Promise<Machine> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.put<Machine>(`${this.baseUrl}/machines/${id}`, {
+          name: name,
+          location: location,
+        }),
+      );
+      return data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+      throw new HttpException('Machine service unavailable', 503);
+    }
   }
 
   async startChangePatient(machineId: string): Promise<string> {
-    const { data } = await firstValueFrom(
-      this.httpService.post<{ lockId: string, expiration: number }>(`${this.baseUrl}/machines/change-patient/${machineId}`)
-    )
-    return data.lockId
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.post<{ lockId: string; expiration: number }>(
+          `${this.baseUrl}/machines/change-patient/${machineId}`,
+        ),
+      );
+      return data.lockId;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+      throw new HttpException('Machine service unavailable', 503);
+    }
   }
 
-  async changePatient(machineId: string, patient_id: string, lockId: string): Promise<Machine> {
-    const { data } = await firstValueFrom(
-      this.httpService.put<Machine>(`${this.baseUrl}/machines/change-patient/${machineId}`,{patient:patient_id,lockId:lockId})
-    )
-    return data
+  async changePatient(
+    machineId: string,
+    patient_id: string,
+    lockId: string,
+  ): Promise<Machine> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.put<Machine>(
+          `${this.baseUrl}/machines/change-patient/${machineId}`,
+          { patient: patient_id, lockId: lockId },
+        ),
+      );
+      return data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+      throw new HttpException('Machine service unavailable', 503);
+    }
   }
 
+  async exitChangePatient(machineId: string, lockId: string): Promise<Machine> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.put<Machine>(
+          `${this.baseUrl}/machines/change-patient/exit/${machineId}`,
+          { lockId: lockId },
+        ),
+      );
+      return data;
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response.data, error.response.status);
+      }
+      throw new HttpException('Machine service unavailable', 503);
+    }
+  }
 }
