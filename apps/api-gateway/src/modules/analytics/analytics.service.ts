@@ -23,4 +23,32 @@ export class AnalyticsService {
     );
     return data;
   }
+
+  async getMostConnectedPatient(): Promise<Patient> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Patient>(`${this.baseUrl}/analytics/machine-usage/DESC`),
+    );
+    return data;
+  }
+
+  async getLeastConnectedPatient(): Promise<Patient> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Patient>(`${this.baseUrl}/analytics/machine-usage/ASC`),
+    );
+    return data;
+  }
+
+  async getMostUsedMachine() {
+    const { data } = await firstValueFrom(
+      this.httpService.get(`${this.baseUrl}/analytics/machines/most-actions/30`),
+    );
+    return data;
+  }
+
+  async getPatientsPerDay() {
+    const { data } = await firstValueFrom(
+      this.httpService.get(`${this.baseUrl}/analytics/patients/new-per-day/30`),
+    );
+    return data;
+  }
 }
