@@ -17,15 +17,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChangePatientContext } from "@/contexts/machines/change-patient-context";
 import { useChangePatient } from "api/machines/machines.query";
 import { usePatients } from "api/patients/patient.query";
+import axios from "axios";
 import { useContext, useState } from "react";
 
-
-export const ChangePatientPopover: React.FC = (
-) => {
+export const ChangePatientPopover: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
   const { data, isPending, error } = usePatients();
-  const {mutate:changePatient}=useChangePatient()
-  const {machineId,lockId}=useContext(ChangePatientContext)
+  const { mutateAsync: changePatient } = useChangePatient();
+  const { machineId, lockId } = useContext(ChangePatientContext);
   if (isPending) {
     return (
       <div className="flex justify-center mt-10">
@@ -59,18 +58,33 @@ export const ChangePatientPopover: React.FC = (
             <SelectGroup>
               <SelectLabel>מטופלים</SelectLabel>
               {data.map((patient) => {
-                return <SelectItem value={patient.id}>{patient.name}</SelectItem>;
+                return (
+                  <SelectItem value={patient.id}>{patient.name}</SelectItem>
+                );
               })}
             </SelectGroup>
           </SelectContent>
         </Select>
         <button
           className="mt-4"
-          onClick={() => {
+          onClick={async () => {
             if (selectedPatient) {
-                changePatient({machineId:machineId, patient:selectedPatient, lockId:lockId})
-            } 
-            else {
+              try {
+                await changePatient({
+                  machineId: machineId,
+                  patient: selectedPatient,
+                  lockId: lockId,
+                });
+              } catch (err) {
+                if (axios.isAxiosError(err)) {
+                  if (err.response?.status == 400) {
+                    alert("המטופל כבר מחובר למכונה");
+                  }
+                } else {
+                  alert(err);
+                }
+              }
+            } else {
               alert("אנא בחר מטופל");
             }
           }}
