@@ -40,7 +40,7 @@ const Analytics = () => {
         <CardContent>
           <div className="h-64 flex items-center justify-center text-muted-foreground">
             <LineGraph
-              data={patientsPerDay
+              data={patientsPerDay?.size
                 ? Array.from(patientsPerDay.entries()).map(
                   ([time, count]) => ({
                     time: new Date(time).toLocaleDateString(),

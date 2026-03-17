@@ -39,7 +39,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: vanguard
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
