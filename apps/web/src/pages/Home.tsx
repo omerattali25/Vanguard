@@ -11,8 +11,10 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
 
         <ControlPanelCard title="מטופלים" description="צפייה בכל המטופלים והסטטוסים שלהם" buttonText="מעבר למטופלים" navigateTo="/patients" />
+        <ControlPanelCard title="המלצות המערכת" description="צפייה בכל המטופלים שהמערכת ממליצה להקצאות להם מכונה" buttonText="מעבר להמלצות" navigateTo="/recommendations" />
         <ControlPanelCard title="מכונות" description="צפייה בכל המכונות ועריכתן" buttonText="מעבר למכונות" navigateTo="/machines" />
-        <ControlPanelCard title="אנליטיקות" description="צפייה בכל אירועי המערכות" buttonText="מעבר לאנליטיקות" navigateTo="/analytics" />
+        <ControlPanelCard title="אירועי מכונות" description="צפייה בכל אירועי המערכות" buttonText="מעבר לאירועי מכונות" navigateTo="/analytics/machines" />
+        <ControlPanelCard title="סטטיסטיקות" description="צפייה בכל סטטיסטיקות המערכת" buttonText="מעבר לסטטיסטיקות" navigateTo="/analytics" />
 
       </div>
     </div>
