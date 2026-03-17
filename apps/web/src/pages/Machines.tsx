@@ -9,8 +9,8 @@ import { ChangePatientContextProvider } from "@/contexts/machines/change-patient
 export const MachinesPage: React.FC = () => {
   const { data, isPending, error } = useMachines();
   if (isPending) {
-    return(
-     <div className="flex justify-center mt-10">
+    return (
+      <div className="flex justify-center mt-10">
         <div className="w-full md:w-1/2 space-y-4">
           <Skeleton className="h-8 w-40 mx-auto" />
           <Skeleton className="h-10 w-full" />
@@ -19,16 +19,14 @@ export const MachinesPage: React.FC = () => {
           <Skeleton className="h-10 w-full" />
         </div>
       </div>
-    )
+    );
   }
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(data)
-  return(
+  return (
     <ChangePatientContextProvider>
-     <MachinesTable/>
+      <MachinesTable />
     </ChangePatientContextProvider>
-  )
-
+  );
 };
