@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum PatientStatus {
     Stable = "stable",
@@ -17,9 +17,12 @@ export class Patient {
   @Column()
   city: string;
 
-  @Column({ type: 'enum', enum: PatientStatus })
+  @Column({ type: 'enum', enum: PatientStatus, default: PatientStatus.Stable })
   status: PatientStatus;
 
   @CreateDateColumn()
   registered_at: string;
+
+  @UpdateDateColumn()
+  updated_at: string;
 }

@@ -7,8 +7,8 @@ import { PatientVitals } from '@vanguard/types';
 export class StatusWorkerController {
   constructor(private readonly statusWorkerService: StatusWorkerService) {}
 
-  @EventPattern(process.env.KAFKA_TOPIC)
-  updatePatientVitalStatus(@Payload() patientVitals: PatientVitals) {
-    void this.statusWorkerService.consumeVitals(patientVitals);
+  @EventPattern(process.env.LISTEN_TOPIC)
+  async updatePatientVitalStatus(@Payload() patientVitals: PatientVitals) {
+    await this.statusWorkerService.consumeVitals(patientVitals);
   }
 }

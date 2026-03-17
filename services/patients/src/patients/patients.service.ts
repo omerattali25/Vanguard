@@ -2,7 +2,7 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Patient, PatientDetails } from '@vanguard/types';
+import { Patient, PatientDetails, PatientStatus } from '@vanguard/types';
 import { Repository } from 'typeorm';
 import { Redis } from 'ioredis';
 
@@ -15,8 +15,7 @@ export class PatientsService {
         private readonly redisService: RedisService,
         private readonly configService: ConfigService,
     ) {
-        const namespace = this.configService.get<string>('REDIS_NAMESPACE');
-        this.redis = this.redisService.getOrThrow(namespace);
+        this.redis = this.redisService.getOrThrow();
     }
 
     private logger = new Logger(PatientsService.name);
@@ -32,15 +31,17 @@ export class PatientsService {
     }
 
     async getPatients(): Promise<Patient[]> {
-        this.logger.log('Fetching all patients');
+        console.log('Fetching all patients');
         return await this.patientRepo.find();
     }
 
     async createPatient(patient: PatientDetails): Promise<Patient> {
-        this.logger.log(`Creating patient with ID ${patient.patient_id}`);
+        this.logger.log(`Creating patient with ID ${patient.id}`);
         const newPatient = this.patientRepo.create(patient);
-        await this.redis.publish(`patients`, JSON.stringify(newPatient));
-        return await this.patientRepo.save(newPatient);
+        const savedPatient = await this.patientRepo.save(newPatient);
+        await this.redis.publish(this.configService.get<string>('REDIS_PATIENTS_TOPIC') ?? 'patients', JSON.stringify(savedPatient));
+        console.log('Published new patient to Redis:', savedPatient);
+        return savedPatient;
     }
 
 }

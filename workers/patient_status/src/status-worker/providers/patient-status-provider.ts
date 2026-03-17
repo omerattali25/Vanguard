@@ -5,7 +5,7 @@ import {
 } from '@vanguard/types';
 import { PatientCriticalVitalCountStatus } from '../config/patient-critical-vital-count-status.config';
 
-type VitalKey = keyof Omit<PatientVitals, 'id' | 'patientId' | 'timestamp'>;
+type VitalKey = keyof Omit<PatientVitals, 'id' | 'patient_id' | 'created_at'>;
 
 export class PatientStatusProvider {
   public providePatientStatus(vitals: PatientVitals) {

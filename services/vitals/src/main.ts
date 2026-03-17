@@ -11,7 +11,6 @@ import { LoggerConfig } from '@vanguard/configurations';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
-    logger: LoggerConfig
   });
 
   app.enableCors({ origin: 'localhost:3000' });
@@ -34,7 +33,6 @@ async function bootstrap() {
   const port = config.get<number>('env.port', { infer: true });
 
   app.startAllMicroservices();
-  this.logger.log(`Vitals service listening on port ${port}`);
   await app.listen(port);
 }
 bootstrap();
