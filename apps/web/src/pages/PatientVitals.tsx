@@ -46,7 +46,7 @@ const PatientVitals = () => {
     return () => {
       socket.off("vitals", newVitalHandler);
       socket.emit("leave", `vitals:${id}`);
-      exitVitals();
+      //exitVitals();
     };
   }, [id]);
 

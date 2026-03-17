@@ -1,13 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PatientVitals, VitalEntity } from '@vanguard/types';
+import { bufferSize, PatientVitals, VitalEntity } from '@vanguard/types';
 import { Repository } from 'typeorm';
 import { PagesStateService } from '../pages-state/pages-state.service';
 
 @Injectable()
 export class IngestionService {
   private batchBuffer: PatientVitals[] = [];
-  private readonly BATCH_THRESHOLD = 500;
+  private readonly BATCH_THRESHOLD = bufferSize;
 
   private logger = new Logger(IngestionService.name);
   constructor(@InjectRepository(VitalEntity) private vitalRepository: Repository<VitalEntity>,
